@@ -6,22 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('carta_di_credito', function (Blueprint $table) {
+        Schema::create('cartaDiCredito', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('id_utente');
+            $table->string('circuito_pagamento');
+            $table->string('codice_carta');
+            $table->string('cvv_carta');
             $table->timestamps();
+
+            // Foreign key constraint
+            $table->foreign('id_utente')
+                  ->references('id')->on('utenti')
+                  ->onDelete('cascade');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('carta_di_credito');
+        Schema::dropIfExists('cartaDiCredito');
     }
 };
