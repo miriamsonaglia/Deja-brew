@@ -2,10 +2,8 @@
 
 namespace App\Models;
 
-class Prodotto extends Model
+class Prodotto extends BaseModel
 {
-    use HasFactory;
-
     protected $table = 'prodotti';
     protected $fillable = [
         'nome',
@@ -55,3 +53,5 @@ class Prodotto extends Model
         return $this->hasMany(Lista::class, 'id_prodotto');
     }
 }
+
+?>

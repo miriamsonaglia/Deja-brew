@@ -2,10 +2,8 @@
 
 namespace App\Models;
 
-class Lista extends Model
+class Lista extends BaseModel
 {
-    use HasFactory;
-
     protected $table = 'liste';
     protected $fillable = [
         'id_utente_compratore',

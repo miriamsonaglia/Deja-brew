@@ -2,10 +2,8 @@
 
 namespace App\Models;
 
-class Aroma extends Model
+class Aroma extends BaseModel
 {
-    use HasFactory;
-
     protected $table = 'aromi';
     protected $fillable = ['gusto'];
 

@@ -2,10 +2,8 @@
 
 namespace App\Models;
 
-class ImpostazioniUtente extends Model
+class ImpostazioniUtente extends BaseModel
 {
-    use HasFactory;
-
     protected $table = 'impostazioni_utenti';
     protected $fillable = [
         'id_utente',

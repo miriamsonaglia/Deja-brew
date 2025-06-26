@@ -2,10 +2,8 @@
 
 namespace App\Models;
 
-class UtenteCompratore extends Model
+class UtenteCompratore extends BaseModel
 {
-    use HasFactory;
-
     protected $table = 'utenti_compratori';
     protected $fillable = ['user_id'];
 
@@ -29,3 +27,5 @@ class UtenteCompratore extends Model
         return $this->hasMany(Lista::class, 'id_utente_compratore')->where('tipo', 'carrello');
     }
 }
+
+?>

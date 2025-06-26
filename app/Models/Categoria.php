@@ -2,10 +2,8 @@
 
 namespace App\Models;
 
-class Categoria extends Model
+class Categoria extends BaseModel
 {
-    use HasFactory;
-
     protected $table = 'categorie';
     protected $fillable = ['descrizione'];
 

@@ -2,10 +2,8 @@
 
 namespace App\Models;
 
-class Notifica extends Model
+class Notifica extends BaseModel
 {
-    use HasFactory;
-
     protected $table = 'notifiche';
     protected $fillable = [
         'tipo',

@@ -2,10 +2,8 @@
 
 namespace App\Models;
 
-class Fattura extends Model
+class Fattura extends BaseModel
 {
-    use HasFactory;
-
     protected $table = 'fatture';
     protected $fillable = [
         'id_utente',

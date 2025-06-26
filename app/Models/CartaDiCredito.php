@@ -2,10 +2,8 @@
 
 namespace App\Models;
 
-class CartaDiCredito extends Model
+class CartaDiCredito extends BaseModel
 {
-    use HasFactory;
-
     protected $table = 'carte_di_credito';
     protected $fillable = [
         'id_utente',

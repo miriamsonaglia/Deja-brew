@@ -2,10 +2,8 @@
 
 namespace App\Models;
 
-class Recensione extends Model
+class Recensione extends BaseModel
 {
-    use HasFactory;
-
     protected $table = 'recensioni';
     protected $fillable = [
         'id_utente',
@@ -27,3 +25,5 @@ class Recensione extends Model
         return $this->belongsTo(Prodotto::class, 'id_prodotto');
     }
 }
+
+?>
