@@ -1,27 +1,35 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+    use Illuminate\Database\Migrations\Migration;
+    use Illuminate\Database\Schema\Blueprint;
+    use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+    class CreateFatturaTable extends Migration
     {
-        Schema::create('fattura', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
-    }
+        /**
+         * Esegui la migrazione.
+         */
+        public function up(): void
+        {
+            Schema::create('fattura', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('id_utente');
+                $table->unsignedBigInteger('id_venditore');
+                $table->unsignedBigInteger('id_ordine');
+                $table->timestamps();
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('fattura');
+                $table->foreign('id_utente')->references('id')->on('utente')->onDelete('cascade');
+                $table->foreign('id_venditore')->references('id')->on('utenteVenditore')->onDelete('cascade');
+                $table->foreign('id_ordine')->references('id')->on('ordini')->onDelete('cascade');
+            });
+        }
+
+        /**
+         * Annulla la migrazione.
+         */
+        public function down(): void
+        {
+            Schema::dropIfExists('fattura');
+        }
     }
-};
+?>
