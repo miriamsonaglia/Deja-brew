@@ -27,7 +27,7 @@ class User extends Authenticatable
 
     protected $casts = [
         'email_verified_at' => 'datetime',
-        // Rimuoviamo 'password' => 'hashed' se non vuoi hashing automatico
+        'password' => 'hashed'
     ];
 
     // Relazioni
