@@ -1,5 +1,4 @@
 <?php
-
 // Model: User (Utente)
 namespace App\Models;
 
