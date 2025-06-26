@@ -4,7 +4,7 @@ namespace App\Models;
 
 class Prodotto extends BaseModel
 {
-    protected $table = 'prodotti';
+    protected $table = 'prodotto';
     protected $fillable = [
         'nome',
         'tipo',

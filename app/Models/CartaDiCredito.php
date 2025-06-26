@@ -4,7 +4,7 @@ namespace App\Models;
 
 class CartaDiCredito extends BaseModel
 {
-    protected $table = 'carte_di_credito';
+    protected $table = 'cartaDiCredito';
     protected $fillable = [
         'id_utente',
         'circuito_pagamento',

@@ -4,7 +4,7 @@ namespace App\Models;
 
 class Lista extends BaseModel
 {
-    protected $table = 'liste';
+    protected $table = 'lista';
     protected $fillable = [
         'id_utente_compratore',
         'id_prodotto',

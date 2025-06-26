@@ -4,7 +4,7 @@ namespace App\Models;
 
 class Recensione extends BaseModel
 {
-    protected $table = 'recensioni';
+    protected $table = 'recensione';
     protected $fillable = [
         'id_utente',
         'id_prodotto',

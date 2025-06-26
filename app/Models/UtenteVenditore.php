@@ -3,7 +3,7 @@
 
     class UtenteVenditore extends BaseModel
     {
-        protected $table = 'utenti_venditori';
+        protected $table = 'utenteVenditore';
         protected $fillable = ['id_utente', 'descrizione'];
 
         public function user()

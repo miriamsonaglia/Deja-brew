@@ -4,7 +4,7 @@
 
     class Ordine extends BaseModel
     {
-        protected $table = 'ordini';
+        protected $table = 'ordine';
         protected $fillable = [
             'id_utente',
             'id_prodotto',

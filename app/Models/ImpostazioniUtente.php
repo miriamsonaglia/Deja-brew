@@ -4,7 +4,7 @@ namespace App\Models;
 
 class ImpostazioniUtente extends BaseModel
 {
-    protected $table = 'impostazioni_utenti';
+    protected $table = 'impostazioniUtente';
     protected $fillable = [
         'id_utente',
         'tema',

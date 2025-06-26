@@ -4,7 +4,7 @@ namespace App\Models;
 
 class Notifica extends BaseModel
 {
-    protected $table = 'notifiche';
+    protected $table = 'notifica';
     protected $fillable = [
         'tipo',
         'impostazione'

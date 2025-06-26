@@ -4,7 +4,7 @@ namespace App\Models;
 
 class UtenteCompratore extends BaseModel
 {
-    protected $table = 'utenti_compratori';
+    protected $table = 'utenteCompratore';
     protected $fillable = ['id_utente'];
 
     public function user()

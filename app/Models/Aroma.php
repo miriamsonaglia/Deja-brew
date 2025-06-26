@@ -4,7 +4,7 @@ namespace App\Models;
 
 class Aroma extends BaseModel
 {
-    protected $table = 'aromi';
+    protected $table = 'aroma';
     protected $fillable = ['gusto'];
 
     public function prodotti()

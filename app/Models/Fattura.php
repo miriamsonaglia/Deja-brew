@@ -4,7 +4,7 @@ namespace App\Models;
 
 class Fattura extends BaseModel
 {
-    protected $table = 'fatture';
+    protected $table = 'fattura';
     protected $fillable = [
         'id_utente',
         'id_venditore',
