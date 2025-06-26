@@ -18,7 +18,7 @@
 
         public function utente()
         {
-            return $this->belongsTo(User::class, 'id_utente');
+            return $this->belongsTo(Utente::class, 'id_utente');
         }
 
         public function prodotto()

@@ -4,11 +4,11 @@
     class UtenteVenditore extends BaseModel
     {
         protected $table = 'utenti_venditori';
-        protected $fillable = ['user_id', 'descrizione'];
+        protected $fillable = ['id_utente', 'descrizione'];
 
         public function user()
         {
-            return $this->belongsTo(User::class);
+            return $this->belongsTo(Utente::class);
         }
 
         public function prodotti()

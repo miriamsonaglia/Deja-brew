@@ -5,11 +5,11 @@ namespace App\Models;
 class UtenteCompratore extends BaseModel
 {
     protected $table = 'utenti_compratori';
-    protected $fillable = ['user_id'];
+    protected $fillable = ['id_utente'];
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Utente::class);
     }
 
     public function liste()
