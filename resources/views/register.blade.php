@@ -49,39 +49,39 @@
 
                 <div class="row mb-3">
                     <div class="col">
-                        <label for="nome" class="form-label">Nome</label>
+                        <label for="nome" class="form-label fw-semibold">Nome</label>
                         <input type="text" id="nome" name="nome" class="form-control" required value="{{ old('nome') }}">
                     </div>
                     <div class="col">
-                        <label for="cognome" class="form-label">Cognome</label>
+                        <label for="cognome" class="form-label fw-semibold">Cognome</label>
                         <input type="text" id="cognome" name="cognome" class="form-control" required value="{{ old('cognome') }}">
                     </div>
                 </div>
 
                 <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
+                    <label for="username" class="form-label fw-semibold">Username</label>
                     <input type="text" id="username" name="username" class="form-control" required value="{{ old('username') }}">
                 </div>
 
                 <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
+                    <label for="email" class="form-label fw-semibold">Email</label>
                     <input type="email" id="email" name="email" class="form-control" required value="{{ old('email') }}">
                 </div>
 
                 <div class="row mb-3">
                     <div class="col">
-                        <label for="password" class="form-label">Password</label>
+                        <label for="password" class="form-label fw-semibold">Password</label>
                         <input type="password" id="password" name="password" class="form-control" required>
                     </div>
                     <div class="col">
-                        <label for="password_confirmation" class="form-label">Conferma Password</label>
+                        <label for="password_confirmation" class="form-label fw-semibold">Conferma Password</label>
                         <input type="password" id="password_confirmation" name="password_confirmation" class="form-control" required>
                     </div>
                 </div>
 
                 <!-- Selezione ruolo -->
                 <div class="text-center mb-4">
-                    <label class="form-label d-block mb-2">Seleziona il tuo ruolo</label>
+                    <label class="form-label fw-semibold d-block mb-2">Seleziona il tuo ruolo</label>
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="radio" name="role" id="role_acquirente" value="acquirente" {{ old('role', 'acquirente') == 'acquirente' ? 'checked' : '' }}>
                         <label class="form-check-label text-primary fw-semibold" for="role_acquirente">Acquirente</label>

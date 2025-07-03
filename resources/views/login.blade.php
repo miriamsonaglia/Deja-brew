@@ -29,19 +29,19 @@
                 @csrf
 
                 <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
+                    <label for="email" class="form-label fw-semibold">Email</label>
                     <input type="email" class="form-control" id="email" name="email" required>
                 </div>
 
                 <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
+                    <label for="password" class="form-label fw-semibold">Password</label>
                     <input type="password" class="form-control" id="password" name="password" required>
                 </div>
 
                 <input type="hidden" id="role" name="role" value="acquirente">
 
                 <div class="d-grid mb-2">
-                    <button type="submit" class="btn btn-info">
+                    <button type="submit" class="btn btn-info fw-semibold">
                         Accedi come <span id="role-label">acquirente</span>
                     </button>
                 </div>
@@ -53,7 +53,7 @@
                 </div>
             </form>
 
-            <div class="text-center mt-4 small">
+            <div class="text-center mt-3 small">
                 Non sei ancora uno di noi?<br>
                 <a href="{{ route('register.form') }}" class="text-decoration-underline text-primary">Registrati</a><br>
             </div>
