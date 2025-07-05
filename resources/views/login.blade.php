@@ -19,7 +19,7 @@
     <div class="container d-flex justify-content-center align-items-center min-vh-100">
         <div class="card shadow p-4" style="max-width: 450px; width: 100%; background-color: #BEFFC8; border-radius: 1rem;">
             
-            <h1 class="text-center mb-4 fw-bold" style="color: #692E01;">Deja-brew</h1>
+            <h1 class="text-center mb-4 fw-bold" style="color: #594431;">Deja-brew</h1>
 
             @if(session('error'))
                 <div class="alert alert-danger">{{ session('error') }}</div>
@@ -53,14 +53,14 @@
                 </div>
             </form>
 
-            <div class="text-center mt-3 small">
+            <div class="text-center mt-3 small fw-bold">
                 Non sei ancora uno di noi?<br>
-                <a href="{{ route('register.form') }}" class="text-decoration-underline text-primary">Registrati</a><br>
+                <a href="{{ route('register.form') }}" class="text-decoration-underline text-primary fw-semibold">Registrati</a><br>
             </div>
 
             <div class="text-center mt-1 small">
                 <span>oppure</span><br>
-                <a href="{{ route('guest.home') }}" class="text-decoration-underline text-primary">Prosegui senza registrarti</a>
+                <a href="{{ route('guest.home') }}" class="text-decoration-underline text-primary fw-semibold">Prosegui senza registrarti</a>
             </div>
         </div>
     </div>

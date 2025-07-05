@@ -30,7 +30,7 @@
             </div>
 
             <!-- Titolo -->
-            <h2 class="text-center text-brown mb-4 fw-bold" style="color: #692E01;">Registrazione</h2>
+            <h2 class="text-center text-brown mb-4 fw-bold" style="color: #594431;">Registrazione</h2>
 
             <!-- Errori -->
             @if ($errors->any())
