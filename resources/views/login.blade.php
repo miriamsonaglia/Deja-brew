@@ -55,12 +55,10 @@
 
             <div class="text-center mt-3 small fw-bold">
                 Non sei ancora uno di noi?<br>
-                <a href="{{ route('register.form') }}" class="text-decoration-underline text-primary fw-semibold">Registrati</a><br>
             </div>
 
             <div class="text-center mt-1 small">
                 <span>oppure</span><br>
-                <a href="{{ route('guest.home') }}" class="text-decoration-underline text-primary fw-semibold">Prosegui senza registrarti</a>
             </div>
         </div>
     </div>
