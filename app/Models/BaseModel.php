@@ -8,4 +8,3 @@
     {
         use HasFactory;
     }
-?>

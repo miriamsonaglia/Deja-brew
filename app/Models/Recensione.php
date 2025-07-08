@@ -25,5 +25,3 @@ class Recensione extends BaseModel
         return $this->belongsTo(Prodotto::class, 'id_prodotto');
     }
 }
-
-?>

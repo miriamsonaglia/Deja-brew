@@ -21,4 +21,3 @@
             return $this->hasMany(Fattura::class, 'id_venditore');
         }
     }
-?>

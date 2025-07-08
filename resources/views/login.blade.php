@@ -18,7 +18,7 @@
 
     <div class="container d-flex justify-content-center align-items-center min-vh-100">
         <div class="card shadow p-4" style="max-width: 450px; width: 100%; background-color: #BEFFC8; border-radius: 1rem;">
-            
+
             <h1 class="text-center mb-4 fw-bold" style="color: #594431;">Deja-brew</h1>
 
             @if(session('error'))

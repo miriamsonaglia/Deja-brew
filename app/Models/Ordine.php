@@ -31,5 +31,3 @@
             return $this->hasOne(Fattura::class, 'id_ordine');
         }
     }
-
-?>

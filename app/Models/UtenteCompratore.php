@@ -27,5 +27,3 @@ class UtenteCompratore extends BaseModel
         return $this->hasMany(Lista::class, 'id_utente_compratore')->where('tipo', 'carrello');
     }
 }
-
-?>

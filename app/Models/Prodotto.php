@@ -53,5 +53,3 @@ class Prodotto extends BaseModel
         return $this->hasMany(Lista::class, 'id_prodotto');
     }
 }
-
-?>
