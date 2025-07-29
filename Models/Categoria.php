@@ -2,7 +2,10 @@
 
 namespace App\Models;
 require_once "./Models/BaseModel.php";
+require_once "./Models/Prodotto.php";
+
 use App\Models\BaseModel;
+use App\Models\Prodotto;
 
 class Categoria extends BaseModel
 {

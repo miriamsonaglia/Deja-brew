@@ -1,6 +1,9 @@
 <?php
 
 namespace App\Models;
+require_once "./Models/BaseModel.php";
+require_once "./Models/Prodotto.php";
+require_once "./Models/UtenteCompratore.php";
 
 class Lista extends BaseModel
 {

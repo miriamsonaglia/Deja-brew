@@ -13,7 +13,8 @@
             // QUERY: READ ALL USER SHOPPING CART FROM DATABASE
             // TODO: This placeholder will generate error because it cannot be called statically,
             // on login we need to save the correct UtenteCompratore object in SESSION VARIABLE
-            $user_cart = UtenteCompratore::carrello();
+            $user = new UtenteCompratore();
+            $user_cart = $user->carrello();
             // $user_cart = $_SESSION['logged-user']->carrello();
         ?>
     </head>

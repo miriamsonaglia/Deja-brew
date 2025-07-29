@@ -13,7 +13,8 @@
             // QUERY: READ ALL USER WISHLIST FROM DATABASE
             // TODO: This placeholder will generate error because it cannot be called statically,
             // on login we need to save the correct UtenteCompratore object in SESSION VARIABLE
-            $user_wishlist = UtenteCompratore::desideri();
+            $user = new UtenteCompratore();
+            $user_wishlist = $user->desideri();
             // $user_wishlist = $_SESSION['logged-user']->desideri();
         ?>
     </head>
