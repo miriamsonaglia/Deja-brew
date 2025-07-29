@@ -10,7 +10,11 @@
             require_once __DIR__ . '/Models/Categoria.php';
             require_once __DIR__ . '/Models/Prodotto.php';
             // READ QUERY: ALL PRODUCTS OF THE CHOSEN CATEGORY
-            $category = Categoria::where('id', $_GET['category']);
+            $category = Categoria::find($_GET['category']);
+            if($category ==  null) { 
+                $category = new Categoria();
+                $category->descrizione = "CATEGORIA PLACEHOLDER";
+            }
             $products = Prodotto::where("categoria_id", $_GET['category']);
         ?>
     </head>
@@ -19,7 +23,7 @@
         <nav><!-- This will be replaced by the navbar template --></nav>
         <!-- Slider template -->
         <section>
-            <h1><?php echo $category->nome; ?></h1>
+            <h1><?php echo $category->descrizione; ?></h1>
             <ul>
             <?php
             foreach($products as $product):
