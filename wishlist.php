@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <!-- INSERT HERE ALL CSS AND JAVASCRIPT NECESSARY IMPORTS -->
+        <!-- INSERT HERE ALL CSS NECESSARY IMPORTS -->
+        <link rel="stylesheet" href="./dist/bootstrap5/css/bootstrap.min.css">
+        <link rel="stylesheet" href="./dist/custom/css/style.css">        
         <?php
             // This in-page script initialize all the required php imports and populates the datasets.
             use App\Models\UtenteCompratore;
