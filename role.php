@@ -1,7 +1,7 @@
 <?php
-    enum Role {
-        case Guest;
-        case Buyer;
-        case Vendor; 
+    enum Role: int {
+        case GUEST = 0;
+        case BUYER = 1;
+        case VENDOR = 2; 
     }
 ?>
