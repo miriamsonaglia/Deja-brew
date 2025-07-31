@@ -4,11 +4,11 @@
         <!-- INSERT HERE ALL CSS AND JAVASCRIPT NECESSARY IMPORTS -->
         <?php
             // This in-page script initialize all the required php imports and populates the datasets.
-            use App\Models\Categoria;
-            use App\Models\Prodotto;
             require_once __DIR__ . '/bootstrap.php';
             require_once __DIR__ . '/Models/Categoria.php';
             require_once __DIR__ . '/Models/Prodotto.php';
+            use App\Models\Categoria;
+            use App\Models\Prodotto;
             // QUERY: READ ALL CATEGORIES FROM DATABASE
             $categories = Categoria::all();
             $concatenated = array();
