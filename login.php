@@ -81,7 +81,7 @@
                 <div class="alert alert-danger"><?= htmlspecialchars($_SESSION['error']) ?></div>
             <?php endif; ?>
 
-            <form method="POST" action="login_process.php">
+            <form method="POST" action="authentication.php?action=login"">
                 <input type="hidden" name="_token" value="<?= $_SESSION['_token'] ?? '' ?>">
 
                 <div class="mb-3">

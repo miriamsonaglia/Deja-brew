@@ -80,7 +80,7 @@
         <h2 class="text-center mb-4 fw-bold">Registrazione</h2>
 
         <!-- Form -->
-        <form method="POST" action="register.php">
+        <form method="POST" action="authentication.php?action=register">
             <div class="row mb-3">
                 <div class="col">
                     <label for="nome" class="form-label fw-semibold">Nome</label>

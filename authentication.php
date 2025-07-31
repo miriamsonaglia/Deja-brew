@@ -8,11 +8,6 @@ session_start();
 
 class AuthController
 {
-    public function showLoginForm()
-    {
-        include __DIR__ . '/../login.php';
-    }
-
     public function login()
     {
         $email = $_POST['email'] ?? '';
@@ -32,7 +27,6 @@ class AuthController
             $_SESSION['role'] = $role;
 
             if ($role === 'acquirente') {
-                // Associa record da utenteCompratore se non esiste
                 if (!$utente->utenteCompratore) {
                     UtenteCompratore::create(['id_utente' => $utente->id]);
                 }
@@ -49,11 +43,6 @@ class AuthController
         $_SESSION['error'] = 'Credenziali errate.';
         header('Location: /login.php');
         exit;
-    }
-
-    public function showRegisterForm()
-    {
-        include __DIR__ . '/../register.php';
     }
 
     public function register()
@@ -100,19 +89,18 @@ class AuthController
             'password' => password_hash($data['password'], PASSWORD_DEFAULT),
         ]);
 
+        $_SESSION['user'] = $utente->toArray();
+        $_SESSION['role'] = $data['role'];
 
-        //TODO home-utente e home-venditore!!!!!!!!!!!!1
+        // TODO HOME UTENTE E VENDITORE
         if ($data['role'] === 'acquirente') {
             UtenteCompratore::create(['id_utente' => $utente->id]);
-            $_SESSION['role'] = 'acquirente';
             header('Location: /home-acquirente.php');
         } else {
             UtenteVenditore::create(['id_utente' => $utente->id]);
-            $_SESSION['role'] = 'venditore';
             header('Location: /home-venditore.php');
         }
 
-        $_SESSION['user'] = $utente->toArray();
         exit;
     }
 
@@ -122,4 +110,23 @@ class AuthController
         header('Location: /index.php');
         exit;
     }
+}
+
+$auth = new AuthController();
+$action = $_GET['action'] ?? '';
+
+switch ($action) {
+    case 'login':
+        $auth->login();
+        break;
+    case 'register':
+        $auth->register();
+        break;
+    case 'logout':
+        $auth->logout();
+        break;
+    default:
+        http_response_code(404);
+        echo "Azione non valida.";
+        break;
 }
