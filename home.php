@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <!-- INSERT HERE ALL CSS AND JAVASCRIPT NECESSARY IMPORTS -->
+        <!-- INSERT HERE ALL CSS NECESSARY IMPORTS -->
+        <link rel="stylesheet" href="./bootstrap5/css/bootstrap.min.css">
+
         <?php
             // This in-page script initialize all the required php imports and populates the datasets.
             require_once __DIR__ . '/bootstrap.php';
@@ -50,7 +52,9 @@
         </section>
         <?php endforeach;?>
         <footer><!-- ?? Possible footer template ?? --></footer>
+        <!-- INSERT HERE ALL JAVASCRIPT NECESSARY IMPORTS -->
+        <script src="./bootstrap5/js/bootstrap.min.js"></script>
+        <script>
+        </script>
     </body>
-    <script>
-    </script>
 </html>
