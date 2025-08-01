@@ -39,7 +39,7 @@
         foreach($concatenated as $object):
         ?>
         <section>
-            <h1><?php echo $object['Category']->descrizione; ?></h1><a href="http://somegeturl/params<?php echo $object['Category']->id; ?>">Vedi tutti</a>
+            <h1><?php echo $object['Category']->descrizione; ?></h1><a href="http://category-products.php?category=<?php echo $object['Category']->id; ?>">Vedi tutti</a>
             <button class="slider-backward"><-</button>
             <div class="slider-container">
                 <ul class="slider-list">

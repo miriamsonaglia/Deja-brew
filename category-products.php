@@ -2,6 +2,7 @@
 <html>
     <head>
         <!-- INSERT HERE ALL CSS NECESSARY IMPORTS -->
+        <link rel="stylesheet" href="./dist/fontawesome7/css/fontawesome.min.css">
         <link rel="stylesheet" href="./dist/bootstrap5/css/bootstrap.min.css">
         <link rel="stylesheet" href="./dist/custom/css/style.css">
         <?php
@@ -34,13 +35,13 @@
                     <!-- Find a way to retrieve image from Database -->
                     <p><?php echo $product->nome; ?></p>
                     <input type="number" step="1"/>
-                    <button class="shopping-bin-product">Cassonetto</button>
+                    <button class="shopping-bin-product"><i class="fa fa-trash"></i></button>
                 </li>
             <?php endforeach;?>
             </ul>
          </main>
         <aside>
-            <button class="filters-button">Filtri</button>
+            <button class="filters-button"><i class="fa-light fa-filter"></i></button>
             <!-- Tendina apribile con lista filtri -->
         </aside>
         <footer><!-- ?? Possible footer template ?? --></footer>

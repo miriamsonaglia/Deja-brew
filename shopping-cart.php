@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="it">
     <head>
+    <meta charset="UTF-8">
+    <title>Carrello - Deja-brew</title>
         <!-- INSERT HERE ALL CSS NECESSARY IMPORTS -->
         <link rel="stylesheet" href="./dist/bootstrap5/css/bootstrap.min.css">
         <link rel="stylesheet" href="./dist/custom/css/style.css">
