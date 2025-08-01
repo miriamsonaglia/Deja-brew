@@ -2,6 +2,7 @@
 <html>
     <head>
         <!-- INSERT HERE ALL CSS NECESSARY IMPORTS -->
+        <link rel="stylesheet" href="./dist/fontawesome7/css/fontawesome.min.css">
         <link rel="stylesheet" href="./dist/bootstrap5/css/bootstrap.min.css">
         <link rel="stylesheet" href="./dist/custom/css/style.css">
         <?php
@@ -38,6 +39,8 @@
             </ul>
         </section>
         <footer><!-- ?? Possible footer template ?? --></footer>
+        <!-- INSERT HERE ALL JAVASCRIPT NECESSARY IMPORTS -->
+        <script src="./dist/bootstrap5/js/bootstrap.min.js"></script>
     </body>
     <script>
     </script>
