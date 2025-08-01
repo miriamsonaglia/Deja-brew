@@ -24,7 +24,7 @@
         <header><!-- ?? Possible header template ?? --></header>
         <nav><!-- This will be replaced by the navbar template --></nav>
         <!-- Slider template -->
-        <section>
+         <main>
             <h1><?php echo $category->descrizione; ?></h1>
             <ul>
             <?php
@@ -38,7 +38,7 @@
                 </li>
             <?php endforeach;?>
             </ul>
-        </section>
+         </main>
         <aside>
             <button class="filters-button">Filtri</button>
             <!-- Tendina apribile con lista filtri -->
