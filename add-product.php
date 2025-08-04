@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $prodotto->categoria_id = $_POST['categoria_id'] ?? null;
     $prodotto->aroma_id     = $_POST['aroma_id'] ?? null;
     $prodotto->descrizione  = $_POST['descrizione'] ?? null;
-    $prodotto->id_venditore = 1; // cambia con ID dinamico se uso sessioni
+    $prodotto->id_venditore = 1; // TODO: cambia con ID dinamico se uso sessioni!!!!!!!
 
     // Salvataggio temporaneo
     $prodotto->save();
