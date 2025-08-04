@@ -109,7 +109,7 @@
 
             <div class="text-center">
                 <button type="button" class="btn btn-link p-0 text-decoration-underline change-role">
-                    Cambia ruolo in venditore
+                    Accesso per venditori
                 </button>
             </div>
         </form>
