@@ -1,3 +1,52 @@
+<?php
+require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/bootstrap.php'; // Connessione Eloquent
+require_once __DIR__ . '/Models/Prodotto.php';
+
+use Models\Prodotto;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $prodotto = new Prodotto();
+
+    $prodotto->nome         = $_POST['nome'] ?? null;
+    $prodotto->prezzo       = $_POST['prezzo'] ?? null;
+    $prodotto->peso         = $_POST['peso'] ?? null;
+    $prodotto->provenienza  = $_POST['provenienza'] ?? null;
+    $prodotto->tipo         = $_POST['tipo'] ?? null;
+    $prodotto->intensita    = $_POST['intensita'] ?? null;
+    $prodotto->categoria_id = $_POST['categoria_id'] ?? null;
+    $prodotto->aroma_id     = $_POST['aroma_id'] ?? null;
+    $prodotto->descrizione  = $_POST['descrizione'] ?? null;
+    $prodotto->id_venditore = 1; // cambia con ID dinamico se uso sessioni
+
+    // Salvataggio temporaneo
+    $prodotto->save();
+
+    // Gestione immagini
+    if (!empty($_FILES['immagini']['name'][0])) {
+        $uploadDir = __DIR__ . '/uploads/prodotti/';
+        if (!file_exists($uploadDir)) mkdir($uploadDir, 0777, true);
+
+        foreach ($_FILES['immagini']['tmp_name'] as $key => $tmpName) {
+            if ($_FILES['immagini']['error'][$key] === UPLOAD_ERR_OK) {
+                $originalName = basename($_FILES['immagini']['name'][$key]);
+                $filePath = 'uploads/prodotti/' . time() . '_' . $originalName;
+                move_uploaded_file($tmpName, __DIR__ . '/' . $filePath);
+
+                // Salva solo la prima nel campo "fotografia"
+                if ($key === 0) {
+                    $prodotto->fotografia = $filePath;
+                    $prodotto->save();
+                }
+            }
+        }
+    }
+
+    header('Location: success.php');
+    exit;
+}
+?>
+
 <?php require_once 'reusables/layout.php'; ?>
 <!DOCTYPE html>
 <html lang="it">
@@ -20,22 +69,16 @@
       color: #594431;
       font-weight: 500;
       cursor: pointer;
-      position: relative;
     }
     .upload-box input[type="file"] { display: none; }
     .form-section { margin-top: 2rem; }
-    .carousel-inner img {
-      object-fit: cover;
-      height: 300px;
-    }
+    .carousel-inner img { object-fit: cover; height: 300px; }
     .btn-info {
       background-color: #7C2E2E;
       border: none;
       color: #fff;
     }
-    .btn-info:hover {
-      background-color: #3E2C23;
-    }
+    .btn-info:hover { background-color: #3E2C23; }
     .form-check-label { color: #7C2E2E; }
     h2, label, .navbar-brand { color: #594431; }
   </style>
@@ -47,7 +90,6 @@
   <form method="POST" enctype="multipart/form-data">
     <div class="row g-4">
 
-      <!-- Colonna sinistra: Immagini -->
       <div class="col-md-6">
         <label class="form-label fw-semibold">Foto del prodotto</label>
         <div class="upload-box mb-3">
@@ -73,7 +115,6 @@
         </div>
       </div>
 
-      <!-- Colonna destra: Dati prodotto -->
       <div class="col-md-6">
         <div class="mb-3">
           <label class="form-label fw-semibold">Nome prodotto</label>
@@ -107,22 +148,9 @@
         </div>
 
         <div class="mb-3">
-          <label class="form-label fw-semibold">Marca</label><br>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" name="marca[]" value="Lavazza">
-            <label class="form-check-label">Lavazza</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" name="marca[]" value="Illy">
-            <label class="form-check-label">Illy</label>
-          </div>
-        </div>
-
-        <div class="mb-3">
           <label for="intensita" class="form-label fw-semibold">Intensità: <span id="valore-intensita">5</span></label>
           <input type="range" class="form-range" name="intensita" id="intensita" min="1" max="10" value="5">
         </div>
-
 
         <div class="mb-3">
           <label class="form-label fw-semibold">Categoria</label>
@@ -130,7 +158,6 @@
             <option value="">Seleziona categoria</option>
             <option value="1">Espresso</option>
             <option value="2">Decaffeinato</option>
-            <!-- ... -->
           </select>
         </div>
 
@@ -140,7 +167,6 @@
             <option value="">Seleziona aroma</option>
             <option value="1">Cioccolato</option>
             <option value="2">Fruttato</option>
-            <!-- ... -->
           </select>
         </div>
 
@@ -159,29 +185,19 @@
   document.addEventListener('DOMContentLoaded', () => {
     const uploadBox = document.querySelector('.upload-box');
     const imageInput = document.querySelector('.image-upload-input');
-    const nameInput = document.querySelector('.product-name');
-    const priceInput = document.querySelector('.product-price');
-    const descInput = document.querySelector('.product-description');
-    const form = document.querySelector('form');
+    const slider = document.getElementById('intensita');
+    const sliderValue = document.getElementById('valore-intensita');
 
-    uploadBox.addEventListener('click', () => imageInput.click());
+    if (uploadBox && imageInput) {
+      uploadBox.addEventListener('click', () => imageInput.click());
+    }
 
-    form.addEventListener('submit', (e) => {
-      if (!nameInput.value.trim() || !priceInput.value.trim() || !descInput.value.trim()) {
-        e.preventDefault();
-        alert('Per favore, compila tutti i campi richiesti.');
-      }
-    });
+    if (slider && sliderValue) {
+      slider.addEventListener('input', () => {
+        sliderValue.textContent = slider.value;
+      });
+    }
   });
-  
-  const slider = document.getElementById('intensita');
-  const valore = document.getElementById('valore-intensita');
-
-  if (slider && valore) {
-    slider.addEventListener('input', () => {
-      valore.textContent = slider.value;
-    });
-  }
 </script>
 
 </body>
