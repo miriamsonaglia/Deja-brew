@@ -23,6 +23,10 @@
       color: #594431;
       font-weight: 500;
       cursor: pointer;
+      position: relative;
+    }
+    .upload-box input[type="file"] {
+      display: none;
     }
     .form-section {
       margin-top: 2rem;
@@ -92,10 +96,10 @@
         <label class="form-label fw-semibold">Foto del prodotto</label>
         <div class="upload-box mb-3">
           <span>Trascina qui le immagini o clicca per selezionarle</span>
-          <input type="file" multiple accept="image/*" class="form-control d-none" id="imageUpload">
+          <input type="file" class="image-upload-input" name="immagini[]" multiple accept="image/*">
         </div>
 
-        <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel slide product-carousel" data-bs-ride="carousel">
           <div class="carousel-inner rounded">
             <div class="carousel-item active">
               <img src="https://via.placeholder.com/500x300" class="d-block w-100" alt="...">
@@ -104,10 +108,10 @@
               <img src="https://via.placeholder.com/500x300?text=2" class="d-block w-100" alt="...">
             </div>
           </div>
-          <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+          <button class="carousel-control-prev" type="button" data-bs-target=".product-carousel" data-bs-slide="prev">
             <span class="carousel-control-prev-icon"></span>
           </button>
-          <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+          <button class="carousel-control-next" type="button" data-bs-target=".product-carousel" data-bs-slide="next">
             <span class="carousel-control-next-icon"></span>
           </button>
         </div>
@@ -116,42 +120,42 @@
       <!-- Sezione Dettagli Prodotto -->
       <div class="col-md-6">
         <div class="mb-3">
-          <label for="productName" class="form-label fw-semibold">Nome prodotto</label>
-          <input type="text" class="form-control" id="productName" name="nome">
+          <label class="form-label fw-semibold">Nome prodotto</label>
+          <input type="text" class="form-control product-name" name="nome">
         </div>
 
         <div class="mb-3">
-          <label for="productPrice" class="form-label fw-semibold">Prezzo (€)</label>
-          <input type="number" class="form-control" id="productPrice" name="prezzo" step="0.10">
+          <label class="form-label fw-semibold">Prezzo (€)</label>
+          <input type="number" class="form-control product-price" name="prezzo" step="0.10">
         </div>
 
         <div class="mb-3">
           <label class="form-label fw-semibold">Marca</label><br>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" id="lavazza" name="marca[]" value="Lavazza">
-            <label class="form-check-label" for="lavazza">Lavazza</label>
+            <input class="form-check-input" type="checkbox" name="marca[]" value="Lavazza">
+            <label class="form-check-label">Lavazza</label>
           </div>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" id="illy" name="marca[]" value="Illy">
-            <label class="form-check-label" for="illy">Illy</label>
+            <input class="form-check-input" type="checkbox" name="marca[]" value="Illy">
+            <label class="form-check-label">Illy</label>
           </div>
         </div>
 
         <div class="mb-3">
           <label class="form-label fw-semibold">Intensità</label><br>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" id="intensita1" name="intensita[]" value="Leggero">
-            <label class="form-check-label" for="intensita1">Leggero</label>
+            <input class="form-check-input" type="checkbox" name="intensita[]" value="Leggero">
+            <label class="form-check-label">Leggero</label>
           </div>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" id="intensita2" name="intensita[]" value="Forte">
-            <label class="form-check-label" for="intensita2">Forte</label>
+            <input class="form-check-input" type="checkbox" name="intensita[]" value="Forte">
+            <label class="form-check-label">Forte</label>
           </div>
         </div>
 
         <div class="mb-3">
-          <label for="descrizione" class="form-label fw-semibold">Descrizione</label>
-          <textarea class="form-control" id="descrizione" name="descrizione" rows="5"></textarea>
+          <label class="form-label fw-semibold">Descrizione</label>
+          <textarea class="form-control product-description" name="descrizione" rows="5"></textarea>
         </div>
 
         <button type="submit" class="btn btn-info w-100 fw-semibold">Aggiungi prodotto</button>
@@ -160,6 +164,28 @@
   </form>
 </div>
 
+<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- JS: gestione interazione -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const uploadBox = document.querySelector('.upload-box');
+    const imageInput = document.querySelector('.image-upload-input');
+    const nameInput = document.querySelector('.product-name');
+    const priceInput = document.querySelector('.product-price');
+    const descInput = document.querySelector('.product-description');
+    const form = document.querySelector('form');
+
+    uploadBox.addEventListener('click', () => imageInput.click());
+
+    form.addEventListener('submit', (e) => {
+      if (!nameInput.value.trim() || !priceInput.value.trim() || !descInput.value.trim()) {
+        e.preventDefault();
+        alert('Per favore, compila tutti i campi richiesti.');
+      }
+    });
+  });
+</script>
 </body>
 </html>
