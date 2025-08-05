@@ -47,43 +47,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-<?php require_once 'reusables/layout.php'; ?>
 <!DOCTYPE html>
 <html lang="it">
 <head>
   <meta charset="UTF-8">
   <title>Aggiungi Prodotto - Deja-brew</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-  <style>
-    body { background-color: #F2EFEA; }
-    .upload-box {
-      background-color: #f8f9fa;
-      border: 2px dashed #594431;
-      border-radius: 8px;
-      height: 300px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #594431;
-      font-weight: 500;
-      cursor: pointer;
-    }
-    .upload-box input[type="file"] { display: none; }
-    .form-section { margin-top: 2rem; }
-    .carousel-inner img { object-fit: cover; height: 300px; }
-    .btn-info {
-      background-color: #7C2E2E;
-      border: none;
-      color: #fff;
-    }
-    .btn-info:hover { background-color: #3E2C23; }
-    .form-check-label { color: #7C2E2E; }
-    h2, label, .navbar-brand { color: #594431; }
-  </style>
+  <link href="/dist/custom/css/style.css" rel="stylesheet">
 </head>
 <body>
+
+<?php include __DIR__ . '/reusables/navbar.php'; ?>
+<?php include __DIR__ . '/reusables/sidebar.php'; ?>
 
 <div class="container form-section">
   <h2 class="mb-4 text-center fw-bold">Aggiungi un nuovo prodotto</h2>

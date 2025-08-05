@@ -1,0 +1,67 @@
+body {
+  background-color: #F2EFEA;
+}
+
+.upload-box {
+  background-color: #f8f9fa;
+  border: 2px dashed #594431;
+  border-radius: 8px;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #594431;
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+}
+
+.upload-box input[type="file"] {
+  display: none;
+}
+
+.btn-info {
+  background-color: #7C2E2E;
+  border: none;
+  color: #fff;
+}
+
+.btn-info:hover {
+  background-color: #3E2C23;
+}
+
+.form-check-label {
+  color: #7C2E2E;
+}
+
+h2,
+label,
+.navbar-brand {
+  color: #594431;
+}
+
+/* STILE NAVBAR */
+.navbar {
+  background-color: #f8f9fa !important;
+  border-bottom: 1px solid #ddd;
+}
+
+.navbar-brand {
+  color: #594431 !important;
+  font-weight: bold;
+}
+
+/* STILE SIDEBAR */
+.offcanvas-body a.nav-link {
+  color: #594431;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.offcanvas-body a.nav-link:hover {
+  text-decoration: underline;
+}
+
+.offcanvas-title {
+  color: #594431;
+}
