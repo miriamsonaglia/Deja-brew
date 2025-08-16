@@ -1,5 +1,5 @@
 <?php
-
+// FIXME: SE VEDI ROSSO E' PERCHÉ TI MANCANO LE CLAUSOLE "USE"
 require_once __DIR__ . '/../models/Utente.php';
 require_once __DIR__ . '/../models/UtenteCompratore.php';
 require_once __DIR__ . '/../models/UtenteVenditore.php';
@@ -93,6 +93,7 @@ class AuthController
         $_SESSION['role'] = $data['role'];
 
         // TODO HOME UTENTE E VENDITORE
+        // MEMO: NO HOME MULTIPLE, ASSEMBLIAMO HOME.PHP IN BASE AL ROLE, RICORDA CHE ESISTE LA ENUM APPOSTA.
         if ($data['role'] === 'acquirente') {
             UtenteCompratore::create(['id_utente' => $utente->id]);
             header('Location: /home-acquirente.php');

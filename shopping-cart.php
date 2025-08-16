@@ -21,7 +21,7 @@
             // on login we need to save the correct UtenteCompratore object in SESSION VARIABLE
             $user = new UtenteCompratore();
             $user_cart = $user->carrello();
-            // $user_cart = $_SESSION['logged-user']->carrello();
+            // $user_cart = Utente::where('id', $_SESSION['LoggedUserID'])->first()->carrello();
         ?>
     </head>
     <body>

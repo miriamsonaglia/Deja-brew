@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+    <!-- This page is only for buyers. -->
     <head>
         <!-- INSERT HERE ALL CSS NECESSARY IMPORTS -->
         <link rel="stylesheet" href="./dist/fontawesome7/css/fontawesome.min.css">
@@ -18,7 +19,7 @@
             // on login we need to save the correct UtenteCompratore object in SESSION VARIABLE
             $user = new UtenteCompratore();
             $user_wishlist = $user->desideri();
-            // $user_wishlist = $_SESSION['logged-user']->desideri();
+            // $user_wishlist = Utente::where('id', $_SESSION['LoggedUserID'])->first()->desideri();
         ?>
     </head>
     <body>
