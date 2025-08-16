@@ -188,7 +188,7 @@ label,
 }
 
 .product-quantity {
-  width: 80px;
+  width: 100%;
   padding: 8px;
   border: 2px solid #594431;
   border-radius: 6px;
@@ -209,14 +209,13 @@ label,
   background-color: #7C2E2E;
   color: white;
   border: none;
-  padding: 12px 20px;
+  padding: 12px;
   border-radius: 8px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
   margin-bottom: 10px;
-  width: 100%;
-  max-width: 180px;
+  width: 80%;
 }
 
 .add-to-cart-button:hover {

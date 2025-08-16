@@ -19,13 +19,6 @@
                 $category->descrizione = "CATEGORIA PLACEHOLDER";
             }
             $products = Prodotto::where("categoria_id", $_GET['category'])->get();
-
-            // Aggiungi questo debug temporaneo
-            echo "<pre>";
-            var_dump($products);
-            echo "Tipo: " . gettype($products);
-            echo "Count: " . (is_array($products) ? count($products) : 'Non è array');
-            echo "</pre>";
         ?>
     </head>
     <body>
@@ -44,7 +37,7 @@
                     <button class="bin-button"><i class="bi bi-trash"></i></button>
                 </li>
             <?php endforeach;?>
-            <!-- ELEMENTO DI PROVA -->
+            <!-- ELEMENTI DI PROVA -->
              <li class="product-list-element">
                     <img src="" class="product-picture" alt="EMPTY">
                     <p class="product-name">Elemento di prova</p>
@@ -57,28 +50,49 @@
                     <p class="product-name">Elemento di prova</p>
                     <input type="number" step="1" class="product-quantity" min="0" value="0"/>
                     <button class="add-to-cart-button">Aggiungi al carrello</button>
-                    <button class="bin-button"><i class="fa fa-trash"></i></button>
+                    <button class="bin-button"><i class="bi bi-trash"></i></button>
                 </li>
                 <li class="product-list-element">
                     <img src="" class="product-picture" alt="EMPTY">
                     <p class="product-name">Elemento di prova</p>
                     <input type="number" step="1" class="product-quantity" min="0" value="0"/>
                     <button class="add-to-cart-button">Aggiungi al carrello</button>
-                    <button class="bin-button"><i class="fa fa-trash"></i></button>
+                    <button class="bin-button"><i class="bi bi-trash"></i></button>
                 </li>
                 <li class="product-list-element">
                     <img src="" class="product-picture" alt="EMPTY">
                     <p class="product-name">Elemento di prova</p>
                     <input type="number" step="1" class="product-quantity" min="0" value="0"/>
                     <button class="add-to-cart-button">Aggiungi al carrello</button>
-                    <button class="bin-button"><i class="fa fa-trash"></i></button>
+                    <button class="bin-button"><i class="bi bi-trash"></i></button>
+                </li>
+                  <li class="product-list-element">
+                    <img src="" class="product-picture" alt="EMPTY">
+                    <p class="product-name">Elemento di prova</p>
+                    <input type="number" step="1" class="product-quantity" min="0" value="0"/>
+                    <button class="add-to-cart-button">Aggiungi al carrello</button>
+                    <button class="bin-button"><i class="bi bi-trash"></i></button>
                 </li>
                 <li class="product-list-element">
                     <img src="" class="product-picture" alt="EMPTY">
                     <p class="product-name">Elemento di prova</p>
                     <input type="number" step="1" class="product-quantity" min="0" value="0"/>
                     <button class="add-to-cart-button">Aggiungi al carrello</button>
-                    <button class="bin-button"><i class="fa fa-trash"></i></button>
+                    <button class="bin-button"><i class="bi bi-trash"></i></button>
+                </li>
+                <li class="product-list-element">
+                    <img src="" class="product-picture" alt="EMPTY">
+                    <p class="product-name">Elemento di prova</p>
+                    <input type="number" step="1" class="product-quantity" min="0" value="0"/>
+                    <button class="add-to-cart-button">Aggiungi al carrello</button>
+                    <button class="bin-button"><i class="bi bi-trash"></i></button>
+                </li>
+                <li class="product-list-element">
+                    <img src="" class="product-picture" alt="EMPTY">
+                    <p class="product-name">Elemento di prova</p>
+                    <input type="number" step="1" class="product-quantity" min="0" value="0"/>
+                    <button class="add-to-cart-button">Aggiungi al carrello</button>
+                    <button class="bin-button"><i class="bi bi-trash"></i></button>
                 </li>
             </ul>
         </main>
