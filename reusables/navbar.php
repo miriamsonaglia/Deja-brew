@@ -10,10 +10,12 @@
       </form>
     </div>
     <div class="cart-container">
-        <div class="cart-icon" id="cart3">
-            <i class="bi bi-cart"></i>
-        </div>
-        <div class="cart-badge" id="badge3">0</div>
+        <a href="../shopping-cart.php">
+          <div class="cart-icon">
+          <i class="bi bi-cart"></i>
+          </div>
+        </a>
+        <div class="cart-badge">0</div>
     </div>
   </div>
 </nav>

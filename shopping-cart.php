@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <title>Carrello - Deja-brew</title>
         <!-- INSERT HERE ALL CSS NECESSARY IMPORTS -->
-        <link rel="stylesheet" href="./dist/fontawesome7/css/fontawesome.min.css">
         <link rel="stylesheet" href="./dist/bootstrap5/css/bootstrap.min.css">
+        <link rel="stylesheet" href="./dist/bootstrap5/icons/bootstrap-icons.css">
         <link rel="stylesheet" href="./dist/custom/css/style.css">
 
         <?php
@@ -26,7 +26,7 @@
     </head>
     <body>
         <header><!-- ?? Possible header template ?? --></header>
-        <nav><!-- This will be replaced by the navbar template --></nav>
+        <?php include('./reusables/navbars/buyer-navbar.php'); ?>
         <!-- Slider template -->
         <section>
             <ul>
