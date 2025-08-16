@@ -8,9 +8,12 @@
       <form class="d-flex me-3" role="search">
         <input class="form-control" type="search" placeholder="Cerca..." aria-label="Search">
       </form>
-      <button class="btn btn-outline-secondary" type="button">
-        <i class="bi bi-cart-fill"></i>
-      </button>
+    </div>
+    <div class="cart-container">
+        <div class="cart-icon" id="cart3">
+            <i class="bi bi-cart"></i>
+        </div>
+        <div class="cart-badge" id="badge3">0</div>
     </div>
   </div>
 </nav>

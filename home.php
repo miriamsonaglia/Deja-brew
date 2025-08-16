@@ -2,7 +2,7 @@
 <html>
     <head>
         <!-- INSERT HERE ALL CSS NECESSARY IMPORTS -->
-        <link rel="stylesheet" href="./dist/fontawesome7/css/fontawesome.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
         <link rel="stylesheet" href="./dist/bootstrap5/css/bootstrap.min.css">
         <link rel="stylesheet" href="./dist/custom/css/style.css">
 
@@ -34,7 +34,7 @@
     </head>
     <body>
         <header><!-- ?? Possible header template ?? --></header>
-        <nav><!-- This will be replaced by the navbar template --></nav>
+        <?php include('./reusables/navbar.php'); ?>
         <!-- Slider template -->
         <?php
         foreach($concatenated as $object):
@@ -56,7 +56,9 @@
         <footer><!-- ?? Possible footer template ?? --></footer>
         <!-- INSERT HERE ALL JAVASCRIPT NECESSARY IMPORTS -->
         <script src="./dist/bootstrap5/js/bootstrap.min.js"></script>
+        <script src="./dist/custom/js/cart-manager.js"></script>
         <script>
+            const $cartManager = new CartManager('badge3');
         </script>
     </body>
 </html>

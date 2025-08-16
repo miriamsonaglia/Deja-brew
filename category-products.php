@@ -2,7 +2,7 @@
 <html>
     <head>
         <!-- INSERT HERE ALL CSS NECESSARY IMPORTS -->
-        <link rel="stylesheet" href="./dist/fontawesome7/css/fontawesome.min.css">
+        <link rel="stylesheet" href="./dist/bootstrap5/icons/bootstrap-icons.css">
         <link rel="stylesheet" href="./dist/bootstrap5/css/bootstrap.min.css">
         <link rel="stylesheet" href="./dist/custom/css/style.css">
         <?php
@@ -18,29 +18,70 @@
                 $category = new Categoria();
                 $category->descrizione = "CATEGORIA PLACEHOLDER";
             }
-            $products = Prodotto::where("categoria_id", $_GET['category']);
+            $products = Prodotto::where("categoria_id", $_GET['category'])->get();
+
+            // Aggiungi questo debug temporaneo
+            echo "<pre>";
+            var_dump($products);
+            echo "Tipo: " . gettype($products);
+            echo "Count: " . (is_array($products) ? count($products) : 'Non è array');
+            echo "</pre>";
         ?>
     </head>
     <body>
         <header><!-- ?? Possible header template ?? --></header>
-        <nav><!-- This will be replaced by the navbar template --></nav>
+        <?php include('./reusables/navbar.php'); ?>
         <!-- Slider template -->
-         <main>
+        <main>
             <h1><?php echo $category->descrizione; ?></h1>
             <ul class="product-list">
-            <?php
-            foreach($products as $product):
-            ?>
+            <?php foreach($products as $product): ?>
                 <li class="product-list-element">
                     <img src="<?php echo $product->fotografia; ?>" class="product-picture" alt="<?php echo $product->nome; ?>">
-                    <p><?php echo $product->nome; ?></p>
-                    <input type="number" step="1"/>
+                    <p class="product-name"><?php echo $product->nome; ?></p>
+                    <input type="number" step="1" class="product-quantity" min="0" value="0"/>
+                    <button class="add-to-cart-button">Aggiungi al carrello</button>
+                    <button class="bin-button"><i class="bi bi-trash"></i></button>
+                </li>
+            <?php endforeach;?>
+            <!-- ELEMENTO DI PROVA -->
+             <li class="product-list-element">
+                    <img src="" class="product-picture" alt="EMPTY">
+                    <p class="product-name">Elemento di prova</p>
+                    <input type="number" step="1" class="product-quantity" min="0" value="0"/>
+                    <button class="add-to-cart-button">Aggiungi al carrello</button>
+                    <button class="bin-button"><i class="bi bi-trash"></i></button>
+                </li>
+                <li class="product-list-element">
+                    <img src="" class="product-picture" alt="EMPTY">
+                    <p class="product-name">Elemento di prova</p>
+                    <input type="number" step="1" class="product-quantity" min="0" value="0"/>
                     <button class="add-to-cart-button">Aggiungi al carrello</button>
                     <button class="bin-button"><i class="fa fa-trash"></i></button>
                 </li>
-            <?php endforeach;?>
+                <li class="product-list-element">
+                    <img src="" class="product-picture" alt="EMPTY">
+                    <p class="product-name">Elemento di prova</p>
+                    <input type="number" step="1" class="product-quantity" min="0" value="0"/>
+                    <button class="add-to-cart-button">Aggiungi al carrello</button>
+                    <button class="bin-button"><i class="fa fa-trash"></i></button>
+                </li>
+                <li class="product-list-element">
+                    <img src="" class="product-picture" alt="EMPTY">
+                    <p class="product-name">Elemento di prova</p>
+                    <input type="number" step="1" class="product-quantity" min="0" value="0"/>
+                    <button class="add-to-cart-button">Aggiungi al carrello</button>
+                    <button class="bin-button"><i class="fa fa-trash"></i></button>
+                </li>
+                <li class="product-list-element">
+                    <img src="" class="product-picture" alt="EMPTY">
+                    <p class="product-name">Elemento di prova</p>
+                    <input type="number" step="1" class="product-quantity" min="0" value="0"/>
+                    <button class="add-to-cart-button">Aggiungi al carrello</button>
+                    <button class="bin-button"><i class="fa fa-trash"></i></button>
+                </li>
             </ul>
-         </main>
+        </main>
         <aside>
             <button class="filters-button"><i class="fa-light fa-filter"></i></button>
             <!-- Tendina apribile con lista filtri -->
