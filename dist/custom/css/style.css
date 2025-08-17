@@ -66,10 +66,11 @@ label,
   color: #594431;
 }
 
+/* STILE ICONA CARRELLO */
 .cart-container {
     position: relative;
     display: inline-block;
-    margin: 50px;
+    margin: 0px;
 }
 
 .cart-icon {
