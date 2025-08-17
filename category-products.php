@@ -23,7 +23,7 @@
     </head>
     <body>
         <header><!-- ?? Possible header template ?? --></header>
-        <?php include('./reusables/navbar.php'); ?>
+        <?php include('./reusables/navbars/buyer-navbar.php'); ?>
         <!-- Slider template -->
         <main>
             <h1><?php echo $category->descrizione; ?></h1>
@@ -103,6 +103,7 @@
         <footer><!-- ?? Possible footer template ?? --></footer>
         <!-- INSERT HERE ALL JAVASCRIPT NECESSARY IMPORTS -->
         <script src="./dist/bootstrap5/js/bootstrap.min.js"></script>
+        <script src="./dist/custom/js/sidebar-manager.js"></script>
     </body>
     <script>
         let addToCartButtons = document.querySelectorAll("main ul li .add-to-cart-button");
