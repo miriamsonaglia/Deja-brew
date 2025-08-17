@@ -3,7 +3,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/bootstrap.php'; // Connessione Eloquent
 require_once __DIR__ . '/Models/Prodotto.php';
 
-use Models\Prodotto;
+use App\Models\Prodotto;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $prodotto = new Prodotto();
