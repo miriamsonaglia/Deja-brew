@@ -3,6 +3,9 @@
 require_once __DIR__ . '/../models/Utente.php';
 require_once __DIR__ . '/../models/UtenteCompratore.php';
 require_once __DIR__ . '/../models/UtenteVenditore.php';
+require_once __DIR__ . '/../role.php';
+
+use Role;
 
 session_start();
 
@@ -24,19 +27,21 @@ class AuthController
 
         if ($utente && password_verify($password, $utente->password)) {
             $_SESSION['user'] = $utente->toArray();
-            $_SESSION['role'] = $role;
 
             if ($role === 'acquirente') {
                 if (!$utente->utenteCompratore) {
                     UtenteCompratore::create(['id_utente' => $utente->id]);
                 }
-                header('Location: /home-acquirente.php');
+                $_SESSION['UserRole'] = Role::BUYER;
             } else {
                 if (!$utente->utenteVenditore) {
                     UtenteVenditore::create(['id_utente' => $utente->id]);
                 }
-                header('Location: /home-venditore.php');
+                $_SESSION['UserRole'] = Role::VENDOR;
             }
+
+            // Una sola home dinamica
+            header('Location: /home.php');
             exit;
         }
 
@@ -90,18 +95,17 @@ class AuthController
         ]);
 
         $_SESSION['user'] = $utente->toArray();
-        $_SESSION['role'] = $data['role'];
 
-        // TODO HOME UTENTE E VENDITORE
-        // MEMO: NO HOME MULTIPLE, ASSEMBLIAMO HOME.PHP IN BASE AL ROLE, RICORDA CHE ESISTE LA ENUM APPOSTA.
         if ($data['role'] === 'acquirente') {
             UtenteCompratore::create(['id_utente' => $utente->id]);
-            header('Location: /home-acquirente.php');
+            $_SESSION['UserRole'] = Role::BUYER;
         } else {
             UtenteVenditore::create(['id_utente' => $utente->id]);
-            header('Location: /home-venditore.php');
+            $_SESSION['UserRole'] = Role::VENDOR;
         }
 
+        // Una sola home dinamica
+        header('Location: /home.php');
         exit;
     }
 
