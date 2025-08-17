@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+require_once "./Models/BaseModel.php";
+
 class CartaDiCredito extends BaseModel
 {
     protected $table = 'cartaDiCredito';

@@ -90,12 +90,34 @@ $immagini = [
       <button class="btn btn-info btn-lg mt-3">
         <i class="bi bi-cart-plus"></i> Aggiungi al carrello
       </button>
+
+      <button id="btnCondividi" class="btn btn-secondary btn-lg mt-3 ms-2">
+        <i class="bi bi-link-45deg"></i> Condividi
+      </button>
     </div>
   </div>
 </div>
 
 <script src="./dist/custom/js/sidebar-manager.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  const btnCondividi = document.getElementById('btnCondividi');
+
+  btnCondividi.addEventListener('click', () => {
+    // Copia l'URL corrente
+    const url = window.location.href;
+
+    // Usa l'API Clipboard
+    navigator.clipboard.writeText(url).then(() => {
+      // Mostra un alert di conferma (puoi sostituire con toast)
+      alert('Link copiato negli appunti!');
+    }).catch(err => {
+      console.error('Errore nel copiare il link: ', err);
+    });
+  });
+</script>
+
 
 </body>
 </html>
