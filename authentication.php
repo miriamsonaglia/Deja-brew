@@ -1,11 +1,14 @@
 <?php
 // FIXME: SE VEDI ROSSO E' PERCHÉ TI MANCANO LE CLAUSOLE "USE"
-require_once __DIR__ . '/../models/Utente.php';
-require_once __DIR__ . '/../models/UtenteCompratore.php';
-require_once __DIR__ . '/../models/UtenteVenditore.php';
+require_once __DIR__ . '/../Models/Utente.php';
+require_once __DIR__ . '/../Models/UtenteCompratore.php';
+require_once __DIR__ . '/../Models/UtenteVenditore.php';
 require_once __DIR__ . '/../role.php';
 
 use Role;
+use App\Models\Utente;
+use App\Models\UtenteCompratore;
+use App\Models\UtenteVenditore;
 
 session_start();
 
