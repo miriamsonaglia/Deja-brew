@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
 
-<?php include __DIR__ . '/reusables/navbar.php'; ?>
+<?php include __DIR__ . '/reusables/buyer-navbar.php'; ?>
 <?php include __DIR__ . '/reusables/sidebar.php'; ?>
 
 <div class="container form-section">
