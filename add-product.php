@@ -57,10 +57,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
   <link href="/dist/custom/css/style.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 </head>
 <body>
 
-<?php include __DIR__ . '/reusables/buyer-navbar.php'; ?>
+<?php include __DIR__ . '/reusables/navbars/buyer-navbar.php'; ?>
 <?php include __DIR__ . '/reusables/sidebar.php'; ?>
 
 <div class="container form-section">
@@ -158,6 +160,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
   </form>
 </div>
+
+<script src='./dist/custom/js/sidebar-manager.js'></script>
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
