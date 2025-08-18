@@ -10,7 +10,7 @@ use App\Models\Prodotto;
 
 // $id = $_GET['id'] ?? 1;
 // $prodotto = Prodotto::find($id);
-// $immagini = [$prodotto->fotografia]; // qui ci metterai tutte le immagini collegate
+// $immagini = [$prodotto->fotografia]; // immagini collegate al prodotto
 
 // ---------------------------------------------------------------------------------------------
 // MOCK (prodotto fasullo)
@@ -47,7 +47,6 @@ $immagini = [
 <body>
 
 <?php include __DIR__ . '/reusables/navbars/buyer-navbar.php'; ?>
-<?php include __DIR__ . '/reusables/sidebar.php'; ?>
 
 <div class="container my-5">
   <div class="row g-4">
@@ -87,11 +86,11 @@ $immagini = [
 
       <p class="mt-3"><?php echo $prodotto->descrizione; ?></p>
 
-      <button class="btn btn-info btn-lg mt-3">
+      <button class="btn btn-info">
         <i class="bi bi-cart-plus"></i> Aggiungi al carrello
       </button>
 
-      <button id="btnCondividi" class="btn btn-secondary btn-lg mt-3 ms-2">
+      <button id="btnCondividi" class="btn btn-secondary">
         <i class="bi bi-link-45deg"></i> Condividi
       </button>
     </div>

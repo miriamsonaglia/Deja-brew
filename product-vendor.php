@@ -18,6 +18,9 @@ use App\Models\UtenteVenditore;
 // $immagini = [$prodotto->fotografia];
 // $mediaRecensioni = Recensione::where('id_prodotto', $id)->avg('stelle') ?? 0;
 // $venditore = UtenteVenditore::with('user')->find($prodotto->id_venditore);
+// $recensioni = Recensione::where('id_prodotto', $id)
+//     ->with('utente')
+//     ->get();
 
 // ---------------------------------------------------------------------------------------------
 // MOCK (per testare ora senza DB)
@@ -40,7 +43,31 @@ $immagini = [
     "https://upload.wikimedia.org/wikipedia/commons/c/c5/Roasted_coffee_beans.jpg",
     "https://upload.wikimedia.org/wikipedia/commons/d/d7/Stacked_coffee_cans.jpg"
 ];
-$mediaRecensioni = 3.7;
+
+$recensioni = [
+    (object) [
+        'utente' => (object)['nome' => 'Luca', 'cognome' => 'Bianchi'],
+        'stelle' => 5,
+        'testo'  => 'Ottimo caffè, gusto intenso!'
+    ],
+    (object) [
+        'utente' => (object)['nome' => 'Giulia', 'cognome' => 'Verdi'],
+        'stelle' => 4,
+        'testo'  => 'Molto buono ma un po’ forte per i miei gusti.'
+    ],
+    (object) [
+        'utente' => (object)['nome' => 'Andrea', 'cognome' => 'Neri'],
+        'stelle' => 3,
+        'testo'  => 'Nella media, mi aspettavo qualcosa di più.'
+    ],
+    (object) [
+        'utente' => (object)['nome' => 'Sara', 'cognome' => 'Fontana'],
+        'stelle' => 5,
+        'testo'  => 'Davvero eccezionale, lo ricomprerò!'
+    ],
+];
+
+$mediaRecensioni = 4.25;
 
 // MOCK venditore
 $venditore = (object) [
@@ -81,8 +108,7 @@ function renderStars($media) {
 </head>
 <body>
 
-<?php include __DIR__ . '/reusables/navbars/empty-navbar.php'; ?>
-<?php include __DIR__ . '/reusables/sidebar.php'; ?>
+<?php include __DIR__ . '/reusables/navbars/vendor-navbar.php'; ?>
 
 <div class="container my-5">
   <div class="row g-4">
@@ -138,12 +164,39 @@ function renderStars($media) {
 
       <p class="mt-3"><?php echo $prodotto->descrizione; ?></p>
 
-      <button id="btnCondividi" class="btn btn-secondary btn-lg mt-3 ms-2">
+      <button id="btnCondividi" class="btn btn-secondary">
         <i class="bi bi-link-45deg"></i> Condividi
       </button>
     </div>
   </div>
 </div>
+
+<!-- Sezione Recensioni -->
+<div class="container my-5">
+  <h4 class="fw-bold mb-4">Recensioni</h4>
+
+  <?php foreach ($recensioni as $index => $rec): ?>
+    <div class="recensione mb-3 <?php echo $index >= 2 ? 'd-none extra-recensione' : ''; ?>">
+      <p class="mb-1 fw-semibold">
+        <?php echo $rec->utente->nome . ' ' . $rec->utente->cognome; ?>
+      </p>
+      <div class="mb-1">
+        <?php echo renderStars($rec->stelle); ?>
+      </div>
+      <p class="text-muted"><?php echo $rec->testo; ?></p>
+      <hr>
+    </div>
+  <?php endforeach; ?>
+
+  <?php if (count($recensioni) > 2): ?>
+    <button id="btnToggleRecensioni" class="btn btn-info">Vedi altre</button>
+  <?php endif; ?>
+</div>
+
+
+
+<script src="./dist/custom/js/sidebar-manager.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
   const btnCondividi = document.getElementById('btnCondividi');
@@ -153,6 +206,29 @@ function renderStars($media) {
     });
   });
 </script>
+
+<script>
+  const btnToggle = document.getElementById('btnToggleRecensioni');
+  if (btnToggle) {
+    btnToggle.addEventListener('click', () => {
+      const extra = document.querySelectorAll('.extra-recensione');
+      const isHidden = extra[0].classList.contains('d-none');
+
+      if (isHidden) {
+        // Mostra recensioni
+        extra.forEach(el => el.classList.remove('d-none'));
+        btnToggle.textContent = 'Nascondi';
+      } else {
+        // Nasconde recensioni
+        extra.forEach(el => el.classList.add('d-none'));
+        btnToggle.textContent = 'Vedi altre';
+        window.scrollTo({ top: btnToggle.offsetTop - 200, behavior: 'smooth' });
+      }
+    });
+  }
+</script>
+
+
 
 </body>
 </html>
