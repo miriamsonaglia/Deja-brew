@@ -228,7 +228,5 @@ function renderStars($media) {
   }
 </script>
 
-
-
 </body>
 </html>
