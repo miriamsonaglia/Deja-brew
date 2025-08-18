@@ -46,7 +46,7 @@
             $products = Prodotto::where('categoria_id', $category->id)->get();
         ?>
         <section>
-            <h1><?php echo $category->descrizione; ?></h1><a href="http://category-products.php?category=<?php echo $category->id; ?>">Vedi tutti</a>
+            <h1><?php echo $category->descrizione; ?></h1><a href="http://localhost:8080/category-products.php?category=<?php echo $category->id; ?>">Vedi tutti</a>
             <button class="slider-backward"><-</button>
             <div class="slider-container">
                 <ul class="slider-list">
@@ -60,7 +60,7 @@
         </section>
         <?php endforeach;?>
         <section>
-            <h1>CATEGORIA DI PROVA</h1><a href="http://category-products.php?category=0">Vedi tutti</a>
+            <h1>CATEGORIA DI PROVA</h1><a href="http://localhost:8080/category-products.php?category=0">Vedi tutti</a>
             <button class="slider-backward"><</button>
             <div class="slider-container">
                 <ul class="slider-list">
@@ -74,7 +74,7 @@
             <button class="slider-forward">></button>
         </section>
         <section>
-            <h1>CATEGORIA DI PROVA</h1><a href="http://category-products.php?category=0">Vedi tutti</a>
+            <h1>CATEGORIA DI PROVA</h1><a href="http://localhost:8080/category-products.php?category=0">Vedi tutti</a>
             <button class="slider-backward"><</button>
             <div class="slider-container">
                 <ul class="slider-list">
@@ -89,7 +89,7 @@
         </section>
         <section>
                 <section>
-            <h1>CATEGORIA DI PROVA</h1><a href="http://category-products.php?category=0">Vedi tutti</a>
+            <h1>CATEGORIA DI PROVA</h1><a href="http://localhost:8080/category-products.php?category=0">Vedi tutti</a>
             <button class="slider-backward"><</button>
             <div class="slider-container">
                 <ul class="slider-list">
@@ -103,7 +103,7 @@
             <button class="slider-forward">></button>
         </section>
                 <section>
-            <h1>CATEGORIA DI PROVA</h1><a href="http://category-products.php?category=0">Vedi tutti</a>
+            <h1>CATEGORIA DI PROVA</h1><a href="http://localhost:8080/category-products.php?category=0">Vedi tutti</a>
             <button class="slider-backward"><</button>
             <div class="slider-container">
                 <ul class="slider-list">
@@ -118,7 +118,7 @@
         </section>
     <button class="slider-backward"><-</button>
                 <section>
-            <h1>CATEGORIA DI PROVA</h1><a href="http://category-products.php?category=0">Vedi tutti</a>
+            <h1>CATEGORIA DI PROVA</h1><a href="http://localhost:8080/category-products.php?category=0">Vedi tutti</a>
             <button class="slider-backward"><</button>
             <div class="slider-container">
                 <ul class="slider-list">
@@ -133,7 +133,7 @@
         </section>
     <div class="slider-container">
                 <section>
-            <h1>CATEGORIA DI PROVA</h1><a href="http://category-products.php?category=0">Vedi tutti</a>
+            <h1>CATEGORIA DI PROVA</h1><a href="http://localhost:8080/category-products.php?category=0">Vedi tutti</a>
             <button class="slider-backward"><</button>
             <div class="slider-container">
                 <ul class="slider-list">
@@ -148,7 +148,7 @@
         </section>
         <ul class="slider-list">
                 <section>
-            <h1>CATEGORIA DI PROVA</h1><a href="http://category-products.php?category=0">Vedi tutti</a>
+            <h1>CATEGORIA DI PROVA</h1><a href="http://localhost:8080/category-products.php?category=0">Vedi tutti</a>
             <button class="slider-backward"><</button>
             <div class="slider-container">
                 <ul class="slider-list">
