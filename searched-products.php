@@ -20,7 +20,6 @@
     <body>
         <header><!-- ?? Possible header template ?? --></header>
         <?php include('./reusables/navbars/buyer-navbar.php'); ?>
-        <!-- Slider template -->
         <main>
             <h1><?php echo $category->descrizione; ?></h1>
             <ul class="product-list">

@@ -5,6 +5,7 @@
       <form class="d-flex me-3" role="search">
         <input class="form-control" type="search" placeholder="Cerca..." aria-label="Search">
       </form>
+      <a href="./login.php">Accedi</a>
     </div>
   </div>
 </nav>
