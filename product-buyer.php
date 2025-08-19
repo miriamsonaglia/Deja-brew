@@ -137,7 +137,7 @@ function renderStars($media) {
 
       <!-- Nome venditore -->
       <div class="mb-1">
-        <a href="vendor-profile.php?id=<?php echo $venditore->id; ?>" class="text-decoration-none">  <!-- TODO: CAMBIARE CON NOME PAGINA PROFILO VENDITORE -->
+        <a href="vendor-profile.php?id=<?php echo $venditore->id; ?>" class="text-decoration-none">
           <span class="fw-semibold text-primary">
             <?php echo $venditore->user->nome . ' ' . $venditore->user->cognome; ?>
           </span>
@@ -150,8 +150,6 @@ function renderStars($media) {
           <?php echo renderStars($mediaRecensioni); ?>
           <small class="text-muted ms-2">(<?php echo number_format($mediaRecensioni, 1); ?> / 5)</small>
         </div>
-
-        <!-- Link aggiungi recensione -->
         <a href="add-review.php?id=<?php echo $prodotto->id; ?>" class="ms-3 text-decoration-none text-primary fw-semibold">
           <i class="bi bi-pencil-square"></i> Aggiungi una recensione
         </a>
@@ -171,10 +169,48 @@ function renderStars($media) {
 
       <p class="mt-3"><?php echo $prodotto->descrizione; ?></p>
 
-      <button id="btnCondividi" class="btn btn-secondary">
-        <i class="bi bi-link-45deg"></i> Condividi
-      </button>
+      <!-- SELETTORE QUANTITÀ -->
+      <div class="d-flex align-items-center mb-3" style="max-width: 160px;">
+        <button class="btn btn-outline-danger" id="btnDecrement">-</button>
+        <input type="text" id="quantita" class="form-control text-center mx-1" value="1" readonly>
+        <button class="btn btn-outline-success" id="btnIncrement">+</button>
+      </div>
+
+      <!-- BOTTONI CARRELLO / ACQUISTA -->
+      <div class="d-flex gap-2">
+        <form method="POST" action="add-to-cart.php">
+          <input type="hidden" name="id_prodotto" value="<?php echo $prodotto->id; ?>">
+          <input type="hidden" id="quantitaInput" name="quantita" value="1">
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-cart-plus"></i> Aggiungi al carrello
+          </button>
+        </form>
+
+        <form method="POST" action="checkout.php">
+          <input type="hidden" name="id_prodotto" value="<?php echo $prodotto->id; ?>">
+          <input type="hidden" id="quantitaAcquista" name="quantita" value="1">
+          <button type="submit" class="btn btn-success">
+            <i class="bi bi-bag-check"></i> Acquista ora
+          </button>
+        </form>
+      </div>
+
+      <!-- PULSANTI CONDIVIDI / PREFERITI -->
+      <div class="d-flex gap-2 mt-3">
+        <button id="btnCondividi" class="btn btn-outline-secondary">
+          <i class="bi bi-link-45deg"></i> Condividi
+        </button>
+
+        <form method="POST" action="add-to-favorites.php">
+          <input type="hidden" name="id_prodotto" value="<?php echo $prodotto->id; ?>">
+          <button type="submit" class="btn btn-outline-danger">
+            <i class="bi bi-heart"></i> Aggiungi ai preferiti
+          </button>
+        </form>
+      </div>
+
     </div>
+
   </div>
 </div>
 
@@ -235,6 +271,31 @@ function renderStars($media) {
   }
 </script>
 
+<script>
+  const btnDecrement = document.getElementById('btnDecrement');
+  const btnIncrement = document.getElementById('btnIncrement');
+  const quantita = document.getElementById('quantita');
+  const quantitaInput = document.getElementById('quantitaInput');
+  const quantitaAcquista = document.getElementById('quantitaAcquista');
+
+  btnIncrement.addEventListener('click', () => {
+    let val = parseInt(quantita.value);
+    if (val < 99) {
+      quantita.value = ++val;
+      quantitaInput.value = val;
+      quantitaAcquista.value = val;
+    }
+  });
+
+  btnDecrement.addEventListener('click', () => {
+    let val = parseInt(quantita.value);
+    if (val > 1) {
+      quantita.value = --val;
+      quantitaInput.value = val;
+      quantitaAcquista.value = val;
+    }
+  });
+</script>
 
 
 </body>

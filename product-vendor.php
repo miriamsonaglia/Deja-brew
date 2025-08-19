@@ -164,7 +164,7 @@ function renderStars($media) {
 
       <p class="mt-3"><?php echo $prodotto->descrizione; ?></p>
 
-      <button id="btnCondividi" class="btn btn-secondary">
+      <button id="btnCondividi" class="btn btn-outline-secondary">
         <i class="bi bi-link-45deg"></i> Condividi
       </button>
     </div>
