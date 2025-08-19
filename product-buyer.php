@@ -150,9 +150,10 @@ function renderStars($media) {
           <?php echo renderStars($mediaRecensioni); ?>
           <small class="text-muted ms-2">(<?php echo number_format($mediaRecensioni, 1); ?> / 5)</small>
         </div>
-        <a href="add-review.php?id=<?php echo $prodotto->id; ?>" class="ms-3 text-decoration-none text-primary fw-semibold">
+        <a href="#" class="ms-3 text-decoration-none text-primary fw-semibold" data-bs-toggle="modal" data-bs-target="#modalRecensione">
           <i class="bi bi-pencil-square"></i> Aggiungi una recensione
         </a>
+
       </div>
 
       <p class="text-muted">
@@ -181,7 +182,7 @@ function renderStars($media) {
         <form method="POST" action="add-to-cart.php">
           <input type="hidden" name="id_prodotto" value="<?php echo $prodotto->id; ?>">
           <input type="hidden" id="quantitaInput" name="quantita" value="1">
-          <button type="submit" class="btn btn-primary">
+          <button type="submit" class="btn btn-success">
             <i class="bi bi-cart-plus"></i> Aggiungi al carrello
           </button>
         </form>
@@ -189,7 +190,7 @@ function renderStars($media) {
         <form method="POST" action="checkout.php">
           <input type="hidden" name="id_prodotto" value="<?php echo $prodotto->id; ?>">
           <input type="hidden" id="quantitaAcquista" name="quantita" value="1">
-          <button type="submit" class="btn btn-success">
+          <button type="submit" class="btn btn-warning">
             <i class="bi bi-bag-check"></i> Acquista ora
           </button>
         </form>
@@ -236,6 +237,43 @@ function renderStars($media) {
   <?php endif; ?>
 </div>
 
+<!-- MODAL RECENSIONE -->
+<div class="modal fade" id="modalRecensione" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <form method="POST" action="save-review.php" class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Lascia una recensione</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+
+        <input type="hidden" name="id_prodotto" value="<?php echo $prodotto->id; ?>">
+        <input type="hidden" name="id_utente" value="<?php echo $_SESSION['user_id'] ?? 1; ?>"> <!-- da sessione -->
+
+        <!-- Selezione stelle -->
+        <div class="mb-3">
+          <label class="form-label">Valutazione</label>
+          <div class="d-flex gap-1" id="starSelector">
+            <?php for ($i=1; $i<=5; $i++): ?>
+              <i class="bi bi-star star-icon fs-3" data-value="<?php echo $i; ?>"></i>
+            <?php endfor; ?>
+          </div>
+          <input type="hidden" name="stelle" id="stelleInput" required>
+        </div>
+
+        <!-- Testo recensione -->
+        <div class="mb-3">
+          <label for="testo" class="form-label">Commento</label>
+          <textarea name="testo" id="testo" rows="3" class="form-control" required></textarea>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-warning">Invia</button>
+      </div>
+    </form>
+  </div>
+</div>
 
 
 <script src="./dist/custom/js/sidebar-manager.js"></script>
@@ -294,6 +332,28 @@ function renderStars($media) {
       quantitaInput.value = val;
       quantitaAcquista.value = val;
     }
+  });
+</script>
+
+<script>
+  const starIcons = document.querySelectorAll('.star-icon');
+  const stelleInput = document.getElementById('stelleInput');
+
+  starIcons.forEach(icon => {
+    icon.addEventListener('click', () => {
+      const value = icon.getAttribute('data-value');
+      stelleInput.value = value;
+
+      starIcons.forEach(i => {
+        if (i.getAttribute('data-value') <= value) {
+          i.classList.remove('bi-star');
+          i.classList.add('bi-star-fill', 'text-warning');
+        } else {
+          i.classList.add('bi-star');
+          i.classList.remove('bi-star-fill', 'text-warning');
+        }
+      });
+    });
   });
 </script>
 

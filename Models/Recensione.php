@@ -8,7 +8,8 @@ class Recensione extends BaseModel
     protected $fillable = [
         'id_utente',
         'id_prodotto',
-        'stelle'
+        'stelle',
+        'testo'
     ];
 
     protected $casts = [
