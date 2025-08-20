@@ -25,7 +25,7 @@ if ($quantity <= 0 || empty($productID)) {
     exit;
 }
 
-// TODO: Salva nel carrello (es: sessione, database, ecc.)
+// TODO: Salva nel Database
 session_start();
 if (!isset($_SESSION['cart'])) {
     $_SESSION['cart'] = [];
