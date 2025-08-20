@@ -1,4 +1,5 @@
 <?php
+// TODO: VALUTA SE CREARE UNA CLASSE DI GESTIONE DEL CARRELLO
 // Imposta intestazione per rispondere in JSON
 header('Content-Type: application/json');
 
@@ -25,23 +26,21 @@ if ($quantity <= 0 || empty($productID)) {
     exit;
 }
 
+require_once('./Models/Lista.php');
+use App\Models\Lista;
+
 // TODO: Salva nel Database
 session_start();
-if (!isset($_SESSION['cart'])) {
-    $_SESSION['cart'] = [];
-}
-
-// Aggiungi o aggiorna il prodotto nel carrello
-if (isset($_SESSION['cart'][$productID])) {
-    $_SESSION['cart'][$productID] += $quantity;
-} else {
-    $_SESSION['cart'][$productID] = $quantity;
-}
+$productInCart = new Lista();
+$productInCart->id_utente_compratore = $_SESSION['UserID'];
+$productInCart->id_prodotto = $productID;
+$productInCart->tipo = 'carrello';
+$productInCart->quantita = $quantity;
+$productInCart->save();
 
 // Risposta al client
 echo json_encode([
     'success' => true,
     'message' => 'Prodotto aggiunto al carrello',
-    'cart' => $_SESSION['cart']
 ]);
 ?>
