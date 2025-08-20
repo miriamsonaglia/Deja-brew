@@ -86,7 +86,7 @@
                 })
                 .then(data => {
                     console.log('Risposta dal server:', data);
-                    // Qui puoi aggiornare il carrello visivamente
+                    // Refresh del carrello
                 })
                 .catch(error => {
                     console.error('Errore durante la richiesta:', error);
