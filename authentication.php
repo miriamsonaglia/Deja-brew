@@ -42,7 +42,7 @@ class AuthController
                 }
                 $_SESSION['UserRole'] = Role::VENDOR;
             }
-
+            // TODO: MIRI AGGIUNGIMI IN SESSIONE UN IDENTIFICATORE DELL'UTENTE: $_SESSION['UserID'].
             // Una sola home dinamica
             header('Location: /home.php');
             exit;
