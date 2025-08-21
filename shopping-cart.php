@@ -17,11 +17,8 @@
             require_once __DIR__ . '/Models/UtenteCompratore.php';
             require_once __DIR__ . '/Models/Prodotto.php';
             // QUERY: READ ALL USER SHOPPING CART FROM DATABASE
-            // TODO: This placeholder will generate error because it cannot be called statically,
-            // on login we need to save the correct UtenteCompratore object in SESSION VARIABLE
-            $user = new UtenteCompratore();
-            $user_cart = $user->carrello();
-            // $user_cart = Utente::where('id', $_SESSION['LoggedUserID'])->first()->carrello();
+            session_start();
+            $user_cart = UtenteCompratore::where('id', $_SESSION['LoggedUserID'])->first()->carrello();
         ?>
     </head>
     <body>
