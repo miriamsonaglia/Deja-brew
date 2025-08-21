@@ -14,13 +14,9 @@
             require_once __DIR__ . '/role.php';
             use App\Models\Categoria;
             use App\Models\Prodotto;
+            session_start();
             $userRole = $_SESSION['UserRole'] ?? Role::GUEST;
-            // QUERY: READ ALL CATEGORIES FROM DATABASE
             $categories = Categoria::all();
-            /**
-             * The generated array "concatenate" its an array of associative array.
-             * Every element has one Category and an array of products.
-             */
         ?>
     </head>
     <body>
@@ -40,33 +36,177 @@
                     break;
             }
         ?>
-        <!-- Slider template -->
-        <?php 
-        foreach($categories as $category):
-            $products = Prodotto::where('categoria_id', $category->id)->get();
-        ?>
-        <section>
-            <h1><?php echo $category->descrizione; ?></h1><a href="http://localhost:8080/category-products.php?category=<?php echo $category->id; ?>">Vedi tutti</a>
-            <button class="slider-backward"><-</button>
-            <div class="slider-container">
-                <ul class="slider-list">
-                <?php foreach($products as $product): ?>
-                    <!-- At the moment the template is very basic -->
-                    <li class="slider-object"><?php echo $product->nome; ?></li>
-                <?php endforeach; ?>
-                </ul>
-            </div>
-            <button class="slider-forward">-></button>
-        </section>
-        <?php endforeach;?>
+        
+        <div class="container-fluid">
+            <!-- Categories with Enhanced Slider -->
+            <?php 
+            foreach($categories as $index => $category):
+                $products = Prodotto::where('categoria_id', $category->id)->get();
+                $sliderId = 'category-' . $category->id;
+            ?>
+            <section class="category-section">
+                <div class="category-header">
+                    <h1 class="category-title"><?php echo htmlspecialchars($category->descrizione); ?></h1>
+                    <a href="http://localhost:8080/category-products.php?category=<?php echo $category->id; ?>" class="view-all-link">Vedi tutti</a>
+                </div>
+                
+                <div class="slider-wrapper">
+                    <button class="slider-backward" data-slider="<?php echo $sliderId; ?>">
+                        <i class="bi bi-arrow-left"></i>
+                    </button>
+                    
+                    <div class="slider-container">
+                        <ul class="slider-list" id="<?php echo $sliderId; ?>-slider">
+                            <?php foreach($products as $product): ?>
+                            <li class="slider-object">
+                                <img src="<?php echo htmlspecialchars($product->fotografia); ?>" 
+                                     alt="<?php echo htmlspecialchars($product->nome); ?>">
+                                <div class="product-name"><?php echo htmlspecialchars($product->nome); ?></div>
+                                <div class="product-price"><?php echo number_format($product->prezzo, 2); ?> €</div>
+                                <input type="number" 
+                                       step="1" 
+                                       value="0" 
+                                       min="0" 
+                                       class="quantity-input"
+                                       data-product-id="<?php echo $product->id; ?>">
+                                <button class="cart-button" 
+                                        data-product-id="<?php echo $product->id; ?>"
+                                        data-product-name="<?php echo htmlspecialchars($product->nome); ?>"
+                                        data-product-price="<?php echo $product->prezzo; ?>">
+                                    Aggiungi al carrello
+                                </button>
+                                <button class="wish-button" 
+                                        data-product-id="<?php echo $product->id; ?>"
+                                        title="Aggiungi alla wishlist">
+                                    <i class="bi bi-heart"></i>
+                                </button>
+                            </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                    
+                    <button class="slider-forward" data-slider="<?php echo $sliderId; ?>">
+                        <i class="bi bi-arrow-right"></i>
+                    </button>
+                </div>
+                
+                <!-- Slider Indicators -->
+                <div class="slider-indicators" id="<?php echo $sliderId; ?>-indicators"></div>
+            </section>
+            <?php endforeach; ?>
+        </div>
+
         <footer><!-- ?? Possible footer template ?? --></footer>
+        
         <!-- INSERT HERE ALL JAVASCRIPT NECESSARY IMPORTS -->
         <script src="./dist/bootstrap5/js/bootstrap.min.js"></script>
         <script src="./dist/custom/js/cart-manager.js"></script>
-        <?php if(isset($userRole) && ($userRole == Role::BUYER || $userRole == Role::VENDOR)): ?>
+        <script src="./dist/custom/js/home-slider-manager.js"></script>
+        <!-- Enhanced Product Slider Script -->
         <script>
-            const $cartManager = new CartManager('badge3');
+            // Initialize everything when DOM is ready
+            document.addEventListener('DOMContentLoaded', function() {
+                // Initialize sliders for each category
+                <?php foreach($categories as $category): ?>
+                new ProductSlider('category-<?php echo $category->id; ?>-slider');
+                <?php endforeach; ?>
+                
+                // Initialize cart manager if user is logged in
+                <?php if(isset($userRole) && ($userRole == Role::BUYER || $userRole == Role::VENDOR)): ?>
+                const cartManager = new CartManager('badge3');
+                
+                // Enhanced cart functionality
+                document.querySelectorAll('.cart-button').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const productId = this.getAttribute('data-product-id');
+                        const productName = this.getAttribute('data-product-name');
+                        const productPrice = parseFloat(this.getAttribute('data-product-price'));
+                        const quantityInput = this.parentElement.querySelector('.quantity-input');
+                        const quantity = parseInt(quantityInput.value) || 1;
+                        
+                        if (quantity > 0) {
+                            // Add to cart using your existing cart manager
+                            for (let i = 0; i < quantity; i++) {
+                                cartManager.addItem({
+                                    id: productId,
+                                    name: productName,
+                                    price: productPrice
+                                });
+                            }
+                            
+                            // Visual feedback
+                            this.style.backgroundColor = '#28a745';
+                            this.textContent = 'Aggiunto!';
+                            
+                            setTimeout(() => {
+                                this.style.backgroundColor = '';
+                                this.textContent = 'Aggiungi al carrello';
+                            }, 1500);
+                            
+                            // Reset quantity
+                            quantityInput.value = 0;
+                        } else {
+                            // Show error for invalid quantity
+                            quantityInput.style.borderColor = '#dc3545';
+                            quantityInput.style.boxShadow = '0 0 0 3px rgba(220, 53, 69, 0.1)';
+                            
+                            setTimeout(() => {
+                                quantityInput.style.borderColor = '';
+                                quantityInput.style.boxShadow = '';
+                            }, 2000);
+                        }
+                    });
+                });
+                <?php endif; ?>
+                
+                // Wishlist functionality
+                document.querySelectorAll('.wish-button').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const productId = this.getAttribute('data-product-id');
+                        const icon = this.querySelector('i');
+                        const isWished = icon.classList.contains('bi-heart-fill');
+                        
+                        if (isWished) {
+                            // Remove from wishlist
+                            icon.classList.remove('bi-heart-fill');
+                            icon.classList.add('bi-heart');
+                            this.style.backgroundColor = '';
+                            this.style.borderColor = '#ff4444';
+                            this.style.color = '#ff4444';
+                            this.title = 'Aggiungi alla wishlist';
+                        } else {
+                            // Add to wishlist
+                            icon.classList.remove('bi-heart');
+                            icon.classList.add('bi-heart-fill');
+                            this.style.backgroundColor = 'rgba(255, 68, 68, 0.1)';
+                            this.style.borderColor = '#ff4444';
+                            this.style.color = '#ff4444';
+                            this.title = 'Rimuovi dalla wishlist';
+                            
+                            // Here you would typically make an AJAX call to save the wishlist item
+                            console.log(`Added product ${productId} to wishlist`);
+                        }
+                    });
+                });
+                
+                // Quantity input validation
+                document.querySelectorAll('.quantity-input').forEach(input => {
+                    input.addEventListener('change', function() {
+                        const value = parseInt(this.value);
+                        if (value < 0) {
+                            this.value = 0;
+                        }
+                        if (value > 99) {
+                            this.value = 99;
+                        }
+                    });
+                    
+                    input.addEventListener('input', function() {
+                        // Remove any non-digit characters
+                        this.value = this.value.replace(/[^0-9]/g, '');
+                    });
+                });
+            });
         </script>
-        <?php endif; ?>
     </body>
 </html>

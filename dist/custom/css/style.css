@@ -1,7 +1,20 @@
+/* =================================================================
+   BASE STYLES
+   ================================================================= */
 body {
   background-color: #F2EFEA;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+h1, h2, label, .navbar-brand {
+  color: #594431;
+}
+
+/* =================================================================
+   FORM ELEMENTS
+   ================================================================= */
+
+/* Upload Box */
 .upload-box {
   background-color: #f8f9fa;
   border: 2px dashed #594431;
@@ -20,6 +33,12 @@ body {
   display: none;
 }
 
+/* Form Elements */
+.form-check-label {
+  color: #7C2E2E;
+}
+
+/* Custom Buttons */
 .btn-info {
   background-color: #7C2E2E;
   border: none;
@@ -30,17 +49,11 @@ body {
   background-color: #3E2C23;
 }
 
-.form-check-label {
-  color: #7C2E2E;
-}
+/* =================================================================
+   NAVIGATION
+   ================================================================= */
 
-h2,
-label,
-.navbar-brand {
-  color: #594431;
-}
-
-/* STILE NAVBAR */
+/* Navbar */
 .navbar {
   background-color: #f8f9fa !important;
   border-bottom: 1px solid #ddd;
@@ -51,7 +64,6 @@ label,
   font-weight: bold;
 }
 
-/* Stili per il pulsante hamburger */
 .navbar-toggler {
     border: none;
     padding: 0.25rem 0.5rem;
@@ -78,8 +90,7 @@ label,
     color: #0d6efd;
 }
 
-
-/* STILE SIDEBAR */
+/* Sidebar/Offcanvas */
 .offcanvas-body a.nav-link {
   color: #594431;
   font-weight: 500;
@@ -94,7 +105,9 @@ label,
   color: #594431;
 }
 
-/* STILE ICONA CARRELLO */
+/* =================================================================
+   CART ICON
+   ================================================================= */
 .cart-container {
     position: relative;
     display: inline-block;
@@ -111,7 +124,6 @@ label,
     font-size: 24px;
     cursor: pointer;
     transition: all 0.3s ease;
-    border: 1px blue;
 }
 
 .cart-icon:hover {
@@ -137,7 +149,6 @@ label,
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
-/* Variante con badge più grande per numeri a 2 cifre */
 .cart-badge.large {
     width: 24px;
     height: 20px;
@@ -145,7 +156,6 @@ label,
     font-size: 11px;
 }
 
-/* Animazione quando si aggiunge un elemento */
 .cart-badge.bounce {
     animation: bounce 0.3s ease;
 }
@@ -156,13 +166,276 @@ label,
     100% { transform: scale(1); }
 }
 
-.controls {
-    margin-top: 20px;
+/* =================================================================
+   PRODUCT SLIDER/CAROUSEL
+   ================================================================= */
+
+/* Category Section */
+.category-section {
+    margin: 40px 0;
+    padding: 0 20px;
+}
+
+.category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 0 10px;
+}
+
+.category-title {
+    color: #594431;
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.view-all-link {
+    color: #7C2E2E;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 2px solid #7C2E2E;
+    transition: all 0.3s ease;
+}
+
+.view-all-link:hover {
+    background-color: #7C2E2E;
+    color: white;
+    text-decoration: none;
+}
+
+/* Slider Structure */
+.slider-wrapper {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.slider-container {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+    padding: 20px 0;
+}
+
+.slider-list {
+    display: flex;
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    list-style: none;
+    padding: 0 20px;
+    margin: 0;
+    gap: 20px;
+}
+
+/* Product Items */
+.slider-object {
+    flex: 0 0 280px;
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border: 2px solid transparent;
+}
+
+.slider-object:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    border-color: #594431;
+}
+
+.slider-object img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    transition: transform 0.3s ease;
+}
+
+.slider-object:hover img {
+    transform: scale(1.05);
+}
+
+/* Product Details */
+.slider-object .product-name,
+.product-name {
+    color: #594431;
+    font-weight: 600;
+    font-size: 1.1em;
+    margin: 10px 0 8px 0;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
 }
 
+.slider-object .product-price {
+    color: #7C2E2E;
+    font-size: 1.3em;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
 
-/* STILE LISTA PRODOTTI */
+/* Form Controls */
+.quantity-input,
+.product-quantity {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #594431;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 16px;
+    margin-bottom: 15px;
+    background-color: #f8f9fa;
+    color: #594431;
+    transition: all 0.3s ease;
+}
+
+.quantity-input:focus,
+.product-quantity:focus {
+    outline: none;
+    border-color: #7C2E2E;
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(124, 46, 46, 0.1);
+}
+
+/* Action Buttons */
+.cart-button,
+.add-to-cart-button {
+    background-color: #7C2E2E;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 10px;
+    width: 100%;
+    font-size: 14px;
+}
+
+.cart-button:hover,
+.add-to-cart-button:hover {
+    background-color: #3E2C23;
+    transform: scale(1.05);
+}
+
+.wish-button {
+    background-color: transparent;
+    color: #ff4444;
+    border: 2px solid #ff4444;
+    padding: 8px 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.wish-button:hover {
+    background-color: #ff4444;
+    color: white;
+    transform: scale(1.1);
+}
+
+.bin-button {
+    background-color: transparent;
+    color: #dc3545;
+    border: 2px solid #dc3545;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.bin-button:hover {
+    background-color: #dc3545;
+    color: white;
+    transform: scale(1.1);
+}
+
+.bin-button i {
+    font-size: 14px;
+}
+
+/* Slider Navigation */
+.slider-backward, .slider-forward {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(124, 46, 46, 0.9);
+    color: white;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    z-index: 10;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.slider-backward {
+    left: 10px;
+}
+
+.slider-forward {
+    right: 10px;
+}
+
+.slider-backward:hover, .slider-forward:hover {
+    background: rgba(62, 44, 35, 0.9);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.slider-backward:disabled, .slider-forward:disabled {
+    background: rgba(124, 46, 46, 0.3);
+    cursor: not-allowed;
+    transform: translateY(-50%) scale(0.9);
+}
+
+/* Slider Indicators */
+.slider-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.slider-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #ddd;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.slider-indicator.active {
+    background-color: #7C2E2E;
+    transform: scale(1.2);
+}
+
+/* =================================================================
+   LEGACY PRODUCT LIST (Grid Layout)
+   ================================================================= */
 .product-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -174,7 +447,6 @@ label,
 
 .product-list-element {
   background-color: #fff;
-  width: 25%;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
@@ -183,6 +455,7 @@ label,
   align-items: center;
   text-align: center;
   border: 1px solid #e0e0e0;
+  border-radius: 12px;
 }
 
 .product-list-element:hover {
@@ -206,74 +479,28 @@ label,
   border-color: #594431;
 }
 
-.product-name {
-  color: #594431;
-  font-weight: 600;
-  font-size: 1.1em;
-  margin: 10px 0 15px 0;
-  min-height: 50px;
-  display: flex;
-  align-items: center;
-}
-
-.product-quantity {
-  width: 100%;
-  padding: 8px;
-  border: 2px solid #594431;
-  border-radius: 6px;
-  text-align: center;
-  font-size: 16px;
-  margin-bottom: 15px;
-  background-color: #f8f9fa;
-  color: #594431;
-}
-
-.product-quantity:focus {
-  outline: none;
-  border-color: #7C2E2E;
-  background-color: #fff;
-}
-
-.add-to-cart-button {
-  background-color: #7C2E2E;
-  color: white;
-  border: none;
-  padding: 12px;
-  border-radius: 8px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-bottom: 10px;
-  width: 100%;
-}
-
-.add-to-cart-button:hover {
-  background-color: #3E2C23;
-  transform: scale(1.05);
-}
-
-.bin-button {
-  background-color: transparent;
-  color: #dc3545;
-  border: 2px solid #dc3545;
-  padding: 8px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.bin-button:hover {
-  background-color: #dc3545;
-  color: white;
-  transform: scale(1.1);
-}
-
-.bin-button i {
-  font-size: 14px;
-}
-
-/* Responsive per schermi piccoli */
+/* =================================================================
+   RESPONSIVE DESIGN
+   ================================================================= */
 @media (max-width: 768px) {
+  /* Slider Responsive */
+  .slider-object {
+    flex: 0 0 250px;
+  }
+  
+  .category-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .slider-backward, .slider-forward {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+  
+  /* Grid Layout Responsive */
   .product-list {
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 15px;
@@ -285,5 +512,19 @@ label,
   
   .product-picture {
     height: 180px;
+  }
+}
+
+@media (max-width: 480px) {
+  .slider-object {
+    flex: 0 0 220px;
+  }
+  
+  .category-section {
+    padding: 0 10px;
+  }
+  
+  .product-list {
+    grid-template-columns: 1fr;
   }
 }
