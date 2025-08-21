@@ -100,112 +100,21 @@
         
         <!-- INSERT HERE ALL JAVASCRIPT NECESSARY IMPORTS -->
         <script src="./dist/bootstrap5/js/bootstrap.min.js"></script>
-        <script src="./dist/custom/js/cart-manager.js"></script>
         <script src="./dist/custom/js/home-slider-manager.js"></script>
-        <!-- Enhanced Product Slider Script -->
+        <script src="./dist/custom/js/input-validation.js"></script>
+        <script src="./dist/custom/js/wishlist-manager.js"></script>
+        <?php if(isset($userRole) && ($userRole == Role::BUYER || $userRole == Role::VENDOR)): ?>
+            // Initialize cart manager if user is logged in.
+            <script src="./dist/custom/js/cart-manager.js"></script>
+        <?php endif; ?>
+
         <script>
             // Initialize everything when DOM is ready
             document.addEventListener('DOMContentLoaded', function() {
                 // Initialize sliders for each category
                 <?php foreach($categories as $category): ?>
-                new ProductSlider('category-<?php echo $category->id; ?>-slider');
+                    new ProductSlider('category-<?php echo $category->id; ?>-slider');
                 <?php endforeach; ?>
-                
-                // Initialize cart manager if user is logged in
-                <?php if(isset($userRole) && ($userRole == Role::BUYER || $userRole == Role::VENDOR)): ?>
-                const cartManager = new CartManager('badge3');
-                
-                // Enhanced cart functionality
-                document.querySelectorAll('.cart-button').forEach(button => {
-                    button.addEventListener('click', function() {
-                        const productId = this.getAttribute('data-product-id');
-                        const productName = this.getAttribute('data-product-name');
-                        const productPrice = parseFloat(this.getAttribute('data-product-price'));
-                        const quantityInput = this.parentElement.querySelector('.quantity-input');
-                        const quantity = parseInt(quantityInput.value) || 1;
-                        
-                        if (quantity > 0) {
-                            // Add to cart using your existing cart manager
-                            for (let i = 0; i < quantity; i++) {
-                                cartManager.addItem({
-                                    id: productId,
-                                    name: productName,
-                                    price: productPrice
-                                });
-                            }
-                            
-                            // Visual feedback
-                            this.style.backgroundColor = '#28a745';
-                            this.textContent = 'Aggiunto!';
-                            
-                            setTimeout(() => {
-                                this.style.backgroundColor = '';
-                                this.textContent = 'Aggiungi al carrello';
-                            }, 1500);
-                            
-                            // Reset quantity
-                            quantityInput.value = 0;
-                        } else {
-                            // Show error for invalid quantity
-                            quantityInput.style.borderColor = '#dc3545';
-                            quantityInput.style.boxShadow = '0 0 0 3px rgba(220, 53, 69, 0.1)';
-                            
-                            setTimeout(() => {
-                                quantityInput.style.borderColor = '';
-                                quantityInput.style.boxShadow = '';
-                            }, 2000);
-                        }
-                    });
-                });
-                <?php endif; ?>
-                
-                // Wishlist functionality
-                document.querySelectorAll('.wish-button').forEach(button => {
-                    button.addEventListener('click', function() {
-                        const productId = this.getAttribute('data-product-id');
-                        const icon = this.querySelector('i');
-                        const isWished = icon.classList.contains('bi-heart-fill');
-                        
-                        if (isWished) {
-                            // Remove from wishlist
-                            icon.classList.remove('bi-heart-fill');
-                            icon.classList.add('bi-heart');
-                            this.style.backgroundColor = '';
-                            this.style.borderColor = '#ff4444';
-                            this.style.color = '#ff4444';
-                            this.title = 'Aggiungi alla wishlist';
-                        } else {
-                            // Add to wishlist
-                            icon.classList.remove('bi-heart');
-                            icon.classList.add('bi-heart-fill');
-                            this.style.backgroundColor = 'rgba(255, 68, 68, 0.1)';
-                            this.style.borderColor = '#ff4444';
-                            this.style.color = '#ff4444';
-                            this.title = 'Rimuovi dalla wishlist';
-                            
-                            // Here you would typically make an AJAX call to save the wishlist item
-                            console.log(`Added product ${productId} to wishlist`);
-                        }
-                    });
-                });
-                
-                // Quantity input validation
-                document.querySelectorAll('.quantity-input').forEach(input => {
-                    input.addEventListener('change', function() {
-                        const value = parseInt(this.value);
-                        if (value < 0) {
-                            this.value = 0;
-                        }
-                        if (value > 99) {
-                            this.value = 99;
-                        }
-                    });
-                    
-                    input.addEventListener('input', function() {
-                        // Remove any non-digit characters
-                        this.value = this.value.replace(/[^0-9]/g, '');
-                    });
-                });
             });
         </script>
     </body>
