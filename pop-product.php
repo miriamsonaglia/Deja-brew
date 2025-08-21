@@ -4,7 +4,7 @@
 header('Content-Type: application/json');
 
 // Abilita CORS se necessario
-// header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: *");
 
 // Recupera e decodifica il corpo della richiesta
 $input = json_decode(file_get_contents('php://input'), true);
@@ -17,9 +17,10 @@ if (!isset($input['productID'])) {
 }
 
 $productID = htmlspecialchars($input['productID']);
+$type = htmlspecialchars($input['type'] ?? 'desideri'); // Default to 'desideri'
 
 // Validazione base
-if ($quantity <= 0 || empty($productID)) {
+if (empty($productID)) {
     http_response_code(400);
     echo json_encode(['error' => 'Dati non validi']);
     exit;
@@ -33,7 +34,7 @@ $productInCart = Lista::find(
     [
         'id_utente_compratore' => $_SESSION['UserID'],
         'id_prodotto' => $productID, 
-        'tipo' => 'carrello'
+        'tipo' => $type
     ]
 );
 
@@ -42,10 +43,10 @@ if($productInCart) {
     // Risposta al client
     echo json_encode([
         'success' => true,
-        'message' => 'Prodotto rimosso dal carrello',
+        'message' => 'Prodotto rimosso da ' . $type
     ]);
 } else {
     http_response_code(404); // Not Found
-    echo json_encode(['error' => 'Prodotto non trovato nel carrello']);
+    echo json_encode(['error' => 'Prodotto non trovato.']);
 }
 ?>

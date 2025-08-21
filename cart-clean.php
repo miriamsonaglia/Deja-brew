@@ -4,7 +4,7 @@
 header('Content-Type: application/json');
 
 // Abilita CORS se necessario
-// header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: *");
 
 
 require_once('./Models/Lista.php');
@@ -20,6 +20,6 @@ foreach($productsInCart as $productInCart) {
 }
 echo json_encode([
     'success' => true,
-    'message' => 'Prodotti rimosso dal carrello',
+    'message' => 'Prodotti rimossi dal carrello',
 ]);
 ?>
