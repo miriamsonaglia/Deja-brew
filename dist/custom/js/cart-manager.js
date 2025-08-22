@@ -6,16 +6,9 @@ document.querySelectorAll('.cart-button').forEach(button => {
         const productPrice = parseFloat(this.getAttribute('data-product-price'));
         const quantityInput = this.parentElement.querySelector('.quantity-input');
         const quantity = parseInt(quantityInput.value) || 1;
-        
         if (quantity > 0) {
-            // Add to cart using your existing cart manager
-            for (let i = 0; i < quantity; i++) {
-                cartManager.addItem({
-                    id: productId,
-                    name: productName,
-                    price: productPrice
-                });
-            }
+            // MAKE LOGIC FOR AJAX CALL TO ADD ITEM TO CART
+            console.log(`Aggiunto al carrello: ${quantity} x ${productName} (ID: ${productId}) a €${productPrice.toFixed(2)} ciascuno.`);
             
             // Visual feedback
             this.style.backgroundColor = '#28a745';

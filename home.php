@@ -58,11 +58,12 @@
                     <div class="slider-container">
                         <ul class="slider-list" id="<?php echo $sliderId; ?>-slider">
                             <?php foreach($products as $product): ?>
-                            <li class="slider-object">
+                            <li class="slider-object" data-product-id="<?php echo $product->id; ?>">
                                 <img src="<?php echo htmlspecialchars($product->fotografia); ?>" 
                                      alt="<?php echo htmlspecialchars($product->nome); ?>">
                                 <div class="product-name"><?php echo htmlspecialchars($product->nome); ?></div>
                                 <div class="product-price"><?php echo number_format($product->prezzo, 2); ?> €</div>
+                                <?php if(isset($userRole) && ($userRole == Role::BUYER)): ?>
                                 <input type="number" 
                                        step="1" 
                                        value="0" 
@@ -80,6 +81,7 @@
                                         title="Aggiungi alla wishlist">
                                     <i class="bi bi-heart"></i>
                                 </button>
+                                <?php endif; ?>
                             </li>
                             <?php endforeach; ?>
                         </ul>
@@ -101,11 +103,13 @@
         <!-- INSERT HERE ALL JAVASCRIPT NECESSARY IMPORTS -->
         <script src="./dist/bootstrap5/js/bootstrap.min.js"></script>
         <script src="./dist/custom/js/home-slider-manager.js"></script>
-        <script src="./dist/custom/js/input-validation.js"></script>
-        <script src="./dist/custom/js/wishlist-manager.js"></script>
-        <?php if(isset($userRole) && ($userRole == Role::BUYER || $userRole == Role::VENDOR)): ?>
-            // Initialize cart manager if user is logged in.
+        <script src="./dist/custom/js/slider-item-manager.js"></script>
+
+        <?php if(isset($userRole) && ($userRole == Role::BUYER)): ?>
+            // Initialize cart and wishlist managers if user is logged in as a buyer.
+            <script src="./dist/custom/js/wishlist-manager.js"></script>
             <script src="./dist/custom/js/cart-manager.js"></script>
+            <script src="./dist/custom/js/input-validation.js"></script>
         <?php endif; ?>
 
         <script>
