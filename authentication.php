@@ -1,11 +1,10 @@
 <?php
-// FIXME: QUESTI NON FUNZIONANO COSÌ!! O METTI __DIR__/PERCORSO OPPURE VISTO CHE SAI DOVE PRENDERLI ./PERCORSO
-require_once __DIR__ . '/../Models/Utente.php';
-require_once __DIR__ . '/../Models/UtenteCompratore.php';
-require_once __DIR__ . '/../Models/UtenteVenditore.php';
-require_once __DIR__ . '/../role.php';
-
-use Role;
+require_once __DIR__ . '/bootstrap.php'; // ADDED THIS MISSING REQUIRE
+require_once __DIR__ . '/Models/Utente.php';
+require_once __DIR__ . '/Models/UtenteCompratore.php';
+require_once __DIR__ . '/Models/UtenteVenditore.php';
+require_once __DIR__ . '/role.php';
+// REMOVED use Role because the use statement its not needed for non-namespaced files.
 use App\Models\Utente;
 use App\Models\UtenteCompratore;
 use App\Models\UtenteVenditore;
@@ -25,26 +24,25 @@ class AuthController
             header('Location: /login.php');
             exit;
         }
-
         $utente = Utente::where('email', $email)->first();
-
-        if ($utente && password_verify($password, $utente->password)) {
-            $_SESSION['user'] = $utente->toArray();
+        echo $utente;
+        // FOR THE MOMENT CHANGED FROM: password_verify($password, $utente->password) TO:
+        if ($utente && $password === $utente->password) {
+            $_SESSION['LoggedUser'] = $utente->toArray();
 
             if ($role === 'acquirente') {
-                if (!$utente->utenteCompratore) {
+                if (!$utente->utenteCompratore()) {
                     UtenteCompratore::create(['id_utente' => $utente->id]);
                 }
                 $_SESSION['UserRole'] = Role::BUYER;
             } else {
-                if (!$utente->utenteVenditore) {
+                if (!$utente->utenteVenditore()) {
                     UtenteVenditore::create(['id_utente' => $utente->id]);
                 }
                 $_SESSION['UserRole'] = Role::VENDOR;
             }
-            // TODO: MIRI AGGIUNGIMI IN SESSIONE UN IDENTIFICATORE DELL'UTENTE: $_SESSION['LoggedUserID'].
             // Una sola home dinamica
-            header('Location: /home.php');
+            header('Location: ./home.php');
             exit;
         }
 
@@ -108,14 +106,15 @@ class AuthController
         }
 
         // Una sola home dinamica
-        header('Location: /home.php');
+        header('Location: ./home.php');
         exit;
     }
 
     public function logout()
     {
         session_destroy();
-        header('Location: /index.php');
+        // BETTER GO ON LOGIN PAGE :D NOT INDEX
+        header('Location: ./index.php');
         exit;
     }
 }

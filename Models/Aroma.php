@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+require_once "./Models/BaseModel.php";
 
 class Aroma extends BaseModel
 {

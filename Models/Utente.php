@@ -1,12 +1,10 @@
 <?php
 
 namespace App\Models;
-
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+require_once "./Models/BaseModel.php";
 
 class Utente extends BaseModel
 {
-    use HasFactory;
     protected $table = 'utente';
 
 
@@ -25,7 +23,6 @@ class Utente extends BaseModel
 
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed'
     ];
 
     // Relazioni

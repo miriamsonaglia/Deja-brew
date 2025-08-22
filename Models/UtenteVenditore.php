@@ -1,5 +1,6 @@
 <?php
     namespace App\Models;
+    require_once "./Models/BaseModel.php";
 
     class UtenteVenditore extends BaseModel
     {

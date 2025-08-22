@@ -61,6 +61,7 @@
             border-right: none;
         }
     </style>
+    <?php session_start(); ?>
 </head>
 <body>
 
