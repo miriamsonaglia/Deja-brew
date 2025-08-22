@@ -5,10 +5,14 @@ require_once __DIR__ . '/Models/Prodotto.php';
 require_once __DIR__ . '/Models/Recensione.php';
 require_once __DIR__ . '/Models/UtenteVenditore.php';
 require_once __DIR__ . '/Models/Utente.php';
+require_once __DIR__ . '/role.php';
 
 use App\Models\Prodotto;
 use App\Models\Recensione;
 use App\Models\UtenteVenditore;
+
+session_start();
+$userRole = $_SESSION['UserRole'] ?? Role::GUEST;
 
 // ---------------------------------------------------------------------------------------------
 // VERSIONE ELOQUENT (quando il DB sarà popolato)
@@ -108,8 +112,21 @@ function renderStars($media) {
 </head>
 <body>
 
-<?php include __DIR__ . '/reusables/navbars/vendor-navbar.php'; ?>
-
+<?php 
+    switch($userRole) {
+        case Role::GUEST:
+            include('./reusables/navbars/empty-navbar.php');
+            break;
+        case Role::BUYER:
+            include('./reusables/navbars/buyer-navbar.php');
+            break;
+        case Role::VENDOR:
+            include('./reusables/navbars/vendor-navbar.php');
+            break;
+        default:
+            break;
+    }
+?>
 <div class="container my-5">
   <div class="row g-4">
     <!-- Carosello immagini -->
@@ -150,10 +167,11 @@ function renderStars($media) {
           <?php echo renderStars($mediaRecensioni); ?>
           <small class="text-muted ms-2">(<?php echo number_format($mediaRecensioni, 1); ?> / 5)</small>
         </div>
-        <a href="#" class="ms-3 text-decoration-none text-primary fw-semibold" data-bs-toggle="modal" data-bs-target="#modalRecensione">
-          <i class="bi bi-pencil-square"></i> Aggiungi una recensione
-        </a>
-
+        <?php if(isset($userRole) && ($userRole == Role::BUYER)): ?>
+          <a href="#" class="ms-3 text-decoration-none text-primary fw-semibold" data-bs-toggle="modal" data-bs-target="#modalRecensione">
+            <i class="bi bi-pencil-square"></i> Aggiungi una recensione
+          </a>
+        <?php endif; ?>
       </div>
 
       <p class="text-muted">
@@ -170,31 +188,35 @@ function renderStars($media) {
 
       <p class="mt-3"><?php echo $prodotto->descrizione; ?></p>
 
-      <!-- SELETTORE QUANTITÀ -->
-      <div class="d-flex align-items-center mb-3" style="max-width: 160px;">
-        <button class="btn btn-outline-danger" id="btnDecrement">-</button>
-        <input type="text" id="quantita" class="form-control text-center mx-1" value="1" readonly>
-        <button class="btn btn-outline-success" id="btnIncrement">+</button>
-      </div>
+      <?php if(isset($userRole) && ($userRole == Role::BUYER)): ?>
+        <!-- SELETTORE QUANTITÀ -->
 
-      <!-- BOTTONI CARRELLO / ACQUISTA -->
-      <div class="d-flex gap-2">
-        <form method="POST" action="add-to-cart.php">
-          <input type="hidden" name="id_prodotto" value="<?php echo $prodotto->id; ?>">
-          <input type="hidden" id="quantitaInput" name="quantita" value="1">
-          <button type="submit" class="btn btn-success">
-            <i class="bi bi-cart-plus"></i> Aggiungi al carrello
-          </button>
-        </form>
+        <div class="d-flex align-items-center mb-3" style="max-width: 160px;">
+          <button class="btn btn-outline-danger" id="btnDecrement">-</button>
+          <input type="text" id="quantita" class="form-control text-center mx-1" value="1" readonly>
+          <button class="btn btn-outline-success" id="btnIncrement">+</button>
+        </div>
 
-        <form method="POST" action="checkout.php">
-          <input type="hidden" name="id_prodotto" value="<?php echo $prodotto->id; ?>">
-          <input type="hidden" id="quantitaAcquista" name="quantita" value="1">
-          <button type="submit" class="btn btn-warning">
-            <i class="bi bi-bag-check"></i> Acquista ora
-          </button>
-        </form>
-      </div>
+        <!-- BOTTONI CARRELLO / ACQUISTA -->
+        <div class="d-flex gap-2">
+          <form method="POST" action="add-to-cart.php">
+            <input type="hidden" name="id_prodotto" value="<?php echo $prodotto->id; ?>">
+            <input type="hidden" id="quantitaInput" name="quantita" value="1">
+            <button type="submit" class="btn btn-success">
+              <i class="bi bi-cart-plus"></i> Aggiungi al carrello
+            </button>
+          </form>
+
+          <form method="POST" action="checkout.php">
+            <input type="hidden" name="id_prodotto" value="<?php echo $prodotto->id; ?>">
+            <input type="hidden" id="quantitaAcquista" name="quantita" value="1">
+            <button type="submit" class="btn btn-warning">
+              <i class="bi bi-bag-check"></i> Acquista ora
+            </button>
+          </form>
+        </div>
+      <?php endif; ?>
+      
 
       <!-- PULSANTI CONDIVIDI / PREFERITI -->
       <div class="d-flex gap-2 mt-3">
@@ -202,12 +224,14 @@ function renderStars($media) {
           <i class="bi bi-link-45deg"></i> Condividi
         </button>
 
+      <?php if(isset($userRole) && ($userRole == Role::BUYER)): ?>
         <form method="POST" action="add-to-favorites.php">
           <input type="hidden" name="id_prodotto" value="<?php echo $prodotto->id; ?>">
           <button type="submit" class="btn btn-outline-danger">
             <i class="bi bi-heart"></i> Aggiungi ai preferiti
           </button>
         </form>
+      <?php endif; ?>
       </div>
 
     </div>
@@ -279,6 +303,7 @@ function renderStars($media) {
 <script src="./dist/custom/js/sidebar-manager.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+  <!-- I DON'T KNOW WHICH SCRIPTS ARE INTENDED FOR THE BUYER OR THE VENDOR, I'LL LEAVE THAT FOR YOU TO MANAGE-->
 <script>
   const btnCondividi = document.getElementById('btnCondividi');
   btnCondividi.addEventListener('click', () => {
