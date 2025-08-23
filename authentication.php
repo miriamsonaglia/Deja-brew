@@ -34,7 +34,10 @@ class AuthController
                 if (!$utente->utenteCompratore()) {
                     UtenteCompratore::create(['id_utente' => $utente->id]);
                 }
-                $_SESSION['UserRole'] = Role::BUYER;
+                // FIXME PLEASE: NEVER ASSIGN ENTIRE ENUM OR CLASS TO SESSION!! IT WILL CAUSE SERIALIZATION ERRORS!
+                // WRONG: $_SESSION['UserRole'] = Role::BUYER;
+                // RIGHT:
+                $_SESSION['UserRole'] = Role::BUYER->value;
             } else {
                 if (!$utente->utenteVenditore()) {
                     UtenteVenditore::create(['id_utente' => $utente->id]);
@@ -99,7 +102,7 @@ class AuthController
 
         if ($data['role'] === 'acquirente') {
             UtenteCompratore::create(['id_utente' => $utente->id]);
-            $_SESSION['UserRole'] = Role::BUYER;
+            $_SESSION['UserRole'] = Role::BUYER->value;
         } else {
             UtenteVenditore::create(['id_utente' => $utente->id]);
             $_SESSION['UserRole'] = Role::VENDOR;

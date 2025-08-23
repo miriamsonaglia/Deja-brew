@@ -18,6 +18,10 @@
             require_once __DIR__ . '/Models/Prodotto.php';
             // QUERY: READ ALL USER SHOPPING CART FROM DATABASE
             session_start();
+            if(!isset($_SESSION['LoggedUser']['id']) || $_SESSION['LoggedUserType'] != Role::BUYER){
+                header("Location: login.php");
+                exit;
+            }
             $user_cart = UtenteCompratore::where('id', $_SESSION['LoggedUserID'])->first()->carrello();
         ?>
     </head>

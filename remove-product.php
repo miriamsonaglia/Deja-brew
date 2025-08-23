@@ -1,5 +1,4 @@
 <?php
-// TODO: VALUTA SE CREARE UNA CLASSE DI GESTIONE DEL CARRELLO
 // Imposta intestazione per rispondere in JSON
 header('Content-Type: application/json');
 
@@ -10,7 +9,7 @@ header("Access-Control-Allow-Origin: *");
 $input = json_decode(file_get_contents('php://input'), true);
 
 // Verifica che i dati siano presenti
-if (!isset($input['productID'])) {
+if (!isset($input['productID']) || !isset($input['type'])) {
     http_response_code(400); // Bad Request
     echo json_encode(['error' => 'Dati mancanti']);
     exit;
@@ -20,23 +19,21 @@ $productID = htmlspecialchars($input['productID']);
 $type = htmlspecialchars($input['type'] ?? 'desideri'); // Default to 'desideri'
 
 // Validazione base
-if (empty($productID)) {
+if (empty($productID) || empty($type)) {
     http_response_code(400);
     echo json_encode(['error' => 'Dati non validi']);
     exit;
 }
 
+require_once('./bootstrap.php');
 require_once('./Models/Lista.php');
 use App\Models\Lista;
 
 session_start();
-$productInCart = Lista::find(
-    [
-        'id_utente_compratore' => $_SESSION['UserID'],
-        'id_prodotto' => $productID, 
-        'tipo' => $type
-    ]
-);
+$productInCart = Lista::where('id_utente_compratore', $_SESSION['LoggedUser']['id'])
+                    ->where('id_prodotto', $productID)
+                    ->where('tipo', $type)
+                    ->first();
 
 if($productInCart) {
     $productInCart->delete();

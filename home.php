@@ -11,10 +11,19 @@
             require_once __DIR__ . '/bootstrap.php';
             require_once __DIR__ . '/Models/Categoria.php';
             require_once __DIR__ . '/Models/Prodotto.php';
+            require_once __DIR__ . '/Models/Lista.php';
             require_once __DIR__ . '/role.php';
             use App\Models\Categoria;
             use App\Models\Prodotto;
+            use App\Models\Lista;
             session_start();
+            function wished($productID) {
+                $wishlist = Lista::where('id_utente_compratore', $_SESSION['LoggedUser']['id'])
+                                ->where('tipo', 'desideri')
+                                ->where('id_prodotto', $productID)
+                                ->first();
+                return $wishlist !== null;
+            }
             $userRole = $_SESSION['UserRole'] ?? Role::GUEST;
             $categories = Categoria::all();
         ?>
@@ -23,13 +32,13 @@
         <header><!-- ?? Possible header template ?? --></header>
         <?php 
             switch($userRole) {
-                case Role::GUEST:
+                case Role::GUEST->value:
                     include('./reusables/navbars/empty-navbar.php');
                     break;
-                case Role::BUYER:
+                case Role::BUYER->value:
                     include('./reusables/navbars/buyer-navbar.php');
                     break;
-                case Role::VENDOR:
+                case Role::VENDOR->value:
                     include('./reusables/navbars/vendor-navbar.php');
                     break;
                 default:
@@ -63,7 +72,7 @@
                                      alt="<?php echo htmlspecialchars($product->nome); ?>">
                                 <div class="product-name"><?php echo htmlspecialchars($product->nome); ?></div>
                                 <div class="product-price"><?php echo number_format($product->prezzo, 2); ?> €</div>
-                                <?php if(isset($userRole) && ($userRole == Role::BUYER)): ?>
+                                <?php if(isset($userRole) && ($userRole === Role::BUYER->value)): ?>
                                 <input type="number" 
                                        step="1" 
                                        value="0" 
@@ -78,8 +87,13 @@
                                 </button>
                                 <button class="wish-button" 
                                         data-product-id="<?php echo $product->id; ?>"
+                                <?php if(wished($product->id)): ?>
+                                        title="Rimuovi dalla wishlist">
+                                        <i class="bi bi-heart-fill"></i>
+                                    <?php else: ?>
                                         title="Aggiungi alla wishlist">
-                                    <i class="bi bi-heart"></i>
+                                        <i class="bi bi-heart"></i>
+                                    <?php endif; ?>
                                 </button>
                                 <?php endif; ?>
                             </li>
@@ -105,7 +119,7 @@
         <script src="./dist/custom/js/home-slider-manager.js"></script>
         <script src="./dist/custom/js/slider-item-manager.js"></script>
 
-        <?php if(isset($userRole) && ($userRole == Role::BUYER)): ?>
+        <?php if(isset($userRole) && ($userRole === Role::BUYER->value)): ?>
             // Initialize cart and wishlist managers if user is logged in as a buyer.
             <script src="./dist/custom/js/wishlist-manager.js"></script>
             <script src="./dist/custom/js/cart-manager.js"></script>

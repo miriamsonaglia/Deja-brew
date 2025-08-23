@@ -17,6 +17,11 @@
             // QUERY: READ ALL USER WISHLIST FROM DATABASE
             // TODO: This placeholder will generate error because it cannot be called statically,
             // on login we need to save the correct UtenteCompratore object in SESSION VARIABLE
+            session_start();
+            if(!isset($_SESSION['LoggedUser']['id']) || $_SESSION['UserRole'] != Role::BUYER){
+                header("Location: login.php");
+                exit;
+            }
             $user = new UtenteCompratore();
             $user_wishlist = $user->desideri();
             // $user_wishlist = Utente::where('id', $_SESSION['LoggedUserID'])->first()->desideri();
