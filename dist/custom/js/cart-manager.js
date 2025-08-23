@@ -8,19 +8,32 @@ document.querySelectorAll('.cart-button').forEach(button => {
         const quantity = parseInt(quantityInput.value) || 1;
         if (quantity > 0) {
             // MAKE LOGIC FOR AJAX CALL TO ADD ITEM TO CART
-            console.log(`Aggiunto al carrello: ${quantity} x ${productName} (ID: ${productId}) a €${productPrice.toFixed(2)} ciascuno.`);
+            fetch('./append-product.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ productID: productId, quantity: quantity, type: 'carrello'})
+            }).then((response) => {
+                if(!response.ok) {
+                    throw new Error('Network response was not ok');
+                } else {
+                    // Visual feedback
+                    this.style.backgroundColor = '#28a745';
+                    this.textContent = 'Aggiunto!';
+
+                    setTimeout(() => {
+                        this.style.backgroundColor = '';
+                        this.textContent = 'Aggiungi al carrello';
+                    }, 1500);
             
-            // Visual feedback
-            this.style.backgroundColor = '#28a745';
-            this.textContent = 'Aggiunto!';
-            
-            setTimeout(() => {
-                this.style.backgroundColor = '';
-                this.textContent = 'Aggiungi al carrello';
-            }, 1500);
-            
-            // Reset quantity
-            quantityInput.value = 0;
+                    // Reset quantity
+                    quantityInput.value = 0;
+                }
+                return response.json();
+            }).then((data) => {
+                console.log(data);
+            })
         } else {
             // Show error for invalid quantity
             quantityInput.style.borderColor = '#dc3545';
