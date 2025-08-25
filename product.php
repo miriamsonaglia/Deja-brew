@@ -6,10 +6,15 @@ require_once __DIR__ . '/Models/Recensione.php';
 require_once __DIR__ . '/Models/UtenteVenditore.php';
 require_once __DIR__ . '/Models/Utente.php';
 require_once __DIR__ . '/role.php';
+require_once __DIR__ . '/Models/Categoria.php';
+require_once __DIR__ . '/Models/Aroma.php';
 
 use App\Models\Prodotto;
 use App\Models\Recensione;
 use App\Models\UtenteVenditore;
+use App\Models\Categoria;
+use App\Models\Utente;
+use App\Models\Aroma;
 
 session_start();
 $userRole = $_SESSION['UserRole'] ?? Role::GUEST;
@@ -17,18 +22,19 @@ $userRole = $_SESSION['UserRole'] ?? Role::GUEST;
 // ---------------------------------------------------------------------------------------------
 // VERSIONE ELOQUENT (quando il DB sarà popolato)
 // ---------------------------------------------------------------------------------------------
-// $id = $_GET['id'] ?? 1;
-// $prodotto = Prodotto::find($id);
-// $immagini = [$prodotto->fotografia];
-// $mediaRecensioni = Recensione::where('id_prodotto', $id)->avg('stelle') ?? 0;
-// $venditore = UtenteVenditore::with('user')->find($prodotto->id_venditore);
-// $recensioni = Recensione::where('id_prodotto', $id)
-//     ->with('utente')
-//     ->get();
+ $id = $_GET['id'] ?? 1;
+ $prodotto = Prodotto::find($id);
+ $immagini = [$prodotto->fotografia];
+ $mediaRecensioni = Recensione::where('id_prodotto', $id)->avg('stelle') ?? 0;
+ $venditore = UtenteVenditore::with('user')->find($prodotto->id_venditore);
+ $recensioni = Recensione::where('id_prodotto', $id)
+     ->with('utente')
+     ->get();
 
 // ---------------------------------------------------------------------------------------------
 // MOCK (per testare ora senza DB)
 // ---------------------------------------------------------------------------------------------
+/*
 $prodotto = (object) [
     'id'          => 1,
     'nome'        => 'Caffè Arabica 100%',
@@ -82,6 +88,7 @@ $venditore = (object) [
         'username' => 'carlolatazza'
     ]
 ];
+*/
 
 // Funzione helper per generare stelline
 function renderStars($media) {

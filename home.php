@@ -68,33 +68,36 @@
                         <ul class="slider-list" id="<?php echo $sliderId; ?>-slider">
                             <?php foreach($products as $product): ?>
                             <li class="slider-object" data-product-id="<?php echo $product->id; ?>">
-                                <img src="<?php echo htmlspecialchars($product->fotografia); ?>" 
-                                     alt="<?php echo htmlspecialchars($product->nome); ?>">
-                                <div class="product-name"><?php echo htmlspecialchars($product->nome); ?></div>
+                                <a href="product.php?id=<?php echo $product->id; ?>" class="text-decoration-none text-dark">
+                                    <img src="<?php echo htmlspecialchars($product->fotografia); ?>" 
+                                        alt="<?php echo htmlspecialchars($product->nome); ?>">
+                                    <div class="product-name"><?php echo htmlspecialchars($product->nome); ?></div>
+                                </a>
                                 <div class="product-price"><?php echo number_format($product->prezzo, 2); ?> €</div>
-                                <?php if(isset($userRole) && ($userRole === Role::BUYER->value)): ?>
-                                <input type="number" 
-                                       step="1" 
-                                       value="0" 
-                                       min="0" 
-                                       class="quantity-input"
-                                       data-product-id="<?php echo $product->id; ?>">
-                                <button class="cart-button" 
-                                        data-product-id="<?php echo $product->id; ?>"
-                                        data-product-name="<?php echo htmlspecialchars($product->nome); ?>"
-                                        data-product-price="<?php echo $product->prezzo; ?>">
-                                    Aggiungi al carrello
-                                </button>
-                                <button class="wish-button" 
-                                        data-product-id="<?php echo $product->id; ?>"
-                                <?php if(wished($product->id)): ?>
-                                        title="Rimuovi dalla wishlist">
-                                        <i class="bi bi-heart-fill"></i>
-                                    <?php else: ?>
-                                        title="Aggiungi alla wishlist">
-                                        <i class="bi bi-heart"></i>
-                                    <?php endif; ?>
-                                </button>
+
+                                <?php if(isset($userRole) && ($userRole == Role::BUYER->value)): ?>
+                                    <input type="number" 
+                                        step="1" 
+                                        value="0" 
+                                        min="0" 
+                                        class="quantity-input"
+                                        data-product-id="<?php echo $product->id; ?>">
+                                    <button class="cart-button" 
+                                            data-product-id="<?php echo $product->id; ?>"
+                                            data-product-name="<?php echo htmlspecialchars($product->nome); ?>"
+                                            data-product-price="<?php echo $product->prezzo; ?>">
+                                        Aggiungi al carrello
+                                    </button>
+                                    <button class="wish-button" 
+                                            data-product-id="<?php echo $product->id; ?>"
+                                    <?php if(wished($product->id)): ?>
+                                            title="Rimuovi dalla wishlist">
+                                            <i class="bi bi-heart-fill"></i>
+                                        <?php else: ?>
+                                            title="Aggiungi alla wishlist">
+                                            <i class="bi bi-heart"></i>
+                                        <?php endif; ?>
+                                    </button>
                                 <?php endif; ?>
                             </li>
                             <?php endforeach; ?>
