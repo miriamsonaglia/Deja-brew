@@ -5,27 +5,33 @@ require_once __DIR__ . '/Models/Prodotto.php';
 require_once __DIR__ . '/Models/Recensione.php';
 require_once __DIR__ . '/Models/UtenteVenditore.php';
 require_once __DIR__ . '/Models/Utente.php';
+require_once __DIR__ . '/Models/Categoria.php';
+require_once __DIR__ . '/Models/Aroma.php';
+
 
 use App\Models\Prodotto;
 use App\Models\Recensione;
 use App\Models\UtenteVenditore;
+use App\Models\Categoria;
+use App\Models\Utente;
+use App\Models\Aroma;
 
 // ---------------------------------------------------------------------------------------------
 // VERSIONE ELOQUENT (quando il DB sarà popolato)
 // ---------------------------------------------------------------------------------------------
-// $id = $_GET['id'] ?? 1;
-// $prodotto = Prodotto::find($id);
-// $immagini = [$prodotto->fotografia];
-// $mediaRecensioni = Recensione::where('id_prodotto', $id)->avg('stelle') ?? 0;
-// $venditore = UtenteVenditore::with('user')->find($prodotto->id_venditore);
-// $recensioni = Recensione::where('id_prodotto', $id)
-//     ->with('utente')
-//     ->get();
+ $id = $_GET['id'] ?? 1;
+ $prodotto = Prodotto::find($id);
+ $immagini = [$prodotto->fotografia];
+ $mediaRecensioni = Recensione::where('id_prodotto', $id)->avg('stelle') ?? 0;
+ $venditore = UtenteVenditore::with('user')->find($prodotto->id_venditore);
+ $recensioni = Recensione::where('id_prodotto', $id)
+     ->with('utente')
+     ->get();
 
 // ---------------------------------------------------------------------------------------------
 // MOCK (per testare ora senza DB)
 // ---------------------------------------------------------------------------------------------
-$prodotto = (object) [
+/* $prodotto = (object) [
     'id'          => 1,
     'nome'        => 'Caffè Arabica 100%',
     'prezzo'      => 12.50,
@@ -78,6 +84,7 @@ $venditore = (object) [
         'username' => 'carlolatazza'
     ]
 ];
+*/
 
 // Funzione helper per generare stelline
 function renderStars($media) {
@@ -160,9 +167,9 @@ function renderStars($media) {
       <p><strong>Peso:</strong> <?php echo $prodotto->peso; ?> g</p>
       <p><strong>Provenienza:</strong> <?php echo $prodotto->provenienza; ?></p>
       <p><strong>Intensità:</strong> <?php echo $prodotto->intensita; ?>/10</p>
-      <p><strong>Aroma:</strong> <?php echo $prodotto->aroma; ?></p>
+      <p><strong>Aroma:</strong> <?php echo $prodotto->aroma->gusto; ?></p>
 
-      <p class="mt-3"><?php echo $prodotto->descrizione; ?></p>
+      <p class="mt-3"><?php echo $prodotto->categoria->descrizione; ?></p>
 
       <button id="btnCondividi" class="btn btn-outline-secondary">
         <i class="bi bi-link-45deg"></i> Condividi

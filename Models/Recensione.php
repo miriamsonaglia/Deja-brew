@@ -3,6 +3,10 @@
 namespace App\Models;
 require_once "./Models/BaseModel.php";
 
+use App\Models\Utente;
+use App\Models\Prodotto;
+
+
 class Recensione extends BaseModel
 {
     protected $table = 'recensione';

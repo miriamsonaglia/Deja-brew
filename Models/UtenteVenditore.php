@@ -9,7 +9,7 @@
 
         public function user()
         {
-            return $this->belongsTo(Utente::class);
+            return $this->belongsTo(Utente::class, 'id_utente');
         }
 
         public function prodotti()
