@@ -84,7 +84,7 @@ $carte = [
                     </select>
                 </div>
 
-                <button type="button" class="btn btn-link mb-3" id="aggiungiCarta">
+                <button type="button" class="btn btn-link mb-3" data-bs-toggle="modal" data-bs-target="#modalNuovaCarta">
                     <i class="bi bi-plus-circle"></i> Aggiungi nuova carta
                 </button>
 
@@ -102,6 +102,79 @@ $carte = [
 
     <div id="esitoPagamento" class="alert mt-4 d-none"></div>
 </div>
+
+<!-- Modal per inserimento nuova carta -->
+<div class="modal fade" id="modalNuovaCarta" tabindex="-1" aria-labelledby="modalNuovaCartaLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="formNuovaCarta">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalNuovaCartaLabel">Aggiungi nuova carta di credito</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="circuito" class="form-label">Circuito della carta</label>
+            <select id="circuito" class="form-select" required>
+              <option value="">Seleziona</option>
+              <option value="Visa">Visa</option>
+              <option value="MasterCard">MasterCard</option>
+              <option value="American Express">American Express</option>
+              <option value="Maestro">Maestro</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="numeroCarta" class="form-label">Numero carta</label>
+            <input type="text" class="form-control" id="numeroCarta" placeholder="1234 5678 9012 3456" required pattern="\d{4} \d{4} \d{4} \d{4}">
+          </div>
+          <div class="mb-3">
+            <label for="scadenza" class="form-label">Data scadenza</label>
+            <input type="month" class="form-control" id="scadenza" required>
+          </div>
+          <div class="mb-3">
+            <label for="cvvNuova" class="form-label">CVV</label>
+            <input type="password" class="form-control" id="cvvNuova" placeholder="***" required pattern="\d{3,4}">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Chiudi</button>
+          <button type="submit" class="btn btn-success  ">Aggiungi carta</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+// Gestione submit del form nuova carta
+document.getElementById('formNuovaCarta').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const circuito = document.getElementById('circuito').value;
+    const numero = document.getElementById('numeroCarta').value;
+    const scadenza = document.getElementById('scadenza').value;
+    const cvv = document.getElementById('cvvNuova').value;
+    
+    if(circuito && numero && scadenza && cvv) {
+        // Qui puoi aggiungere la chiamata AJAX per salvare la carta nel DB
+        alert('Carta aggiunta con successo! (demo)');
+
+        // Chiudi il modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('modalNuovaCarta'));
+        modal.hide();
+
+        // Aggiorna select con la nuova carta (demo)
+        const select = document.getElementById('carta');
+        const newOption = document.createElement('option');
+        newOption.value = Date.now(); // id fittizio
+        newOption.text = `${circuito} - **** **** **** ${numero.slice(-4)}`;
+        select.add(newOption);
+        select.value = newOption.value;
+    } else {
+        alert('Compila tutti i campi.');
+    }
+});
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>

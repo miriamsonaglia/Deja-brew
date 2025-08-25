@@ -62,8 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
 
-<?php include __DIR__ . '/reusables/navbars/buyer-navbar.php'; ?>
-<?php include __DIR__ . '/reusables/sidebar.php'; ?>
+<?php include __DIR__ . '/reusables/navbars/vendor-navbar.php'; ?>
 
 <div class="container form-section">
   <h2 class="mb-4 text-center fw-bold">Aggiungi un nuovo prodotto</h2>
