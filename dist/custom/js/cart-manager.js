@@ -1,13 +1,21 @@
+async function updateCartCount() {
+    fetch('./update-cart-count.php', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then((res) => res.json()).then((data) => {
+        document.querySelector('.cart-badge').innerHTML = data.count;
+    });
+}
+
 // Enhanced cart functionality
 document.querySelectorAll('.cart-button').forEach(button => {
     button.addEventListener('click', function() {
         const productId = this.getAttribute('data-product-id');
-        const productName = this.getAttribute('data-product-name');
-        const productPrice = parseFloat(this.getAttribute('data-product-price'));
         const quantityInput = this.parentElement.querySelector('.quantity-input');
         const quantity = parseInt(quantityInput.value) || 1;
         if (quantity > 0) {
-            // MAKE LOGIC FOR AJAX CALL TO ADD ITEM TO CART
             fetch('./append-product.php', {
                 method: 'POST',
                 headers: {
@@ -21,7 +29,7 @@ document.querySelectorAll('.cart-button').forEach(button => {
                     // Visual feedback
                     this.style.backgroundColor = '#28a745';
                     this.textContent = 'Aggiunto!';
-
+                    updateCartCount();
                     setTimeout(() => {
                         this.style.backgroundColor = '';
                         this.textContent = 'Aggiungi al carrello';

@@ -1,5 +1,4 @@
 <?php
-// TODO: VALUTA SE CREARE UNA CLASSE DI GESTIONE DEL CARRELLO
 // Imposta intestazione per rispondere in JSON
 header('Content-Type: application/json');
 

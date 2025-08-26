@@ -17,7 +17,7 @@
             
             <!-- Carrello -->
             <div class="cart-container">
-                <a href="#" class="cart-link">
+                <a href="./shopping-cart.php" class="cart-link">
                     <div class="cart-icon">
                         <i class="bi bi-cart"></i>
                     </div>
