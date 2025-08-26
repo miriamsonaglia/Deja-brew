@@ -191,7 +191,7 @@ function renderStars($media) {
       <p><strong>Peso:</strong> <?php echo $prodotto->peso; ?> g</p>
       <p><strong>Provenienza:</strong> <?php echo $prodotto->provenienza; ?></p>
       <p><strong>Intensità:</strong> <?php echo $prodotto->intensita; ?>/10</p>
-      <p><strong>Aroma:</strong> <?php echo $prodotto->aroma; ?></p>
+      <p><strong>Aroma:</strong> <?= $prodotto->aroma->gusto ?? 'N/A' ?></p>
 
       <p class="mt-3"><?php echo $prodotto->descrizione; ?></p>
 
