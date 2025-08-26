@@ -17,7 +17,7 @@ use App\Models\Utente;
 use App\Models\Aroma;
 
 session_start();
-$userRole = $_SESSION['UserRole'] ?? Role::GUEST;
+$userRole = $_SESSION['UserRole'] ?? Role::GUEST->value;
 
 // ---------------------------------------------------------------------------------------------
 // VERSIONE ELOQUENT (quando il DB sarà popolato)
@@ -121,13 +121,13 @@ function renderStars($media) {
 
 <?php 
     switch($userRole) {
-        case Role::GUEST:
+        case Role::GUEST->value:
             include('./reusables/navbars/empty-navbar.php');
             break;
-        case Role::BUYER:
+        case Role::BUYER->value:
             include('./reusables/navbars/buyer-navbar.php');
             break;
-        case Role::VENDOR:
+        case Role::VENDOR->value:
             include('./reusables/navbars/vendor-navbar.php');
             break;
         default:
@@ -195,7 +195,7 @@ function renderStars($media) {
 
       <p class="mt-3"><?php echo $prodotto->descrizione; ?></p>
 
-      <?php if(isset($userRole) && ($userRole == Role::BUYER)): ?>
+      <?php if(isset($userRole) && ($userRole == Role::BUYER->value)): ?>
         <!-- SELETTORE QUANTITÀ -->
 
         <div class="d-flex align-items-center mb-3" style="max-width: 160px;">
@@ -231,7 +231,7 @@ function renderStars($media) {
           <i class="bi bi-link-45deg"></i> Condividi
         </button>
 
-      <?php if(isset($userRole) && ($userRole == Role::BUYER)): ?>
+      <?php if(isset($userRole) && ($userRole == Role::BUYER->value)): ?>
         <form method="POST" action="add-to-favorites.php">
           <input type="hidden" name="id_prodotto" value="<?php echo $prodotto->id; ?>">
           <button type="submit" class="btn btn-outline-danger">
