@@ -2,10 +2,15 @@
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/bootstrap.php';
 require_once __DIR__ . '/Models/Utente.php';
+require_once __DIR__ . '/Models/UtenteCompratore.php';
 require_once __DIR__ . '/Models/CartaDiCredito.php';
+require_once __DIR__ . '/Models/Lista.php';
+require_once __DIR__ . '/Models/Prodotto.php';
 
 use App\Models\Utente;
+use App\Models\UtenteCompratore;
 use App\Models\CartaDiCredito;
+use App\Models\Lista;
 
 session_start();
 
@@ -18,6 +23,24 @@ $idUtente = $_SESSION['LoggedUser']['id'];
 $utente = Utente::find($idUtente);
 if (!$utente) die("Utente non trovato.");
 
+// --- Recupero utente compratore senza usare la relazione ---
+$utenteCompratore = UtenteCompratore::where('id_utente', $idUtente)->first();
+if (!$utenteCompratore) die("Utente compratore non trovato.");
+
+// --- Recupero prodotti nel carrello ---
+$carrello = Lista::where('id_utente_compratore', $utenteCompratore->id)
+                 ->carrello()
+                 ->with('prodotto')
+                 ->get();
+
+// Calcolo totale
+$totale = $carrello->sum(function($item) {
+    return $item->quantita * $item->prodotto->prezzo;
+});
+
+// --- Recupero carte di credito ---
+$carte = CartaDiCredito::where('id_utente', $idUtente)->get();
+
 // --- Gestione aggiunta nuova carta ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_card') {
     $circuito = $_POST['circuito'] ?? '';
@@ -25,34 +48,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_c
     $scadenza = $_POST['scadenza'] ?? '';
     $cvv = $_POST['cvv'] ?? '';
 
-    if ($circuito && $numero && $scadenza && $cvv) {
+    $errors = [];
+
+    // Validazioni lato server
+    if (!$circuito) $errors[] = "Seleziona il circuito della carta.";
+    $numeroPulito = str_replace(' ', '', $numero);
+    if (!preg_match('/^\d{16}$/', $numeroPulito)) $errors[] = "Numero carta non valido.";
+    if (!preg_match('/^\d{3,4}$/', $cvv)) $errors[] = "CVV non valido.";
+    if (strtotime($scadenza . '-01') < strtotime(date('Y-m-01'))) $errors[] = "La data di scadenza deve essere futura.";
+
+    if ($errors) {
+        $_SESSION['error'] = implode('<br>', $errors);
+    } else {
         $carta = new CartaDiCredito();
         $carta->id_utente = $idUtente;
         $carta->circuito_pagamento = $circuito;
-        $carta->codice_carta = $numero;
+        $carta->codice_carta = $numeroPulito;
         $carta->cvv_carta = $cvv;
-        $carta->scadenza = $scadenza; // assicurati che la colonna esista nel DB
+        $carta->scadenza = $scadenza;
         $carta->save();
         $_SESSION['success'] = "Carta aggiunta con successo!";
-    } else {
-        $_SESSION['error'] = "Compila tutti i campi.";
     }
 
     header('Location: checkout.php');
     exit;
 }
-
-// --- Recupera carte aggiornate dell'utente ---
-$carte = $utente->carteDiCredito()->get();
-
-// --- MOCK carrello e totale ordine (solo demo, commentato) ---
-/*
-$totale = 25.50;
-$carrello = [
-    ['nome' => 'Caffè Arabica', 'quantita' => 1, 'prezzo' => 12.50],
-    ['nome' => 'Caffè Robusta', 'quantita' => 1, 'prezzo' => 13.00],
-];
-*/
 ?>
 
 <!DOCTYPE html>
@@ -84,11 +104,11 @@ $carrello = [
     <div class="card mb-4 shadow-sm">
         <div class="card-header fw-bold">Riepilogo ordine</div>
         <ul class="list-group list-group-flush">
-            <?php if (!empty($carrello ?? null)): ?>
+            <?php if ($carrello->count() > 0): ?>
                 <?php foreach ($carrello as $item): ?>
                     <li class="list-group-item d-flex justify-content-between">
-                        <span><?= $item['nome'] . ' x ' . $item['quantita'] ?></span>
-                        <span><?= number_format($item['prezzo'], 2) ?> €</span>
+                        <span><?= $item->prodotto->nome ?> x <?= $item->quantita ?></span>
+                        <span><?= number_format($item->quantita * $item->prodotto->prezzo, 2) ?> €</span>
                     </li>
                 <?php endforeach; ?>
                 <li class="list-group-item d-flex justify-content-between fw-bold">
@@ -105,14 +125,14 @@ $carrello = [
     <div class="card shadow-sm">
         <div class="card-header fw-bold">Metodo di pagamento</div>
         <div class="card-body">
-            <form id="checkoutForm" method="POST">
+            <form id="checkoutForm">
                 <div class="mb-3">
                     <label for="carta" class="form-label">Seleziona carta di credito</label>
-                    <select class="form-select" id="carta" name="carta" required>
+                    <select class="form-select" id="carta" required>
                         <?php if ($carte->count() > 0): ?>
                             <?php foreach ($carte as $carta): ?>
                                 <option value="<?= $carta->id ?>">
-                                    <?= $carta->circuito_pagamento . ' - **** **** **** ' . substr($carta->codice_carta, -4) ?>
+                                    <?= $carta->circuito_pagamento ?> - **** **** **** <?= substr($carta->codice_carta, -4) ?>
                                 </option>
                             <?php endforeach; ?>
                         <?php else: ?>
@@ -127,17 +147,15 @@ $carrello = [
 
                 <div class="mb-3">
                     <label for="cvv" class="form-label">CVV</label>
-                    <input type="password" class="form-control" id="cvv" name="cvv" placeholder="***" required>
+                    <input type="password" class="form-control" id="cvv" placeholder="***" required>
                 </div>
 
                 <button type="submit" class="btn btn-success btn-lg">
-                    <i class="bi bi-credit-card"></i> Paga
+                    <i class="bi bi-credit-card"></i> Paga <?= number_format($totale, 2) ?> €
                 </button>
             </form>
         </div>
     </div>
-
-    <div id="esitoPagamento" class="alert mt-4 d-none"></div>
 </div>
 
 <!-- Modal nuova carta -->
@@ -192,15 +210,18 @@ document.getElementById('checkoutForm').addEventListener('submit', function(e) {
     const carta = document.getElementById('carta').value;
     const cvv = document.getElementById('cvv').value;
 
-    const esito = document.getElementById('esitoPagamento');
+    const esito = document.getElementById('esitoPagamento') || document.createElement('div');
+    esito.id = 'esitoPagamento';
+    esito.className = 'alert mt-4';
     if(carta && cvv) {
-        esito.className = 'alert alert-success mt-4';
+        esito.classList.add('alert-success');
         esito.textContent = 'Pagamento effettuato con successo!';
     } else {
-        esito.className = 'alert alert-danger mt-4';
+        esito.classList.add('alert-danger');
         esito.textContent = 'Errore: compilare tutti i campi.';
     }
-    esito.classList.remove('d-none');
+
+    document.querySelector('.container').appendChild(esito);
 });
 </script>
 
