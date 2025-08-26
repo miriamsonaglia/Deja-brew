@@ -174,7 +174,7 @@ function renderStars($media) {
           <?php echo renderStars($mediaRecensioni); ?>
           <small class="text-muted ms-2">(<?php echo number_format($mediaRecensioni, 1); ?> / 5)</small>
         </div>
-        <?php if(isset($userRole) && ($userRole == Role::BUYER)): ?>
+        <?php if(isset($userRole) && ($userRole == Role::BUYER->value)): ?>
           <a href="#" class="ms-3 text-decoration-none text-primary fw-semibold" data-bs-toggle="modal" data-bs-target="#modalRecensione">
             <i class="bi bi-pencil-square"></i> Aggiungi una recensione
           </a>

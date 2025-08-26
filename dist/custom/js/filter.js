@@ -1,6 +1,6 @@
 class Filter {
     constructor() {
-        this.filters = {};
+        this.elements = document.querySelectorAll('.slider-object');
     }
 
     addFilter(name, callback) {
