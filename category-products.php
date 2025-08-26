@@ -10,9 +10,11 @@
             require_once __DIR__ . '/bootstrap.php';
             require_once __DIR__ . '/Models/Categoria.php';
             require_once __DIR__ . '/Models/Prodotto.php';
+            require_once __DIR__ . '/Models/Aroma.php';
             require_once __DIR__ . '/role.php';
             use App\Models\Prodotto;
             use App\Models\Categoria;
+            use App\Models\Aroma;
             session_start();
             $userRole = $_SESSION['UserRole'] ?? Role::GUEST;
             // READ QUERY: ALL PRODUCTS OF THE CHOSEN CATEGORY
@@ -52,7 +54,11 @@
                     <div class="product-grid-container">
                         <ul class="product-grid">
                             <?php foreach($products as $product): ?>
-                            <li class="slider-object" data-product-id="<?php echo $product->id; ?>">
+                            <li class="slider-object"
+                                data-product-id="<?php echo $product->id;?>"
+                                data-product-name="<?php echo htmlspecialchars($product->nome); ?>"
+                                data-product-price="<?php echo $product->prezzo; ?>"
+                                data-product-aroma="<?php echo htmlspecialchars($product->aroma ? $product->aroma->gusto : ''); ?>">
                                 <img src="<?php echo htmlspecialchars($product->fotografia); ?>" 
                                      alt="<?php echo htmlspecialchars($product->nome); ?>">
                                 <div class="product-name"><?php echo htmlspecialchars($product->nome); ?></div>
@@ -83,7 +89,7 @@
                 </div>
             </div>
         </main>
-        <!-- Filters Sidebar -->
+        <!-- Filters Sidebar - VERSIONE SEMPLIFICATA -->
         <aside class="filters-sidebar" id="filtersSidebar">
             <div class="filters-header">
                 <h3>Filtri</h3>
@@ -91,8 +97,34 @@
                     <i class="bi bi-x"></i>
                 </button>
             </div>
-            
+
             <div class="filters-content">
+                <!-- Aromi Filter -->
+                <div class="filter-group">
+                    <h4 class="filter-title">Aroma</h4>
+                    <select id="aromaFilter" class="form-select">
+                        <option value="">Tutti gli aromi</option>
+                        <?php
+                        // Ottieni tutti gli aromi unici dai prodotti (usando Collection di Laravel)
+                        $aromi = $products->pluck('aroma')
+                                         ->filter()
+                                         ->unique()
+                                         ->sort()
+                                         ->values();
+
+                        foreach($aromi as $aroma): 
+                            if(!empty($aroma)):
+                        ?>
+                            <option value="<?php echo htmlspecialchars($aroma); ?>">
+                                <?php echo htmlspecialchars($aroma->gusto); ?>
+                            </option>
+                        <?php 
+                            endif;
+                        endforeach; 
+                        ?>
+                    </select>
+                </div>
+                    
                 <!-- Price Range Filter -->
                 <div class="filter-group">
                     <h4 class="filter-title">Prezzo</h4>
@@ -102,62 +134,21 @@
                             <span>-</span>
                             <input type="number" id="maxPrice" placeholder="Max €" min="0" step="0.01">
                         </div>
-                        <div class="price-range-display">
-                            <span id="priceRangeText">Tutti i prezzi</span>
-                        </div>
                     </div>
                 </div>
-
-                <!-- Availability Filter -->
-                <div class="filter-group">
-                    <h4 class="filter-title">Disponibilità</h4>
-                    <div class="filter-options">
-                        <label class="filter-checkbox">
-                            <input type="checkbox" id="inStock" checked>
-                            <span class="checkmark"></span>
-                            Solo prodotti disponibili
-                        </label>
-                    </div>
-                </div>
-
+                    
                 <!-- Sort Options -->
                 <div class="filter-group">
                     <h4 class="filter-title">Ordina per</h4>
-                    <div class="filter-options">
-                        <label class="filter-radio">
-                            <input type="radio" name="sortBy" value="default" checked>
-                            <span class="radiomark"></span>
-                            Predefinito
-                        </label>
-                        <label class="filter-radio">
-                            <input type="radio" name="sortBy" value="price-low">
-                            <span class="radiomark"></span>
-                            Prezzo: dal più basso
-                        </label>
-                        <label class="filter-radio">
-                            <input type="radio" name="sortBy" value="price-high">
-                            <span class="radiomark"></span>
-                            Prezzo: dal più alto
-                        </label>
-                        <label class="filter-radio">
-                            <input type="radio" name="sortBy" value="name">
-                            <span class="radiomark"></span>
-                            Nome A-Z
-                        </label>
-                    </div>
+                    <select id="sortBy" class="form-select">
+                        <option value="default">Predefinito</option>
+                        <option value="name-az">Nome A-Z</option>
+                        <option value="name-za">Nome Z-A</option>
+                        <option value="price-low">Prezzo: dal più basso</option>
+                        <option value="price-high">Prezzo: dal più alto</option>
+                    </select>
                 </div>
-
-                <!-- Search Filter -->
-                <div class="filter-group">
-                    <h4 class="filter-title">Cerca prodotto</h4>
-                    <div class="search-filter">
-                        <input type="text" id="productSearch" placeholder="Nome prodotto...">
-                        <button type="button" id="clearSearch">
-                            <i class="bi bi-x"></i>
-                        </button>
-                    </div>
-                </div>
-
+                    
                 <!-- Filter Actions -->
                 <div class="filter-actions">
                     <button class="btn-apply-filters" id="applyFilters">
@@ -167,10 +158,10 @@
                         Pulisci Tutto
                     </button>
                 </div>
-
+                    
                 <!-- Results Counter -->
                 <div class="results-counter">
-                    <span id="resultsCount"><?php echo count($products); ?> prodotti trovati</span>
+                    <span id="resultsCount"><?php echo $products->count(); ?> prodotti trovati</span>
                 </div>
             </div>
         </aside>
