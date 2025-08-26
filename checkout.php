@@ -1,40 +1,58 @@
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/Models/Utente.php';
 require_once __DIR__ . '/Models/CartaDiCredito.php';
 
+use App\Models\Utente;
 use App\Models\CartaDiCredito;
 
-// MOCK utente e carrello
-$totale = 25.50; // esempio totale ordine
+session_start();
+
+// --- Controllo utente loggato ---
+if (!isset($_SESSION['LoggedUser'])) {
+    die("Devi effettuare il login per accedere al checkout.");
+}
+
+$idUtente = $_SESSION['LoggedUser']['id'];
+$utente = Utente::find($idUtente);
+if (!$utente) die("Utente non trovato.");
+
+// --- Gestione aggiunta nuova carta ---
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_card') {
+    $circuito = $_POST['circuito'] ?? '';
+    $numero = $_POST['numero'] ?? '';
+    $scadenza = $_POST['scadenza'] ?? '';
+    $cvv = $_POST['cvv'] ?? '';
+
+    if ($circuito && $numero && $scadenza && $cvv) {
+        $carta = new CartaDiCredito();
+        $carta->id_utente = $idUtente;
+        $carta->circuito_pagamento = $circuito;
+        $carta->codice_carta = $numero;
+        $carta->cvv_carta = $cvv;
+        $carta->scadenza = $scadenza; // assicurati che la colonna esista nel DB
+        $carta->save();
+        $_SESSION['success'] = "Carta aggiunta con successo!";
+    } else {
+        $_SESSION['error'] = "Compila tutti i campi.";
+    }
+
+    header('Location: checkout.php');
+    exit;
+}
+
+// --- Recupera carte aggiornate dell'utente ---
+$carte = $utente->carteDiCredito()->get();
+
+// --- MOCK carrello e totale ordine (solo demo, commentato) ---
+/*
+$totale = 25.50;
 $carrello = [
     ['nome' => 'Caffè Arabica', 'quantita' => 1, 'prezzo' => 12.50],
     ['nome' => 'Caffè Robusta', 'quantita' => 1, 'prezzo' => 13.00],
 ];
-
-
-// VERSIONE ELOQUENT (quando il DB sarà popolato)
-
-// $idUtente = 1; // esempio ID utente loggato
-// $carte = CartaDiCredito::where('id_utente', $idUtente)->get();
-
-// ---------------------------------------------------------------------------
-
-// MOCK carte di credito
-$carte = [
-    (object)[
-        'id' => 1,
-        'circuito_pagamento' => 'Visa',
-        'codice_carta' => '**** **** **** 1234',
-        'cvv_carta' => '***'
-    ],
-    (object)[
-        'id' => 2,
-        'circuito_pagamento' => 'MasterCard',
-        'codice_carta' => '**** **** **** 5678',
-        'cvv_carta' => '***'
-    ]
-];
+*/
 ?>
 
 <!DOCTYPE html>
@@ -51,20 +69,35 @@ $carte = [
 <div class="container my-5">
     <h2 class="mb-4">Checkout</h2>
 
+    <!-- Messaggi -->
+    <?php if (isset($_SESSION['success'])): ?>
+        <div class="alert alert-success"><?= $_SESSION['success'] ?></div>
+        <?php unset($_SESSION['success']); ?>
+    <?php endif; ?>
+
+    <?php if (isset($_SESSION['error'])): ?>
+        <div class="alert alert-danger"><?= $_SESSION['error'] ?></div>
+        <?php unset($_SESSION['error']); ?>
+    <?php endif; ?>
+
     <!-- Carrello -->
     <div class="card mb-4 shadow-sm">
         <div class="card-header fw-bold">Riepilogo ordine</div>
         <ul class="list-group list-group-flush">
-            <?php foreach ($carrello as $item): ?>
-            <li class="list-group-item d-flex justify-content-between">
-                <span><?php echo $item['nome'] . ' x ' . $item['quantita']; ?></span>
-                <span><?php echo number_format($item['prezzo'], 2); ?> €</span>
-            </li>
-            <?php endforeach; ?>
-            <li class="list-group-item d-flex justify-content-between fw-bold">
-                <span>Totale</span>
-                <span><?php echo number_format($totale, 2); ?> €</span>
-            </li>
+            <?php if (!empty($carrello ?? null)): ?>
+                <?php foreach ($carrello as $item): ?>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span><?= $item['nome'] . ' x ' . $item['quantita'] ?></span>
+                        <span><?= number_format($item['prezzo'], 2) ?> €</span>
+                    </li>
+                <?php endforeach; ?>
+                <li class="list-group-item d-flex justify-content-between fw-bold">
+                    <span>Totale</span>
+                    <span><?= number_format($totale, 2) ?> €</span>
+                </li>
+            <?php else: ?>
+                <li class="list-group-item text-center">Il carrello è vuoto.</li>
+            <?php endif; ?>
         </ul>
     </div>
 
@@ -72,15 +105,19 @@ $carte = [
     <div class="card shadow-sm">
         <div class="card-header fw-bold">Metodo di pagamento</div>
         <div class="card-body">
-            <form id="checkoutForm">
+            <form id="checkoutForm" method="POST">
                 <div class="mb-3">
                     <label for="carta" class="form-label">Seleziona carta di credito</label>
-                    <select class="form-select" id="carta">
-                        <?php foreach ($carte as $carta): ?>
-                        <option value="<?php echo $carta->id; ?>">
-                            <?php echo $carta->circuito_pagamento . ' - ' . $carta->codice_carta; ?>
-                        </option>
-                        <?php endforeach; ?>
+                    <select class="form-select" id="carta" name="carta" required>
+                        <?php if ($carte->count() > 0): ?>
+                            <?php foreach ($carte as $carta): ?>
+                                <option value="<?= $carta->id ?>">
+                                    <?= $carta->circuito_pagamento . ' - **** **** **** ' . substr($carta->codice_carta, -4) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <option value="">Nessuna carta disponibile</option>
+                        <?php endif; ?>
                     </select>
                 </div>
 
@@ -90,11 +127,11 @@ $carte = [
 
                 <div class="mb-3">
                     <label for="cvv" class="form-label">CVV</label>
-                    <input type="password" class="form-control" id="cvv" placeholder="***">
+                    <input type="password" class="form-control" id="cvv" name="cvv" placeholder="***" required>
                 </div>
 
                 <button type="submit" class="btn btn-success btn-lg">
-                    <i class="bi bi-credit-card"></i> Paga <?php echo number_format($totale, 2); ?> €
+                    <i class="bi bi-credit-card"></i> Paga
                 </button>
             </form>
         </div>
@@ -103,11 +140,12 @@ $carte = [
     <div id="esitoPagamento" class="alert mt-4 d-none"></div>
 </div>
 
-<!-- Modal per inserimento nuova carta -->
+<!-- Modal nuova carta -->
 <div class="modal fade" id="modalNuovaCarta" tabindex="-1" aria-labelledby="modalNuovaCartaLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form id="formNuovaCarta">
+      <form id="formNuovaCarta" method="POST" action="checkout.php">
+        <input type="hidden" name="action" value="add_card">
         <div class="modal-header">
           <h5 class="modal-title" id="modalNuovaCartaLabel">Aggiungi nuova carta di credito</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
@@ -115,7 +153,7 @@ $carte = [
         <div class="modal-body">
           <div class="mb-3">
             <label for="circuito" class="form-label">Circuito della carta</label>
-            <select id="circuito" class="form-select" required>
+            <select id="circuito" name="circuito" class="form-select" required>
               <option value="">Seleziona</option>
               <option value="Visa">Visa</option>
               <option value="MasterCard">MasterCard</option>
@@ -125,59 +163,30 @@ $carte = [
           </div>
           <div class="mb-3">
             <label for="numeroCarta" class="form-label">Numero carta</label>
-            <input type="text" class="form-control" id="numeroCarta" placeholder="1234 5678 9012 3456" required pattern="\d{4} \d{4} \d{4} \d{4}">
+            <input type="text" id="numeroCarta" name="numero" class="form-control" placeholder="1234 5678 9012 3456" required pattern="\d{4} \d{4} \d{4} \d{4}">
           </div>
           <div class="mb-3">
             <label for="scadenza" class="form-label">Data scadenza</label>
-            <input type="month" class="form-control" id="scadenza" required>
+            <input type="month" id="scadenza" name="scadenza" class="form-control" required>
           </div>
           <div class="mb-3">
             <label for="cvvNuova" class="form-label">CVV</label>
-            <input type="password" class="form-control" id="cvvNuova" placeholder="***" required pattern="\d{3,4}">
+            <input type="password" id="cvvNuova" name="cvv" class="form-control" placeholder="***" required pattern="\d{3,4}">
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Chiudi</button>
-          <button type="submit" class="btn btn-success  ">Aggiungi carta</button>
+          <button type="submit" class="btn btn-success">Aggiungi carta</button>
         </div>
       </form>
     </div>
   </div>
 </div>
 
-<script>
-// Gestione submit del form nuova carta
-document.getElementById('formNuovaCarta').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const circuito = document.getElementById('circuito').value;
-    const numero = document.getElementById('numeroCarta').value;
-    const scadenza = document.getElementById('scadenza').value;
-    const cvv = document.getElementById('cvvNuova').value;
-    
-    if(circuito && numero && scadenza && cvv) {
-        // Qui puoi aggiungere la chiamata AJAX per salvare la carta nel DB
-        alert('Carta aggiunta con successo! (demo)');
-
-        // Chiudi il modal
-        const modal = bootstrap.Modal.getInstance(document.getElementById('modalNuovaCarta'));
-        modal.hide();
-
-        // Aggiorna select con la nuova carta (demo)
-        const select = document.getElementById('carta');
-        const newOption = document.createElement('option');
-        newOption.value = Date.now(); // id fittizio
-        newOption.text = `${circuito} - **** **** **** ${numero.slice(-4)}`;
-        select.add(newOption);
-        select.value = newOption.value;
-    } else {
-        alert('Compila tutti i campi.');
-    }
-});
-</script>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
+// Demo pagamento client-side
 document.getElementById('checkoutForm').addEventListener('submit', function(e) {
     e.preventDefault();
     const carta = document.getElementById('carta').value;
@@ -192,11 +201,6 @@ document.getElementById('checkoutForm').addEventListener('submit', function(e) {
         esito.textContent = 'Errore: compilare tutti i campi.';
     }
     esito.classList.remove('d-none');
-});
-
-// Pulsante aggiungi nuova carta (apre prompt per demo)
-document.getElementById('aggiungiCarta').addEventListener('click', function() {
-    alert("Qui potrai aprire un form per aggiungere una nuova carta.");
 });
 </script>
 
