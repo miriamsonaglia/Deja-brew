@@ -37,7 +37,29 @@ $productInCart->id_utente_compratore = $_SESSION['LoggedUser']['id'];
 $productInCart->id_prodotto = $productID;
 $productInCart->tipo = $type;
 $productInCart->quantita = $quantity;
-$productInCart->save();
+try {
+    $productInCart->save();
+} catch (Exception $e) {
+    $existingProduct = Lista::where([
+        'id_utente_compratore' => $productInCart->id_utente_compratore,
+        'id_prodotto' => $productInCart->id_prodotto,
+        'tipo' => $productInCart->tipo
+    ])->first();
+    if ($existingProduct) {
+        $productInCart = $existingProduct;
+    } else {
+        http_response_code(500);
+        echo json_encode(['error' => 'Errore interno del server']);
+        exit;
+    }
+    // Aggiorna la quantità
+    $productInCart->update(['quantita' => $productInCart->quantita + $quantity], [
+        'id_utente_compratore' => $productInCart->id_utente_compratore,
+        'id_prodotto' => $productInCart->id_prodotto,
+        'tipo' => $productInCart->tipo
+    ]);
+}
+
 
 // Risposta al client
 echo json_encode([
