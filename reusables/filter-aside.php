@@ -16,10 +16,10 @@
                 <?php
                 // Ottieni tutti gli aromi unici dai prodotti (usando Collection di Laravel)
                 $aromi = $products->pluck('aroma')
-                                    ->filter()
-                                    ->unique()
-                                    ->sort()
-                                    ->values();
+                                  ->filter()
+                                  ->unique()
+                                  ->sort()
+                                  ->values();
 
                 foreach($aromi as $aroma): 
                     if(!empty($aroma)):
@@ -33,15 +33,53 @@
                 ?>
             </select>
         </div>
+
+        <!-- Provenienza Filter -->
+        <div class="filter-group">
+            <h4 class="filter-title">Provenienza</h4>
+            <select id="provenienzaFilter" class="form-select">
+                <option value="">Tutte le provenienze</option>
+                <?php
+                // Ottieni tutte le provenienze uniche dai prodotti
+                $provenienze = $products->pluck('provenienza')
+                                        ->filter()
+                                        ->unique()
+                                        ->sort()
+                                        ->values();
+
+                foreach($provenienze as $provenienza): 
+                    if(!empty($provenienza)):
+                ?>
+                    <option value="<?php echo htmlspecialchars($provenienza);?>">
+                        <?php echo htmlspecialchars($provenienza); ?>
+                    </option>
+                <?php 
+                    endif;
+                endforeach; 
+                ?>
+            </select>
+        </div>
             
         <!-- Price Range Filter -->
         <div class="filter-group">
             <h4 class="filter-title">Prezzo</h4>
             <div class="price-range">
                 <div class="price-inputs">
-                    <input type="number" id="minPrice" placeholder="Min €" min="0" step="0.01">
+                    <input type="number" id="minPrice" placeholder="Min €" min="0" step="0.10">
                     <span>-</span>
-                    <input type="number" id="maxPrice" placeholder="Max €" min="0" step="0.01">
+                    <input type="number" id="maxPrice" placeholder="Max €" min="0" step="0.10">
+                </div>
+            </div>
+        </div>
+
+         <!-- Weight Range Filter -->
+        <div class="filter-group">
+            <h4 class="filter-title">Peso (gr)</h4>
+            <div class="price-range">
+                <div class="price-inputs">
+                    <input type="number" id="minWeight" placeholder="Min gr" min="0" step="1">
+                    <span>-</span>
+                    <input type="number" id="maxWeight" placeholder="Max gr" min="0" step="1">
                 </div>
             </div>
         </div>
@@ -51,26 +89,18 @@
             <h4 class="filter-title">Ordina per</h4>
             <select id="sortBy" class="form-select">
                 <option value="default">Predefinito</option>
-                <option value="name-az">Nome A-Z</option>
-                <option value="name-za">Nome Z-A</option>
-                <option value="price-low">Prezzo: dal più basso</option>
-                <option value="price-high">Prezzo: dal più alto</option>
+                <option value="name-asc">Nome A-Z</option>
+                <option value="name-desc">Nome Z-A</option>
+                <option value="price-asc">Prezzo: dal più basso</option>
+                <option value="price-desc">Prezzo: dal più alto</option>
             </select>
         </div>
             
         <!-- Filter Actions -->
         <div class="filter-actions">
-            <button class="btn-apply-filters" id="applyFilters">
-                Applica Filtri
-            </button>
             <button class="btn-clear-filters" id="clearFilters">
                 Pulisci Tutto
             </button>
-        </div>
-            
-        <!-- Results Counter -->
-        <div class="results-counter">
-            <span id="resultsCount"><?php echo $products->count(); ?> prodotti trovati</span>
         </div>
     </div>
 </aside>

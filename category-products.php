@@ -57,7 +57,9 @@
                                 data-product-id="<?php echo $product->id;?>"
                                 data-product-name="<?php echo htmlspecialchars($product->nome); ?>"
                                 data-product-price="<?php echo $product->prezzo; ?>"
-                                data-product-aroma="<?php echo htmlspecialchars($product->aroma ? $product->aroma->gusto : ''); ?>">
+                                data-product-aroma="<?php echo htmlspecialchars($product->aroma ? $product->aroma->gusto : ''); ?>"
+                                data-product-provenienza="<?php echo htmlspecialchars($product->provenienza ?? ''); ?>"
+                                data-product-weight="<?php echo $product->peso ?? 0; ?>">
                                 <img src="<?php echo htmlspecialchars($product->fotografia); ?>" 
                                      alt="<?php echo htmlspecialchars($product->nome); ?>">
                                 <div class="product-name"><?php echo htmlspecialchars($product->nome); ?></div>
