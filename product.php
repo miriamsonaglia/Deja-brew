@@ -8,6 +8,7 @@ require_once __DIR__ . '/Models/Utente.php';
 require_once __DIR__ . '/role.php';
 require_once __DIR__ . '/Models/Categoria.php';
 require_once __DIR__ . '/Models/Aroma.php';
+require_once __DIR__ . '/utilities.php';
 
 use App\Models\Prodotto;
 use App\Models\Recensione;
@@ -30,65 +31,6 @@ $userRole = $_SESSION['UserRole'] ?? Role::GUEST->value;
  $recensioni = Recensione::where('id_prodotto', $id)
      ->with('utente')
      ->get();
-
-// ---------------------------------------------------------------------------------------------
-// MOCK (per testare ora senza DB)
-// ---------------------------------------------------------------------------------------------
-/*
-$prodotto = (object) [
-    'id'          => 1,
-    'nome'        => 'Caffè Arabica 100%',
-    'prezzo'      => 12.50,
-    'peso'        => 250,
-    'provenienza' => 'Colombia',
-    'tipo'        => 'Grani',
-    'intensita'   => 7,
-    'categoria'   => 'Espresso',
-    'aroma'       => 'Cioccolato',
-    'descrizione' => 'Un caffè dal gusto pieno e avvolgente, con note di cacao e frutta secca.',
-    'id_venditore'=> 42
-];
-$immagini = [
-    "https://upload.wikimedia.org/wikipedia/commons/4/45/A_small_cup_of_coffee.JPG",
-    "https://upload.wikimedia.org/wikipedia/commons/c/c5/Roasted_coffee_beans.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/d/d7/Stacked_coffee_cans.jpg"
-];
-
-$recensioni = [
-    (object) [
-        'utente' => (object)['nome' => 'Luca', 'cognome' => 'Bianchi'],
-        'stelle' => 5,
-        'testo'  => 'Ottimo caffè, gusto intenso!'
-    ],
-    (object) [
-        'utente' => (object)['nome' => 'Giulia', 'cognome' => 'Verdi'],
-        'stelle' => 4,
-        'testo'  => 'Molto buono ma un po’ forte per i miei gusti.'
-    ],
-    (object) [
-        'utente' => (object)['nome' => 'Andrea', 'cognome' => 'Neri'],
-        'stelle' => 3,
-        'testo'  => 'Nella media, mi aspettavo qualcosa di più.'
-    ],
-    (object) [
-        'utente' => (object)['nome' => 'Sara', 'cognome' => 'Fontana'],
-        'stelle' => 5,
-        'testo'  => 'Davvero eccezionale, lo ricomprerò!'
-    ],
-];
-
-$mediaRecensioni = 4.25;
-
-// MOCK venditore
-$venditore = (object) [
-    'id'   => 42,
-    'user' => (object) [
-        'nome'     => 'Carlo',
-        'cognome'  => 'Latazza',
-        'username' => 'carlolatazza'
-    ]
-];
-*/
 
 // Funzione helper per generare stelline
 function renderStars($media) {
@@ -116,6 +58,70 @@ function renderStars($media) {
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
   <link href="/dist/custom/css/style.css" rel="stylesheet">
+  
+  <style>
+    /* Custom styles to match home page functionality */
+    .product-card {
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      padding: 20px;
+      background: white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .quantity-input {
+      width: 80px;
+      text-align: center;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      padding: 6px;
+    }
+    
+    .cart-button, .wish-button {
+      padding: 8px 16px;
+      border-radius: 4px;
+      border: 1px solid;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+    
+    .cart-button {
+      background-color: #28a745;
+      color: white;
+      border-color: #28a745;
+    }
+    
+    .cart-button:hover {
+      background-color: #218838;
+      border-color: #1e7e34;
+    }
+    
+    .wish-button {
+      background-color: transparent;
+      color: #ff4444;
+      border-color: #ff4444;
+      padding: 8px 12px;
+      margin-left: 8px;
+    }
+    
+    .wish-button:hover {
+      background-color: rgba(255, 68, 68, 0.1);
+    }
+    
+    .product-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    
+    .quantity-container {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+  </style>
 </head>
 <body>
 
@@ -134,6 +140,7 @@ function renderStars($media) {
             break;
     }
 ?>
+
 <div class="container my-5">
   <div class="row g-4">
     <!-- Carosello immagini -->
@@ -157,92 +164,99 @@ function renderStars($media) {
 
     <!-- Dettagli prodotto -->
     <div class="col-md-6">
-      <h2 class="fw-bold"><?php echo $prodotto->nome; ?></h2>
+      <div class="product-card">
+        <h2 class="fw-bold product-name"><?php echo $prodotto->nome; ?></h2>
 
-      <!-- Nome venditore -->
-      <div class="mb-1">
-        <a href="vendor-profile.php?id=<?php echo $venditore->id; ?>" class="text-decoration-none">
-          <span class="fw-semibold text-primary">
-            <?php echo $venditore->user->nome . ' ' . $venditore->user->cognome; ?>
-          </span>
-        </a>
-      </div>
-
-      <!-- Stelle recensioni -->
-      <div class="mb-2 d-flex align-items-center gap-2">
-        <div>
-          <?php echo renderStars($mediaRecensioni); ?>
-          <small class="text-muted ms-2">(<?php echo number_format($mediaRecensioni, 1); ?> / 5)</small>
-        </div>
-        <?php if(isset($userRole) && ($userRole == Role::BUYER->value)): ?>
-          <a href="#" class="ms-3 text-decoration-none text-primary fw-semibold" data-bs-toggle="modal" data-bs-target="#modalRecensione">
-            <i class="bi bi-pencil-square"></i> Aggiungi una recensione
+        <!-- Nome venditore -->
+        <div class="mb-1">
+          <a href="vendor-profile.php?id=<?php echo $venditore->id; ?>" class="text-decoration-none">
+            <span class="fw-semibold text-primary">
+              <?php echo $venditore->user->nome . ' ' . $venditore->user->cognome; ?>
+            </span>
           </a>
-        <?php endif; ?>
-      </div>
-
-      <p class="text-muted">
-        <?php echo $prodotto->categoria; ?> • <?php echo $prodotto->tipo; ?>
-      </p>
-      <h3 class="text-success fw-bold mb-3">
-        <?php echo number_format($prodotto->prezzo, 2); ?> €
-      </h3>
-
-      <p><strong>Peso:</strong> <?php echo $prodotto->peso; ?> g</p>
-      <p><strong>Provenienza:</strong> <?php echo $prodotto->provenienza; ?></p>
-      <p><strong>Intensità:</strong> <?php echo $prodotto->intensita; ?>/10</p>
-      <p><strong>Aroma:</strong> <?= $prodotto->aroma->gusto ?? 'N/A' ?></p>
-
-      <p class="mt-3"><?php echo $prodotto->descrizione; ?></p>
-
-      <?php if(isset($userRole) && ($userRole == Role::BUYER->value)): ?>
-        <!-- SELETTORE QUANTITÀ -->
-
-        <div class="d-flex align-items-center mb-3" style="max-width: 160px;">
-          <button class="btn btn-outline-danger" id="btnDecrement">-</button>
-          <input type="text" id="quantita" class="form-control text-center mx-1" value="1" readonly>
-          <button class="btn btn-outline-success" id="btnIncrement">+</button>
         </div>
 
-        <!-- BOTTONI CARRELLO / ACQUISTA -->
-        <div class="d-flex gap-2">
-          <form method="POST" action="add-to-cart.php">
-            <input type="hidden" name="id_prodotto" value="<?php echo $prodotto->id; ?>">
-            <input type="hidden" id="quantitaInput" name="quantita" value="1">
-            <button type="submit" class="btn btn-success">
+        <!-- Stelle recensioni -->
+        <div class="mb-2 d-flex align-items-center gap-2">
+          <div>
+            <?php echo renderStars($mediaRecensioni); ?>
+            <small class="text-muted ms-2">(<?php echo number_format($mediaRecensioni, 1); ?> / 5)</small>
+          </div>
+          <?php if(isset($userRole) && ($userRole == Role::BUYER->value)): ?>
+            <a href="#" class="ms-3 text-decoration-none text-primary fw-semibold" data-bs-toggle="modal" data-bs-target="#modalRecensione">
+              <i class="bi bi-pencil-square"></i> Aggiungi una recensione
+            </a>
+          <?php endif; ?>
+        </div>
+
+        <p class="text-muted">
+          <?php echo $prodotto->categoria; ?> • <?php echo $prodotto->tipo; ?>
+        </p>
+        <h3 class="text-success fw-bold mb-3 product-price">
+          <?php echo number_format($prodotto->prezzo, 2); ?> €
+        </h3>
+
+        <p><strong>Peso:</strong> <?php echo $prodotto->peso; ?> g</p>
+        <p><strong>Provenienza:</strong> <?php echo $prodotto->provenienza; ?></p>
+        <p><strong>Intensità:</strong> <?php echo $prodotto->intensita; ?>/10</p>
+        <p><strong>Aroma:</strong> <?= $prodotto->aroma->gusto ?? 'N/A' ?></p>
+
+        <p class="mt-3"><?php echo $prodotto->descrizione; ?></p>
+
+        <?php if(isset($userRole) && ($userRole == Role::BUYER->value)): ?>
+          <!-- Actions compatible with JavaScript -->
+          <div class="product-actions">
+            <div class="quantity-container">
+              <label for="quantity-<?php echo $prodotto->id; ?>" class="form-label mb-0 me-2">Quantità:</label>
+              <input type="number" 
+                     step="1" 
+                     value="1" 
+                     min="1" 
+                     max="99"
+                     class="quantity-input"
+                     id="quantity-<?php echo $prodotto->id; ?>"
+                     data-product-id="<?php echo $prodotto->id; ?>">
+            </div>
+            
+            <button class="cart-button" 
+                    data-product-id="<?php echo $prodotto->id; ?>"
+                    data-product-name="<?php echo htmlspecialchars($prodotto->nome); ?>"
+                    data-product-price="<?php echo $prodotto->prezzo; ?>">
               <i class="bi bi-cart-plus"></i> Aggiungi al carrello
             </button>
-          </form>
-
-          <form method="POST" action="checkout.php">
-            <input type="hidden" name="id_prodotto" value="<?php echo $prodotto->id; ?>">
-            <input type="hidden" id="quantitaAcquista" name="quantita" value="1">
-            <button type="submit" class="btn btn-warning">
-              <i class="bi bi-bag-check"></i> Acquista ora
+            
+            <button class="wish-button" 
+                    data-product-id="<?php echo $prodotto->id; ?>"
+                    <?php if(wished($prodotto->id, $_SESSION['LoggedUser']['id'])): ?>
+                      title="Rimuovi dalla wishlist">
+                      <i class="bi bi-heart-fill"></i>
+                    <?php else: ?>
+                      title="Aggiungi alla wishlist">
+                      <i class="bi bi-heart"></i>
+                    <?php endif; ?>
             </button>
-          </form>
-        </div>
-      <?php endif; ?>
-      
+          </div>
 
-      <!-- PULSANTI CONDIVIDI / PREFERITI -->
-      <div class="d-flex gap-2 mt-3">
-        <button id="btnCondividi" class="btn btn-outline-secondary">
-          <i class="bi bi-link-45deg"></i> Condividi
-        </button>
+          <!-- Buy now button -->
+          <div class="mt-3">
+            <form method="POST" action="checkout.php" class="d-inline">
+              <input type="hidden" name="id_prodotto" value="<?php echo $prodotto->id; ?>">
+              <input type="hidden" id="buyNowQuantity" name="quantita" value="1">
+              <button type="submit" class="btn btn-warning">
+                <i class="bi bi-bag-check"></i> Acquista ora
+              </button>
+            </form>
+          </div>
+        <?php endif; ?>
 
-      <?php if(isset($userRole) && ($userRole == Role::BUYER->value)): ?>
-        <form method="POST" action="add-to-favorites.php">
-          <input type="hidden" name="id_prodotto" value="<?php echo $prodotto->id; ?>">
-          <button type="submit" class="btn btn-outline-danger">
-            <i class="bi bi-heart"></i> Aggiungi ai preferiti
+        <!-- PULSANTI CONDIVIDI -->
+        <div class="d-flex gap-2 mt-3">
+          <button id="btnCondividi" class="btn btn-outline-secondary">
+            <i class="bi bi-link-45deg"></i> Condividi
           </button>
-        </form>
-      <?php endif; ?>
+        </div>
       </div>
-
     </div>
-
   </div>
 </div>
 
@@ -279,7 +293,7 @@ function renderStars($media) {
       <div class="modal-body">
 
         <input type="hidden" name="id_prodotto" value="<?php echo $prodotto->id; ?>">
-        <input type="hidden" name="id_utente" value="<?php echo $_SESSION['user_id'] ?? 1; ?>"> <!-- da sessione -->
+        <input type="hidden" name="id_utente" value="<?php echo $_SESSION['user_id'] ?? 1; ?>">
 
         <!-- Selezione stelle -->
         <div class="mb-3">
@@ -306,89 +320,75 @@ function renderStars($media) {
   </div>
 </div>
 
-
+<!-- JavaScript imports -->
 <script src="./dist/custom/js/sidebar-manager.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-  <!-- I DON'T KNOW WHICH SCRIPTS ARE INTENDED FOR THE BUYER OR THE VENDOR, I'LL LEAVE THAT FOR YOU TO MANAGE-->
+<?php if(isset($userRole) && ($userRole === Role::BUYER->value)): ?>
+  <script src="./dist/custom/js/wishlist-manager.js"></script>
+  <script src="./dist/custom/js/cart-manager.js"></script>
+  <script src="./dist/custom/js/input-validation.js"></script>
+<?php endif; ?>
+
 <script>
-  const btnCondividi = document.getElementById('btnCondividi');
-  btnCondividi.addEventListener('click', () => {
-    navigator.clipboard.writeText(window.location.href).then(() => {
-      alert('Link copiato negli appunti!');
-    });
+// Share functionality
+document.getElementById('btnCondividi').addEventListener('click', () => {
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    alert('Link copiato negli appunti!');
   });
-</script>
+});
 
-<script>
-  const btnToggle = document.getElementById('btnToggleRecensioni');
-  if (btnToggle) {
-    btnToggle.addEventListener('click', () => {
-      const extra = document.querySelectorAll('.extra-recensione');
-      const isHidden = extra[0].classList.contains('d-none');
+// Reviews toggle functionality
+const btnToggle = document.getElementById('btnToggleRecensioni');
+if (btnToggle) {
+  btnToggle.addEventListener('click', () => {
+    const extra = document.querySelectorAll('.extra-recensione');
+    const isHidden = extra[0].classList.contains('d-none');
 
-      if (isHidden) {
-        // Mostra recensioni
-        extra.forEach(el => el.classList.remove('d-none'));
-        btnToggle.textContent = 'Nascondi';
+    if (isHidden) {
+      extra.forEach(el => el.classList.remove('d-none'));
+      btnToggle.textContent = 'Nascondi';
+    } else {
+      extra.forEach(el => el.classList.add('d-none'));
+      btnToggle.textContent = 'Vedi altre';
+      window.scrollTo({ top: btnToggle.offsetTop - 200, behavior: 'smooth' });
+    }
+  });
+}
+
+// Star rating functionality
+const starIcons = document.querySelectorAll('.star-icon');
+const stelleInput = document.getElementById('stelleInput');
+
+starIcons.forEach(icon => {
+  icon.addEventListener('click', () => {
+    const value = icon.getAttribute('data-value');
+    stelleInput.value = value;
+
+    starIcons.forEach(i => {
+      if (i.getAttribute('data-value') <= value) {
+        i.classList.remove('bi-star');
+        i.classList.add('bi-star-fill', 'text-warning');
       } else {
-        // Nasconde recensioni
-        extra.forEach(el => el.classList.add('d-none'));
-        btnToggle.textContent = 'Vedi altre';
-        window.scrollTo({ top: btnToggle.offsetTop - 200, behavior: 'smooth' });
+        i.classList.add('bi-star');
+        i.classList.remove('bi-star-fill', 'text-warning');
       }
     });
-  }
-</script>
-
-<script>
-  const btnDecrement = document.getElementById('btnDecrement');
-  const btnIncrement = document.getElementById('btnIncrement');
-  const quantita = document.getElementById('quantita');
-  const quantitaInput = document.getElementById('quantitaInput');
-  const quantitaAcquista = document.getElementById('quantitaAcquista');
-
-  btnIncrement.addEventListener('click', () => {
-    let val = parseInt(quantita.value);
-    if (val < 99) {
-      quantita.value = ++val;
-      quantitaInput.value = val;
-      quantitaAcquista.value = val;
-    }
   });
+});
 
-  btnDecrement.addEventListener('click', () => {
-    let val = parseInt(quantita.value);
-    if (val > 1) {
-      quantita.value = --val;
-      quantitaInput.value = val;
-      quantitaAcquista.value = val;
-    }
-  });
+// Sync quantity for buy now button
+<?php if(isset($userRole) && ($userRole === Role::BUYER->value)): ?>
+document.querySelector('.quantity-input').addEventListener('change', function() {
+  document.getElementById('buyNowQuantity').value = this.value;
+});
+
+// Initialize cart count
+document.addEventListener('DOMContentLoaded', function() {
+  updateCartCount();
+});
+<?php endif; ?>
 </script>
-
-<script>
-  const starIcons = document.querySelectorAll('.star-icon');
-  const stelleInput = document.getElementById('stelleInput');
-
-  starIcons.forEach(icon => {
-    icon.addEventListener('click', () => {
-      const value = icon.getAttribute('data-value');
-      stelleInput.value = value;
-
-      starIcons.forEach(i => {
-        if (i.getAttribute('data-value') <= value) {
-          i.classList.remove('bi-star');
-          i.classList.add('bi-star-fill', 'text-warning');
-        } else {
-          i.classList.add('bi-star');
-          i.classList.remove('bi-star-fill', 'text-warning');
-        }
-      });
-    });
-  });
-</script>
-
 
 </body>
 </html>
