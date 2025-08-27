@@ -184,11 +184,13 @@
             <script src="./dist/custom/js/wishlist-manager.js"></script>
             <script src="./dist/custom/js/cart-manager.js"></script>
             <script src="./dist/custom/js/input-validation.js"></script>
+            <script src="./dist/custom/js/filter.js"></script>
         <?php endif; ?>
     </body>
     
     <script>
         <?php if(isset($userRole) && ($userRole == Role::BUYER)): ?>
+        const filter = new Filter('.slider-object');
         // Cart functionality
         document.addEventListener('DOMContentLoaded', function() {
             let addToCartButtons = document.querySelectorAll(".cart-button");
