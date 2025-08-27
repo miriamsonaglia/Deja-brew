@@ -42,7 +42,7 @@ class AuthController
                 if (!$utente->utenteVenditore()) {
                     UtenteVenditore::create(['id_utente' => $utente->id]);
                 }
-                $_SESSION['UserRole'] = Role::VENDOR;
+                $_SESSION['UserRole'] = Role::VENDOR->value;
             }
             // Una sola home dinamica
             header('Location: ./home.php');
@@ -105,7 +105,7 @@ class AuthController
             $_SESSION['UserRole'] = Role::BUYER->value;
         } else {
             UtenteVenditore::create(['id_utente' => $utente->id]);
-            $_SESSION['UserRole'] = Role::VENDOR;
+            $_SESSION['UserRole'] = Role::VENDOR->value;
         }
 
         // Una sola home dinamica
