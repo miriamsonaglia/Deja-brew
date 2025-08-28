@@ -21,10 +21,6 @@
         session_start();
         $userRole = $_SESSION['UserRole'] ?? Role::GUEST->value;
         $category = Categoria::find($_GET['category']);
-        if ($category == null) {
-            $category = new Categoria();
-            $category->descrizione = "CATEGORIA PLACEHOLDER";
-        }
         $products = Prodotto::where("categoria_id", $_GET['category'])->get();
     ?>
 </head>
