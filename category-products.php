@@ -67,7 +67,7 @@
                                      alt="<?php echo htmlspecialchars($product->nome); ?>">
                                 <div class="product-name"><?php echo htmlspecialchars($product->nome); ?></div>
                                 <div class="product-price"><?php echo number_format($product->prezzo, 2); ?> €</div>
-                                <?php if(isset($userRole) && ($userRole == Role::BUYER)): ?>
+                                <?php if(isset($userRole) && ($userRole == Role::BUYER->value)): ?>
                                 <input type="number" 
                                        step="1" 
                                        value="1" 

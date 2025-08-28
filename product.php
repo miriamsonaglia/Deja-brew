@@ -190,7 +190,7 @@ function renderStars($media) {
         </div>
 
         <p class="text-muted">
-          <?php echo $prodotto->categoria; ?> • <?php echo $prodotto->tipo; ?>
+          <?php echo $prodotto->categoria->descrizione; ?> • <?php echo $prodotto->tipo; ?>
         </p>
         <h3 class="text-success fw-bold mb-3 product-price">
           <?php echo number_format($prodotto->prezzo, 2); ?> €

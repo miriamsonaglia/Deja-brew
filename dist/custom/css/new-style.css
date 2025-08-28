@@ -4,6 +4,7 @@
 :root {
   --primary-brown: #594431;
   --secondary-red: #7C2E2E;
+  --secondary-green: #2E7C46;
   --dark-brown: #3E2C23;
   --cream-bg: #F2EFEA;
   --light-gray: #f8f9fa;
@@ -102,6 +103,16 @@ body {
   border-color: var(--secondary-red);
   background-color: white;
   box-shadow: 0 0 0 0.2rem rgba(124, 46, 46, 0.25);
+}
+
+.quantity-input {
+  width: 60px;
+  text-align: center;
+  border: 1px solid var(--primary-brown);
+  border-radius: 6px;
+  background-color: var(--light-gray);
+  color: var(--primary-brown);
+  transition: var(--transition);
 }
 
 /* =================================================================
@@ -381,13 +392,22 @@ body {
   width: 32px;
   height: 32px;
   border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: var(--transition);
 }
 
-.cart-quantity-btn:hover {
+.decrease-btn:hover  {
   background: var(--secondary-red);
   color: white;
   border-color: var(--secondary-red);
+}
+
+.increase-btn:hover {
+  background: var(--secondary-green);
+  color: white;
+  border-color: var(--secondary-green);
 }
 
 .cart-summary {

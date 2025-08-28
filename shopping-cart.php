@@ -83,22 +83,22 @@
                                         </div>
                                     </div>
                                     
-                                    <!-- Quantity Controls -->
+                                    <!-- Quantity Controls - TODO MERGE WITH CART-MANAGER LOGIC -->
                                     <div class="col-md-3 col-sm-2">
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <button class="cart-quantity-btn btn" 
-                                                    onclick="updateCartQuantity(<?php echo $product->id; ?>, -1)">
+                                            <button class="cart-quantity-btn btn decrease-btn" 
+                                                    onclick="decreaseQuantity(<?php echo $product->id;?>)">
                                                 <i class="bi bi-dash"></i>
                                             </button>
-                                            <input type="number" 
+                                            <!-- Quantity Input: Link onchange with cart logic -->
+                                            <input type="text" 
                                                    value="<?php echo $cart_item->quantita; ?>" 
-                                                   min="1" 
-                                                   class="form-control mx-2 text-center" 
+                                                   class="form-control mx-2 text-center quantity-input" 
                                                    style="width: 60px;"
                                                    data-product-id="<?php echo $product->id; ?>"
-                                                   onchange="updateCartQuantityInput(<?php echo $product->id; ?>, this.value)">
-                                            <button class="cart-quantity-btn btn" 
-                                                    onclick="updateCartQuantity(<?php echo $product->id; ?>, 1)">
+                                                   readonly>
+                                            <button class="cart-quantity-btn btn increase-btn" 
+                                                    onclick="increaseQuantity(<?php echo $product->id;?>)">
                                                 <i class="bi bi-plus"></i>
                                             </button>
                                         </div>
@@ -216,6 +216,22 @@
             document.addEventListener('DOMContentLoaded', function() {
                 updateCartCount();
             });
+            // Funzioni per aumentare/diminuire la quantità
+            function increaseQuantity(productId) {
+                const input = document.querySelector(`input[data-product-id='${productId}']`);
+                let currentValue = parseInt(input.value);
+                input.value = currentValue + 1;
+                updateCartQuantity(productId, 1);
+            }
+
+            function decreaseQuantity(productId) {
+                const input = document.querySelector(`input[data-product-id='${productId}']`);
+                let currentValue = parseInt(input.value);
+                if (currentValue > 1) {
+                    input.value = currentValue - 1;
+                }
+                updateCartQuantity(productId, -1);
+            }
         </script>
     </body>
 </html>

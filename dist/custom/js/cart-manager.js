@@ -1,3 +1,4 @@
+
 async function updateCartCount() {
     try {
         const response = await fetch('./update-cart-count.php', {
@@ -16,8 +17,35 @@ async function updateCartCount() {
     }
 }
 
+async function updateCartQuantity(productId, quantity) {
+    try {
+            const response = await fetch('./append-product.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    productID: productId,
+                    quantity: quantity,
+                    type: 'carrello'
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            await updateCartCount();
+            const data = await response.json();
+            console.log('Cart updated:', data);
+        } catch (error) {
+            console.error('Error updating cart quantity:', error);
+        }
+}
+
 // Enhanced cart functionality that works on both home and product pages
 document.addEventListener('DOMContentLoaded', function() {
+
     // Handle cart buttons
     document.querySelectorAll('.cart-button').forEach(button => {
         button.addEventListener('click', async function() {
@@ -68,8 +96,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     // Reset quantity to 0 for home page, keep 1 for product page
                     if (quantityInput) {
-                        const isProductPage = window.location.href.includes('product.php');
-                        quantityInput.value = isProductPage ? 1 : 0;
+                        quantityInput.value = 1;
                     }
 
                     const data = await response.json();
@@ -99,6 +126,36 @@ document.addEventListener('DOMContentLoaded', function() {
                         quantityInput.style.boxShadow = '';
                     }, 2000);
                 }
+            }
+        });
+    });
+
+    document.querySelectorAll('.quantity-input').forEach(input => {
+        input.addEventListener('change', async function() {
+            let quantity = parseInt(this.value);
+            let productId = this.getAttribute('data-product-id');
+            if (!isNaN(quantity) && productId) {
+                const response = await fetch('./append-product.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ 
+                            productID: productId, 
+                            quantity: quantity, 
+                            type: 'carrello'
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+
+                    // Update cart count
+                    await updateCartCount();
+
+                    const data = await response.json();
+                    console.log('Cart updated:', data);
             }
         });
     });

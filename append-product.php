@@ -1,75 +1,72 @@
 <?php
-// Imposta intestazione per rispondere in JSON
-header('Content-Type: application/json');
+    // Imposta intestazione per rispondere in JSON
+    header('Content-Type: application/json');
+    // Abilita CORS se necessario
+    header("Access-Control-Allow-Origin: *");
 
-// Abilita CORS se necessario
-header("Access-Control-Allow-Origin: *");
+    // Recupera e decodifica il corpo della richiesta
+    $input = json_decode(file_get_contents('php://input'), true);
 
-
-// Recupera e decodifica il corpo della richiesta
-$input = json_decode(file_get_contents('php://input'), true);
-
-// Verifica che i dati siano presenti
-if (!isset($input['productID']) || !isset($input['quantity'])) {
-    http_response_code(400); // Bad Request
-    echo json_encode(['error' => 'Dati mancanti']);
-    exit;
-}
-
-$productID = htmlspecialchars($input['productID']);
-$quantity = (int)$input['quantity'];
-$type = htmlspecialchars($input['type'] ?? 'desideri'); // Default to 'desideri'
-
-// Validazione base
-if ($quantity <= 0 || empty($productID)) {
-    http_response_code(400);
-    echo json_encode(['error' => 'Dati non validi']);
-    exit;
-}
-
-require_once('./bootstrap.php');
-require_once('./Models/Lista.php');
-require_once('./Models/Utente.php');
-require_once('./Models/UtenteCompratore.php');
-use App\Models\Lista;
-use App\Models\UtenteCompratore;
-
-session_start();
-// --- Recupero utente compratore senza usare la relazione ---
-$utenteCompratore = UtenteCompratore::where('id_utente', $_SESSION['LoggedUser']['id'])->first();
-
-$productInCart = new Lista();
-$productInCart->id_utente_compratore = $utenteCompratore->id;
-$productInCart->id_prodotto = $productID;
-$productInCart->tipo = $type;
-$productInCart->quantita = $quantity;
-try {
-    $productInCart->save();
-} catch (Exception $e) {
-    $existingProduct = Lista::where([
-        'id_utente_compratore' => $productInCart->id_utente_compratore,
-        'id_prodotto' => $productInCart->id_prodotto,
-        'tipo' => $productInCart->tipo
-    ])->first();
-    if ($existingProduct) {
-        $productInCart = $existingProduct;
-    } else {
-        http_response_code(500);
-        echo json_encode(['error' => 'Errore interno del server']);
+    // Verifica che i dati siano presenti
+    if (!isset($input['productID']) || !isset($input['quantity'])) {
+        http_response_code(400); // Bad Request
+        echo json_encode(['error' => 'Dati mancanti']);
         exit;
     }
-    // Aggiorna la quantità
-    $productInCart->update(['quantita' => $productInCart->quantita + $quantity], [
-        'id_utente_compratore' => $productInCart->id_utente_compratore,
-        'id_prodotto' => $productInCart->id_prodotto,
-        'tipo' => $productInCart->tipo
+
+    $productID = htmlspecialchars($input['productID']);
+    $quantity = (int)$input['quantity'];
+    $type = htmlspecialchars($input['type'] ?? 'desideri'); // Default to 'desideri'
+
+    // Validazione base
+    if (empty($productID)) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Dati non validi']);
+        exit;
+    }
+
+    require_once('./bootstrap.php');
+    require_once('./Models/Lista.php');
+    require_once('./Models/Utente.php');
+    require_once('./Models/UtenteCompratore.php');
+    use App\Models\Lista;
+    use App\Models\UtenteCompratore;
+
+    session_start();
+    // --- Recupero utente compratore senza usare la relazione ---
+    $utenteCompratore = UtenteCompratore::where('id_utente', $_SESSION['LoggedUser']['id'])->first();
+
+    $productInCart = new Lista();
+    $productInCart->id_utente_compratore = $utenteCompratore->id;
+    $productInCart->id_prodotto = $productID;
+    $productInCart->tipo = $type;
+    $productInCart->quantita = $quantity;
+    try {
+        $productInCart->save();
+    } catch (Exception $e) {
+        $existingProduct = Lista::where([
+            'id_utente_compratore' => $productInCart->id_utente_compratore,
+            'id_prodotto' => $productInCart->id_prodotto,
+            'tipo' => $productInCart->tipo
+        ])->first();
+        if ($existingProduct) {
+            $productInCart = $existingProduct;
+        } else {
+            http_response_code(500);
+            echo json_encode(['error' => 'Errore interno del server']);
+            exit;
+        }
+        // Aggiorna la quantità
+        $productInCart->update(['quantita' => $productInCart->quantita + $quantity], [
+            'id_utente_compratore' => $productInCart->id_utente_compratore,
+            'id_prodotto' => $productInCart->id_prodotto,
+            'tipo' => $productInCart->tipo
+        ]);
+    }
+
+    // Risposta al client
+    echo json_encode([
+        'success' => true,
+        'message' => 'Lista ' . $type . ' aggiornata'
     ]);
-}
-
-
-// Risposta al client
-echo json_encode([
-    'success' => true,
-    'message' => 'Prodotto aggiunto correttamente alla lista ' . $type,
-]);
 ?>
