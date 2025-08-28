@@ -41,7 +41,7 @@
         <header></header>
         <?php include('./reusables/navbars/buyer-navbar.php'); ?>
         
-        <div class="container-fluid">
+        <div class="container-fluid" id="main-container">
             <?php if(count($user_cart) > 0): ?>
             <div class="cart-content">
                 <div class="row">
@@ -112,8 +112,6 @@
                                         </div>
                                     </div>
 
-
-                                    
                                     <!-- Remove Button -->
                                     <div class="col-md-1 col-sm-1 text-end">
                                         <button class="btn btn-outline-danger btn-sm" 
@@ -215,6 +213,7 @@
         <script src="./dist/custom/js/cart-manager.js"></script>
 
         <script>
+            updateCartCount();
             const SHIPPING_COST = 5.90;
             const TAX_RATE = 0.22;
 
@@ -235,6 +234,9 @@
                 
                     updateCartQuantity(productId, -1); // Esistente
                     updatePrices(productId, currentValue - 1);
+                } else {
+                    // Opzionale: Rimuovi il prodotto se la quantità è 1 e si tenta di diminuire
+                    removeFromCart(productId);
                 }
             }
 
@@ -271,8 +273,8 @@
                 // Aggiorna i valori nel DOM
                 document.getElementById('cart-subtotal').innerText = '€ ' + subtotal.toFixed(2);
                 document.getElementById('tax-amount').innerText = '€ ' + tax.toFixed(2);
-    document.getElementById('cart-total').innerText = '€ ' + total.toFixed(2);
-}
+                document.getElementById('cart-total').innerText = '€ ' + total.toFixed(2);
+            }
         </script>
     </body>
 </html>

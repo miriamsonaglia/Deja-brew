@@ -78,7 +78,7 @@ async function removeFromCart(productId) {
         const remainingItems = document.querySelectorAll('.cart-item');
         if (remainingItems.length === 0) {
             document.querySelector('.cart-content').remove();
-            document.querySelector('.container-fluid').innerHTML += `
+            document.querySelector('#main-container').innerHTML += `
                 <div class="empty-state">
                 <i class="bi bi-cart-x display-1 text-muted mb-4"></i>
                 <h3 class="text-primary-brown mb-3">Il tuo carrello è vuoto</h3>
@@ -180,36 +180,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         quantityInput.style.boxShadow = '';
                     }, 2000);
                 }
-            }
-        });
-    });
-
-    document.querySelectorAll('.quantity-input').forEach(input => {
-        input.addEventListener('change', async function() {
-            let quantity = parseInt(this.value);
-            let productId = this.getAttribute('data-product-id');
-            if (!isNaN(quantity) && productId) {
-                const response = await fetch('./append-product.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ 
-                            productID: productId, 
-                            quantity: quantity, 
-                            type: 'carrello'
-                        })
-                    });
-
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-
-                    // Update cart count
-                    await updateCartCount();
-
-                    const data = await response.json();
-                    console.log('Cart updated:', data);
             }
         });
     });
