@@ -14,11 +14,12 @@ class Utente extends BaseModel
         'email',
         'username',
         'password',
+        'immagine_profilo'
     ];
 
     protected $hidden = [
         'password',
-        'remember_token',
+        'remember_token'
     ];
 
     protected $casts = [
