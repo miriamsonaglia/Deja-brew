@@ -13,10 +13,12 @@
         <?php
             use App\Models\UtenteCompratore;
             use App\Models\Prodotto;
+            use App\Models\Lista;
 
             require_once __DIR__ . '/bootstrap.php';
             require_once __DIR__ . '/Models/UtenteCompratore.php';
             require_once __DIR__ . '/Models/Prodotto.php';
+            require_once __DIR__ . '/Models/Lista.php';
             require_once __DIR__ . '/role.php';
             
             session_start();
@@ -25,8 +27,12 @@
                 exit;
             }
             
-            $user = new UtenteCompratore();
-            $user_wishlist = $user->desideri();
+            // --- Recupero utente compratore senza usare la relazione ---
+            $utenteCompratore = UtenteCompratore::where('id_utente', $_SESSION['LoggedUser']['id'])->first();
+            // --- Recupero prodotti nel carrello ---
+            $user_wishlist = Lista::where('id_utente_compratore', $utenteCompratore->id)
+                            ->where('tipo', 'desideri')
+                            ->get();
         ?>
     </head>
     <body class="bg-cream">
