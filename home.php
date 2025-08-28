@@ -13,9 +13,12 @@
             require_once __DIR__ . '/Models/Prodotto.php';
             require_once __DIR__ . '/role.php';
             require_once __DIR__ . '/utilities.php';
+            require_once __DIR__ . '/Models/UtenteCompratore.php';
             use App\Models\Categoria;
             use App\Models\Prodotto;
+            use App\Models\UtenteCompratore;
             session_start();
+            $utenteCompratore = UtenteCompratore::where('id_utente', $_SESSION['LoggedUser']['id'])->first();
             $userRole = $_SESSION['UserRole'] ?? Role::GUEST->value;
             $categories = Categoria::all();
         ?>
@@ -82,7 +85,7 @@
                                     </button>
                                     <button class="wish-button" 
                                             data-product-id="<?php echo $product->id; ?>"
-                                    <?php if(wished($product->id, $_SESSION['LoggedUser']['id'])): ?>
+                                    <?php if(wished($product->id, $utenteCompratore->id)): ?>
                                             title="Rimuovi dalla wishlist">
                                             <i class="bi bi-heart-fill"></i>
                                         <?php else: ?>
@@ -114,7 +117,6 @@
         <script src="./dist/custom/js/home-slider-manager.js"></script>
 
         <?php if(isset($userRole) && ($userRole === Role::BUYER->value)): ?>
-            // Initialize cart and wishlist managers if user is logged in as a buyer.
             <script src="./dist/custom/js/wishlist-manager.js"></script>
             <script src="./dist/custom/js/cart-manager.js"></script>
             <script src="./dist/custom/js/input-validation.js"></script>

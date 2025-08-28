@@ -83,7 +83,6 @@
                                         </div>
                                     </div>
                                     
-                                    <!-- Quantity Controls - TODO MERGE WITH CART-MANAGER LOGIC -->
                                     <div class="col-md-3 col-sm-2">
                                         <div class="d-flex align-items-center justify-content-center">
                                             <button class="cart-quantity-btn btn decrease-btn" 

@@ -1,196 +1,144 @@
 class Filter {
     constructor() {
+        this.cacheDOM();
+        this.bindEvents();
+        this.originalOrder = Array.from(this.elements);
+    }
+
+    cacheDOM() {
         this.filtersSidebar = document.getElementById('filtersSidebar');
         this.filtersToggleBtn = document.getElementById('filtersToggleBtn');
         this.closeFiltersBtn = document.getElementById('closeFiltersBtn');
         this.filtersOverlay = document.getElementById('filtersOverlay');
-        this.applyFiltersBtn = document.getElementById('applyFilters');
         this.clearFiltersBtn = document.getElementById('clearFilters');
         this.elements = document.querySelectorAll('.slider-object');
-        this.maxPriceFilter = document.getElementById('maxPrice');
-        this.minPriceFilter = document.getElementById('minPrice');
-        this.aromaFilter = document.getElementById('aromaFilter');
-        this.provenienzaFilter = document.getElementById('provenienzaFilter');
-        this.minWeightFilter = document.getElementById('minWeight');
-        this.maxWeightFilter = document.getElementById('maxWeight');
-        this.sortBy = document.getElementById('sortBy');
-        this.init();
+
+        this.filters = {
+            aroma: document.getElementById('aromaFilter'),
+            provenienza: document.getElementById('provenienzaFilter'),
+            minPrice: document.getElementById('minPrice'),
+            maxPrice: document.getElementById('maxPrice'),
+            minWeight: document.getElementById('minWeight'),
+            maxWeight: document.getElementById('maxWeight'),
+            sortBy: document.getElementById('sortBy')
+        };
     }
 
-    init() {
-         // Event listeners
-        this.filtersToggleBtn.addEventListener('click', () => this.openFilters());
-        this.closeFiltersBtn.addEventListener('click', () => this.closeFilters());
-        this.filtersOverlay.addEventListener('click', () => this.closeFilters());
-        this.maxPriceFilter.addEventListener('input', () => this.applyFilters());
-        this.minPriceFilter.addEventListener('input', () => this.applyFilters());
-        this.aromaFilter.addEventListener('change', () => this.applyFilters());
-        this.provenienzaFilter.addEventListener('change', () => this.applyFilters());
-        this.minWeightFilter.addEventListener('input', () => this.applyFilters());
-        this.maxWeightFilter.addEventListener('input', () => this.applyFilters());
-        this.sortBy.addEventListener('change', () => this.sort());
+    bindEvents() {
+        this.filtersToggleBtn.addEventListener('click', () => this.openSidebar());
+        this.closeFiltersBtn.addEventListener('click', () => this.closeSidebar());
+        this.filtersOverlay.addEventListener('click', () => this.closeSidebar());
         this.clearFiltersBtn.addEventListener('click', () => this.clearAllFilters());
+
+        Object.values(this.filters).forEach(input => {
+            input.addEventListener('input', () => {
+                if (input === this.filters.sortBy) {
+                    this.sort();
+                } else {
+                    this.applyFilters();
+                }
+            });
+        });
     }
 
-    // Toggle filters sidebar
-    openFilters() {
-        this.filtersSidebar.classList.add('active');
+    openSidebar() {
+        this.filtersSidebar.classList.add('show');
         this.filtersOverlay.classList.add('active');
         document.body.style.overflow = 'hidden';
     }
-    
-    closeFilters() {
-        this.filtersSidebar.classList.remove('active');
+
+    closeSidebar() {
+        this.filtersSidebar.classList.remove('show');
         this.filtersOverlay.classList.remove('active');
         document.body.style.overflow = '';
     }
 
     applyFilters() {
-        const maxPrice = parseFloat(this.maxPriceFilter.value);
-        const minPrice = parseFloat(this.minPriceFilter.value);
-        const selectedAroma = this.aromaFilter.value ? JSON.parse(this.aromaFilter.value).gusto : '';
-        const selectedProvenienza = this.provenienzaFilter.value;
-        const maxWeight = parseFloat(this.maxWeightFilter.value);
-        const minWeight = parseFloat(this.minWeightFilter.value);
+        const {
+            aroma, provenienza,
+            minPrice, maxPrice,
+            minWeight, maxWeight
+        } = this.filters;
 
-        this.elements.forEach(element => {
-            const price = parseFloat(element.getAttribute('data-product-price'));
-            const aroma = element.getAttribute('data-product-aroma');
-            const provenienza = element.getAttribute('data-product-provenienza');
-            const weight = parseFloat(element.getAttribute('data-product-weight'));
-            
-            // Price filter
-            let matchesPrice;
-            if(!isNaN(minPrice) && !isNaN(maxPrice)) {
-                matchesPrice = (price >= minPrice) && (price <= maxPrice);
-            } else if(!isNaN(minPrice)) {
-                matchesPrice = price >= minPrice;
-            } else if(!isNaN(maxPrice)) {
-                matchesPrice = price <= maxPrice;
-            } else {
-                matchesPrice = true;
-            }
+        const filters = {
+            aroma: aroma.value,
+            provenienza: provenienza.value,
+            minPrice: parseFloat(minPrice.value),
+            maxPrice: parseFloat(maxPrice.value),
+            minWeight: parseFloat(minWeight.value),
+            maxWeight: parseFloat(maxWeight.value)
+        };
 
-            // Aroma filter
-            const matchesAroma = selectedAroma === '' || aroma === selectedAroma;
-            
-            // Provenienza filter
-            const matchesProvenienza = selectedProvenienza === '' || provenienza === selectedProvenienza;
-            
-            // Weight filter
-            let matchesWeight;
-            if(!isNaN(minWeight) && !isNaN(maxWeight)) {
-                matchesWeight = (weight >= minWeight) && (weight <= maxWeight);
-            } else if(!isNaN(minWeight)) {
-                matchesWeight = weight >= minWeight;
-            } else if(!isNaN(maxWeight)) {
-                matchesWeight = weight <= maxWeight;
-            } else {
-                matchesWeight = true;
-            }
+        this.elements.forEach(el => {
+            const price = parseFloat(el.dataset.productPrice);
+            const weight = parseFloat(el.dataset.productWeight);
+            const aromaVal = el.dataset.productAroma;
+            const provenienzaVal = el.dataset.productProvenienza;
 
-            // Show/hide element based on all filters
-            if (matchesPrice && matchesAroma && matchesProvenienza && matchesWeight) {
-                element.style.display = '';
-            } else {
-                element.style.display = 'none';
-            }
+            const matchesPrice = (
+                (isNaN(filters.minPrice) || price >= filters.minPrice) &&
+                (isNaN(filters.maxPrice) || price <= filters.maxPrice)
+            );
+
+            const matchesWeight = (
+                (isNaN(filters.minWeight) || weight >= filters.minWeight) &&
+                (isNaN(filters.maxWeight) || weight <= filters.maxWeight)
+            );
+
+            const matchesAroma = !filters.aroma || aromaVal === filters.aroma;
+            const matchesProvenienza = !filters.provenienza || provenienzaVal === filters.provenienza;
+
+            el.style.display = (matchesPrice && matchesWeight && matchesAroma && matchesProvenienza)
+                ? ''
+                : 'none';
         });
     }
 
     sort() {
-        const sortValue = this.sortBy.value;
-        if (sortValue === 'price-asc') {
-            this.sortByPrice(true);
-        } else if (sortValue === 'price-desc') {
-            this.sortByPrice(false);
-        } else if (sortValue === 'name-asc') {
-            this.sortByName(true);
-        } else if (sortValue === 'name-desc') {
-            this.sortByName(false);
-        }
-    }
-
-    sortByPrice(ascending = true) {
+        const sortValue = this.filters.sortBy.value;
         const container = document.querySelector('.product-grid');
         const productsArray = Array.from(this.elements);
 
-        productsArray.sort((a, b) => {
-            const priceA = parseFloat(a.getAttribute('data-product-price'));
-            const priceB = parseFloat(b.getAttribute('data-product-price'));
-            return ascending ? priceA - priceB : priceB - priceA;
-        });
+        const sortFn = {
+            'name-asc': (a, b) =>
+                a.dataset.productName.localeCompare(b.dataset.productName),
+            'name-desc': (a, b) =>
+                b.dataset.productName.localeCompare(a.dataset.productName),
+            'price-asc': (a, b) =>
+                parseFloat(a.dataset.productPrice) - parseFloat(b.dataset.productPrice),
+            'price-desc': (a, b) =>
+                parseFloat(b.dataset.productPrice) - parseFloat(a.dataset.productPrice)
+        }[sortValue];
 
-        // SOLUZIONE MIGLIORE: Riordina senza distruggere gli elementi
-        const fragment = document.createDocumentFragment();
-        productsArray.forEach(product => {
-            fragment.appendChild(product); // Sposta l'elemento senza clonarlo
-        });
-        container.appendChild(fragment);
-        
-        // Aggiorna la reference agli elementi
-        this.elements = document.querySelectorAll('.slider-object');
-    }
-    
-    clearAllFilters() {
-        // Reset tutti i filtri ai valori di default
-        this.maxPriceFilter.value = '';
-        this.minPriceFilter.value = '';
-        this.aromaFilter.value = '';
-        this.provenienzaFilter.value = '';
-        this.maxWeightFilter.value = '';
-        this.minWeightFilter.value = '';
-        this.sortBy.value = 'default';
-        
-        // Mostra tutti gli elementi
-        this.elements.forEach(element => {
-            element.style.display = '';
-        });
-        
-        // Ripristina l'ordine originale se necessario
-        if (this.sortBy.value === 'default') {
+        if (sortFn) {
+            productsArray.sort(sortFn);
+            const fragment = document.createDocumentFragment();
+            productsArray.forEach(product => fragment.appendChild(product));
+            container.appendChild(fragment);
+            this.elements = document.querySelectorAll('.slider-object');
+        } else {
             this.restoreOriginalOrder();
         }
     }
-    
-    restoreOriginalOrder() {
-        // Ripristina l'ordine originale basato sull'ordine nel DOM originale
-        // Questo metodo assume che gli elementi siano già nell'ordine originale quando la pagina viene caricata
-        const container = document.querySelector('.product-grid');
-        const originalElements = Array.from(document.querySelectorAll('.slider-object'));
-        
-        // Ordina gli elementi secondo il loro ordine originale nel DOM
-        // (questo funziona se gli elementi sono già nell'ordine corretto al caricamento)
-        const fragment = document.createDocumentFragment();
-        originalElements.forEach(element => {
-            fragment.appendChild(element);
+
+    clearAllFilters() {
+        Object.values(this.filters).forEach(input => {
+            input.value = '';
         });
-        container.appendChild(fragment);
-        
-        // Aggiorna la reference
-        this.elements = document.querySelectorAll('.slider-object');
+        this.filters.sortBy.value = 'default';
+
+        this.restoreOriginalOrder();
+
+        this.elements.forEach(el => {
+            el.style.display = '';
+        });
     }
 
-    sortByName(ascending = true) {
+    restoreOriginalOrder() {
         const container = document.querySelector('.product-grid');
-        const productsArray = Array.from(this.elements);
-
-        productsArray.sort((a, b) => {
-            const nameA = a.getAttribute('data-product-name').toLowerCase();
-            const nameB = b.getAttribute('data-product-name').toLowerCase();
-            if (nameA < nameB) return ascending ? -1 : 1;
-            if (nameA > nameB) return ascending ? 1 : -1;
-            return 0;
-        });
-
-        // SOLUZIONE MIGLIORE: Riordina senza distruggere gli elementi
         const fragment = document.createDocumentFragment();
-        productsArray.forEach(product => {
-            fragment.appendChild(product); // Sposta l'elemento senza clonarlo
-        });
+        this.originalOrder.forEach(el => fragment.appendChild(el));
         container.appendChild(fragment);
-        
-        // Aggiorna la reference agli elementi
         this.elements = document.querySelectorAll('.slider-object');
     }
 }
