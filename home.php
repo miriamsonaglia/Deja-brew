@@ -19,28 +19,12 @@
             use App\Models\UtenteCompratore;
             session_start();
             $utenteCompratore = UtenteCompratore::where('id_utente', $_SESSION['LoggedUser']['id'])->first();
-            $userRole = $_SESSION['UserRole'] ?? Role::GUEST->value;
             $categories = Categoria::all();
         ?>
     </head>
     <body>
         <header><!-- ?? Possible header template ?? --></header>
-        <?php 
-            switch($userRole) {
-                case Role::GUEST->value:
-                    include('./reusables/navbars/empty-navbar.php');
-                    break;
-                case Role::BUYER->value:
-                    include('./reusables/navbars/buyer-navbar.php');
-                    break;
-                case Role::VENDOR->value:
-                    include('./reusables/navbars/vendor-navbar.php');
-                    break;
-                default:
-                    break;
-            }
-        ?>
-        
+        <?php require_once __DIR__ . 'navbar-selector.php'; ?>
         <div class="container-fluid">
             <!-- Categories with Enhanced Slider -->
             <?php 

@@ -19,32 +19,13 @@
         use App\Models\Prodotto;
         use App\Models\Categoria;
         session_start();
-        $userRole = $_SESSION['UserRole'] ?? Role::GUEST->value;
         $category = Categoria::find($_GET['category']);
         $products = Prodotto::where("categoria_id", $_GET['category'])->get();
     ?>
 </head>
 <body>
-
 <header></header>
-
-<?php 
-    switch ($userRole) {
-        case Role::GUEST->value:
-            include('./reusables/navbars/empty-navbar.php');
-            break;
-        case Role::BUYER->value:
-            include('./reusables/navbars/buyer-navbar.php');
-            break;
-        case Role::VENDOR->value:
-            include('./reusables/navbars/vendor-navbar.php');
-            break;
-        default:
-            include('./reusables/navbars/empty-navbar.php');
-            break;
-    }
-?>
-
+<?php require_once __DIR__ . 'navbar-selector.php'; ?>
 <main>
     <div class="container-fluid">
         <div class="category-section my-4">
