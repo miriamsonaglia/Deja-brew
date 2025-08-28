@@ -38,7 +38,6 @@
     <body class="bg-cream">
         <header></header>
         <?php include('./reusables/navbars/buyer-navbar.php'); ?>
-        
         <div class="container-fluid">
             <div class="wishlist-content">
                 <?php if(count($user_wishlist) > 0): ?>
@@ -165,10 +164,6 @@
                             <i class="bi bi-shop me-2"></i>
                             Esplora Prodotti
                         </a>
-                        <a href="category-products.php" class="btn btn-outline-primary-custom">
-                            <i class="bi bi-grid me-2"></i>
-                            Sfoglia Categorie
-                        </a>
                     </div>
                 </div>
                 <?php endif; ?>
@@ -187,7 +182,7 @@
                 updateCartCount();
             });
             
-            // Make compatibility check with cart-manager and wishlist manager
+            // Make compatibility check with wishlist manager
         </script>
     </body>
 </html>

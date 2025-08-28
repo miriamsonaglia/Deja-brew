@@ -7,7 +7,7 @@
         </button>
         
         <!-- Logo/Brand centrato -->
-        <span class="navbar-brand mx-auto fw-bold fs-3">Deja-brew</span>
+        <a href='./home.php'><span class="navbar-brand mx-auto fw-bold fs-3">Deja-brew</span></a>
         
         <!-- Barra di ricerca e carrello -->
         <div class="d-flex align-items-center">
