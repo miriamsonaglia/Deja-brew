@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html>
+    <meta charset="UTF-8">
+    <title>Home - Deja-brew</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <head>
         <!-- INSERT HERE ALL CSS NECESSARY IMPORTS -->
         <link rel="stylesheet" href="./dist/bootstrap5/icons/bootstrap-icons.css">
@@ -39,7 +42,7 @@
                     include('./reusables/navbars/vendor-navbar.php');
                     break;
                 default:
-                    include('./reusables/navbars/buyer-navbar.php');
+                    include('./reusables/navbars/empty-navbar.php');
                     break;
             }
         ?>

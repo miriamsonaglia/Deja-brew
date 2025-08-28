@@ -5,13 +5,13 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title>Carrello - Deja-brew</title>
-        <!-- INSERT HERE ALL CSS NECESSARY IMPORTS -->
+        <!-- Bootstrap 5 CSS -->
         <link rel="stylesheet" href="./dist/bootstrap5/css/bootstrap.min.css">
         <link rel="stylesheet" href="./dist/bootstrap5/icons/bootstrap-icons.css">
-        <link rel="stylesheet" href="./dist/custom/css/style.css">
+        <link rel="stylesheet" href="./dist/custom/css/new-style.css">
 
         <?php
-            // This in-page script initialize all the required php imports and populates the datasets.
+            // PHP initialization code remains the same
             use App\Models\Prodotto;
             use App\Models\Lista;
 
@@ -22,7 +22,6 @@
             require_once __DIR__ . '/role.php';
             session_start();
             
-            // QUERY: READ ALL USER SHOPPING CART FROM DATABASE
             if(!isset($_SESSION['LoggedUser']['id']) || $_SESSION['UserRole'] != Role::BUYER->value){
                 header("Location: login.php");
                 exit;
@@ -36,140 +35,182 @@
             $item_count = 0;
         ?>
     </head>
-    <body class="cart-page">
-        <header><!-- ?? Possible header template ?? --></header>
+    <body class="bg-cream">
+        <header></header>
         <?php include('./reusables/navbars/buyer-navbar.php'); ?>
         
+        <div class="container-fluid">
             <?php if(count($user_cart) > 0): ?>
             <div class="cart-content">
-                <!-- Cart Items -->
-                <div class="cart-items">
-                    <div class="cart-items-header">
-                        <i class="bi bi-bag-check"></i> 
-                        Prodotti nel carrello (<span id="cart-items-count"><?php echo count($user_cart); ?></span> articoli)
+                <div class="row">
+                    <!-- Cart Items Column -->
+                    <div class="col-lg-8 mb-4">
+                        <div class="cart-items-section">
+                            <div class="cart-header d-flex align-items-center">
+                                <i class="bi bi-bag-check me-2"></i>
+                                <span>Prodotti nel carrello (<span id="cart-items-count"><?php echo count($user_cart); ?></span> articoli)</span>
+                            </div>
+                            
+                            <?php 
+                            foreach($user_cart as $cart_item):
+                                $product = Prodotto::where('id', $cart_item->id_prodotto)->first();
+                                if($product):
+                                    $subtotal = floatval($product->prezzo) * intval($cart_item->quantita);
+                                    $total += $subtotal;
+                                    $item_count += intval($cart_item->quantita);
+                            ?>
+                            <div class="cart-item" data-product-id="<?php echo $product->id; ?>">
+                                <div class="row align-items-center">
+                                    <!-- Product Image -->
+                                    <div class="col-md-2 col-sm-3">
+                                        <img src="<?php echo htmlspecialchars($product->fotografia); ?>" 
+                                             alt="<?php echo htmlspecialchars($product->nome); ?>" 
+                                             class="cart-product-image img-fluid rounded">
+                                    </div>
+                                    
+                                    <!-- Product Info -->
+                                    <div class="col-md-4 col-sm-5">
+                                        <div class="d-flex flex-column">
+                                            <a href="product.php?id=<?php echo $product->id; ?>" 
+                                               class="cart-product-name text-decoration-none mb-1">
+                                                <?php echo htmlspecialchars($product->nome); ?>
+                                            </a>
+                                            <small class="text-muted">
+                                                € <?php echo number_format($product->prezzo, 2); ?> cad.
+                                            </small>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Quantity Controls -->
+                                    <div class="col-md-3 col-sm-2">
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <button class="cart-quantity-btn btn" 
+                                                    onclick="updateCartQuantity(<?php echo $product->id; ?>, -1)">
+                                                <i class="bi bi-dash"></i>
+                                            </button>
+                                            <input type="number" 
+                                                   value="<?php echo $cart_item->quantita; ?>" 
+                                                   min="1" 
+                                                   class="form-control mx-2 text-center" 
+                                                   style="width: 60px;"
+                                                   data-product-id="<?php echo $product->id; ?>"
+                                                   onchange="updateCartQuantityInput(<?php echo $product->id; ?>, this.value)">
+                                            <button class="cart-quantity-btn btn" 
+                                                    onclick="updateCartQuantity(<?php echo $product->id; ?>, 1)">
+                                                <i class="bi bi-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Subtotal -->
+                                    <div class="col-md-2 col-sm-1 text-end">
+                                        <div class="fw-bold text-secondary-red" 
+                                             data-product-id="<?php echo $product->id; ?>">
+                                            € <?php echo number_format($subtotal, 2); ?>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Remove Button -->
+                                    <div class="col-md-1 col-sm-1 text-end">
+                                        <button class="btn btn-outline-danger btn-sm" 
+                                                onclick="removeCartItem(<?php echo $product->id; ?>)"
+                                                title="Rimuovi dal carrello">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php 
+                                endif;
+                            endforeach; 
+                            ?>
+                        </div>
                     </div>
-                    
-                    <?php 
-                    foreach($user_cart as $cart_item):
-                        $product = Prodotto::where('id', $cart_item->id_prodotto)->first();
-                        if($product):
-                            $subtotal = floatval($product->prezzo) * intval($cart_item->quantita);
-                            $total += $subtotal;
-                            $item_count += intval($cart_item->quantita);
-                    ?>
-                    <div class="cart-item" data-product-id="<?php echo $product->id; ?>">
-                        <img src="<?php echo htmlspecialchars($product->fotografia); ?>" 
-                             alt="<?php echo htmlspecialchars($product->nome); ?>" 
-                             class="cart-product-image">
-                        
-                        <div class="cart-product-info">
-                            <a href="product.php?id=<?php echo $product->id; ?>" class="cart-product-name">
-                                <?php echo htmlspecialchars($product->nome); ?>
-                            </a>
-                            <div class="cart-product-price">
-                                € <?php echo number_format($product->prezzo, 2); ?> cad.
+
+                    <!-- Cart Summary Column -->
+                    <div class="col-lg-4">
+                        <div class="cart-summary position-sticky" style="top: 2rem;">
+                            <h3 class="text-primary-brown mb-4 pb-3 border-bottom border-2">
+                                <i class="bi bi-receipt me-2"></i>Riepilogo Ordine
+                            </h3>
+                            
+                            <div class="summary-row d-flex justify-content-between align-items-center">
+                                <span class="text-muted">Subtotale:</span>
+                                <span class="fw-bold text-secondary-red" id="cart-subtotal">
+                                    € <?php echo number_format($total, 2); ?>
+                                </span>
+                            </div>
+                            
+                            <div class="summary-row d-flex justify-content-between align-items-center">
+                                <span class="text-muted">Spedizione:</span>
+                                <span class="fw-bold text-secondary-red" id="shipping-cost">
+                                    € 5.90
+                                </span>
+                            </div>
+                            
+                            <div class="summary-row d-flex justify-content-between align-items-center">
+                                <span class="text-muted">IVA (22%):</span>
+                                <span class="fw-bold text-secondary-red" id="tax-amount">
+                                    € <?php echo number_format($total * 0.22, 2); ?>
+                                </span>
+                            </div>
+                            
+                            <div class="summary-total d-flex justify-content-between align-items-center">
+                                <span class="fw-bold text-primary-brown">Totale:</span>
+                                <span class="fw-bold fs-4 text-secondary-red" id="cart-total">
+                                    € <?php echo number_format($total + 5.90 + ($total * 0.22), 2); ?>
+                                </span>
+                            </div>
+                            
+                            <!-- Delivery Info -->
+                            <div class="bg-light rounded p-3 my-4">
+                                <div class="fw-bold text-primary-brown mb-2">
+                                    <i class="bi bi-truck me-2"></i>Informazioni Consegna
+                                </div>
+                                <div class="small text-muted">
+                                    <strong>Consegna prevista:</strong> 2-3 giorni lavorativi<br>
+                                    <strong>Indirizzo:</strong> Da definire al checkout
+                                </div>
+                            </div>
+                            
+                            <!-- Action Buttons -->
+                            <div class="d-grid gap-2">
+                                <a href="checkout.php" class="btn btn-primary-custom btn-lg">
+                                    <i class="bi bi-credit-card me-2"></i>
+                                    Procedi all'Acquisto
+                                </a>
+                                
+                                <a href="home.php" class="btn btn-outline-primary-custom">
+                                    <i class="bi bi-arrow-left me-2"></i>
+                                    Continua gli Acquisti
+                                </a>
                             </div>
                         </div>
-                        
-                        <div class="cart-quantity-controls">
-                            <button class="cart-quantity-btn" onclick="updateCartQuantity(<?php echo $product->id; ?>, -1)">
-                                <i class="bi bi-dash"></i>
-                            </button>
-                            <input type="number" 
-                                   value="<?php echo $cart_item->quantita; ?>" 
-                                   min="1" 
-                                   class="cart-quantity-input" 
-                                   data-product-id="<?php echo $product->id; ?>"
-                                   onchange="updateCartQuantityInput(<?php echo $product->id; ?>, this.value)">
-                            <button class="cart-quantity-btn" onclick="updateCartQuantity(<?php echo $product->id; ?>, 1)">
-                                <i class="bi bi-plus"></i>
-                            </button>
-                        </div>
-                        
-                        <div class="cart-subtotal-price" data-product-id="<?php echo $product->id; ?>">
-                            € <?php echo number_format($subtotal, 2); ?>
-                        </div>
-                        
-                        <button class="cart-remove-btn" onclick="removeCartItem(<?php echo $product->id; ?>)">
-                            <i class="bi bi-trash"></i>
-                        </button>
                     </div>
-                    <?php 
-                        endif;
-                    endforeach; 
-                    ?>
-                </div>
-
-                <!-- Cart Summary -->
-                <div class="cart-summary">
-                    <h2 class="summary-header">
-                        Riepilogo Ordine
-                    </h2>
-                    
-                    <div class="summary-row">
-                        <span class="summary-label">Subtotale:</span>
-                        <span class="summary-value" id="cart-subtotal">€ <?php echo number_format($total, 2); ?></span>
-                    </div>
-                    
-                    <div class="summary-row">
-                        <span class="summary-label">Spedizione:</span>
-                        <span class="summary-value" id="shipping-cost">€ 5.90</span>
-                    </div>
-                    
-                    <div class="summary-row">
-                        <span class="summary-label">IVA (22%):</span>
-                        <span class="summary-value" id="tax-amount">€ <?php echo number_format($total * 0.22, 2); ?></span>
-                    </div>
-                    
-                    <div class="summary-row summary-total-row">
-                        <span class="summary-label">Totale:</span>
-                        <span class="summary-value" id="cart-total">€ <?php echo number_format($total + 5.90 + ($total * 0.22), 2); ?></span>
-                    </div>
-                    
-                    <div class="delivery-info">
-                        <div class="delivery-title">
-                            <i class="bi bi-truck"></i> Informazioni Consegna
-                        </div>
-                        <div class="delivery-details">
-                            <strong>Consegna prevista:</strong> 2-3 giorni lavorativi<br>
-                            <strong>Indirizzo:</strong> Da definire al checkout
-                        </div>
-                    </div>
-                    
-                    <a href="checkout.php" class="checkout-btn">
-                        <i class="bi bi-credit-card"></i>
-                        Procedi all'Acquisto
-                    </a>
-                    
-                    <a href="home.php" class="continue-shopping-btn">
-                        <i class="bi bi-arrow-left"></i>
-                        Continua gli Acquisti
-                    </a>
                 </div>
             </div>
             
             <?php else: ?>
             <!-- Empty Cart State -->
-            <div class="empty-cart">
-                <i class="bi bi-cart-x"></i>
-                <h3>Il tuo carrello è vuoto</h3>
-                <p>Aggiungi alcuni prodotti per iniziare i tuoi acquisti!</p>
-                <a href="home.php" class="continue-shopping-btn" style="width: auto; margin-top: 0;">
-                    <i class="bi bi-shop"></i>
+            <div class="empty-state">
+                <i class="bi bi-cart-x display-1 text-muted mb-4"></i>
+                <h3 class="text-primary-brown mb-3">Il tuo carrello è vuoto</h3>
+                <p class="text-muted mb-4">Aggiungi alcuni prodotti per iniziare i tuoi acquisti!</p>
+                <a href="home.php" class="btn btn-primary-custom">
+                    <i class="bi bi-shop me-2"></i>
                     Inizia lo Shopping
                 </a>
             </div>
             <?php endif; ?>
         </div>
 
-        <footer><!-- ?? Possible footer template ?? --></footer>
+        <footer></footer>
         
-        <!-- INSERT HERE ALL JAVASCRIPT NECESSARY IMPORTS -->
+        <!-- Bootstrap 5 JS -->
         <script src="./dist/bootstrap5/js/bootstrap.min.js"></script>
         <script src="./dist/custom/js/cart-manager.js"></script>
 
         <script>
-            // Initialize everything when DOM is ready
             document.addEventListener('DOMContentLoaded', function() {
                 updateCartCount();
             });
