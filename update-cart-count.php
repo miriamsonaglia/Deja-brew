@@ -4,10 +4,14 @@
     session_start();
     require_once('./bootstrap.php');
     require_once('./Models/Lista.php');
+    require_once('./Models/UtenteCompratore.php');
     use App\Models\Lista;
-    $userID = $_SESSION['LoggedUser']['id'] ?? null;
-    if ($userID) {
-        $cartCount = Lista::where('id_utente_compratore', $userID
+    use App\Models\UtenteCompratore;
+    // --- Recupero utente compratore senza usare la relazione ---
+    $utenteCompratore = UtenteCompratore::where('id_utente', $_SESSION['LoggedUser']['id'])->first();
+
+    if ($utenteCompratore) {
+        $cartCount = Lista::where('id_utente_compratore', $utenteCompratore->id
                     )->where('tipo', 'carrello'
                     )->sum('quantita');
     } else {

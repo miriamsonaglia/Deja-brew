@@ -8,10 +8,14 @@ header("Access-Control-Allow-Origin: *");
 
 
 require_once('./Models/Lista.php');
+require_once('./Models/UtenteCompratore.php');
 use App\Models\Lista;
+use App\Models\UtenteCompratore;
 
 session_start();
-$productsInCart = Lista::where('id_utente_compratore', $_SESSION['UserID'])
+// --- Recupero utente compratore senza usare la relazione ---
+$utenteCompratore = UtenteCompratore::where('id_utente', $_SESSION['LoggedUser']['id'])->first();
+$productsInCart = Lista::where('id_utente_compratore', $utenteCompratore->id)
     ->where('tipo', 'carrello')
     ->get();
 

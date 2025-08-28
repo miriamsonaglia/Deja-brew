@@ -27,10 +27,13 @@ if (empty($productID) || empty($type)) {
 
 require_once('./bootstrap.php');
 require_once('./Models/Lista.php');
+require_once('./Models/UtenteCompratore.php');
 use App\Models\Lista;
-
+use App\Models\UtenteCompratore;
 session_start();
-$productInCart = Lista::where('id_utente_compratore', $_SESSION['LoggedUser']['id'])
+$utenteCompratore = UtenteCompratore::where('id_utente', $_SESSION['LoggedUser']['id'])->first();
+
+$productInCart = Lista::where('id_utente_compratore', $utenteCompratore->id)
                     ->where('id_prodotto', $productID)
                     ->where('tipo', $type)
                     ->first();

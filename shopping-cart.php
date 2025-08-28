@@ -14,7 +14,7 @@
             // PHP initialization code remains the same
             use App\Models\Prodotto;
             use App\Models\Lista;
-
+            use App\Models\UtenteCompratore;
             require_once __DIR__ . '/bootstrap.php';
             require_once __DIR__ . '/Models/UtenteCompratore.php';
             require_once __DIR__ . '/Models/Prodotto.php';
@@ -26,8 +26,10 @@
                 header("Location: login.php");
                 exit;
             }
-            
-            $user_cart = Lista::where('id_utente_compratore', $_SESSION['LoggedUser']['id'])
+            // --- Recupero utente compratore senza usare la relazione ---
+            $utenteCompratore = UtenteCompratore::where('id_utente', $_SESSION['LoggedUser']['id'])->first();
+            // --- Recupero prodotti nel carrello ---
+            $user_cart = Lista::where('id_utente_compratore', $utenteCompratore->id)
                             ->where('tipo', 'carrello')
                             ->get();
             

@@ -70,8 +70,8 @@
                                 <?php if(isset($userRole) && ($userRole == Role::BUYER)): ?>
                                 <input type="number" 
                                        step="1" 
-                                       value="0" 
-                                       min="0" 
+                                       value="1" 
+                                       min="1" 
                                        class="quantity-input"
                                        data-product-id="<?php echo $product->id; ?>">
                                 <button class="cart-button" 

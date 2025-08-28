@@ -29,11 +29,17 @@ if ($quantity <= 0 || empty($productID)) {
 
 require_once('./bootstrap.php');
 require_once('./Models/Lista.php');
+require_once('./Models/Utente.php');
+require_once('./Models/UtenteCompratore.php');
 use App\Models\Lista;
+use App\Models\UtenteCompratore;
 
 session_start();
+// --- Recupero utente compratore senza usare la relazione ---
+$utenteCompratore = UtenteCompratore::where('id_utente', $_SESSION['LoggedUser']['id'])->first();
+
 $productInCart = new Lista();
-$productInCart->id_utente_compratore = $_SESSION['LoggedUser']['id'];
+$productInCart->id_utente_compratore = $utenteCompratore->id;
 $productInCart->id_prodotto = $productID;
 $productInCart->tipo = $type;
 $productInCart->quantita = $quantity;
