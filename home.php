@@ -24,7 +24,7 @@
     </head>
     <body>
         <header><!-- ?? Possible header template ?? --></header>
-        <?php require_once __DIR__ . 'navbar-selector.php'; ?>
+        <?php require_once __DIR__ . '/navbar-selector.php'; ?>
         <div class="container-fluid">
             <!-- Categories with Enhanced Slider -->
             <?php 

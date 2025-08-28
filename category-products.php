@@ -25,7 +25,7 @@
 </head>
 <body>
 <header></header>
-<?php require_once __DIR__ . 'navbar-selector.php'; ?>
+<?php require_once __DIR__ . '/navbar-selector.php'; ?>
 <main>
     <div class="container-fluid">
         <div class="category-section my-4">
