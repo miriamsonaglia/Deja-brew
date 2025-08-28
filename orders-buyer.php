@@ -30,6 +30,7 @@
 	<?php if (empty($orders)): ?>
 		<p>Non hai ancora effettuato ordini.</p>
 	<?php else: ?>
+		<!-- FIXME DA QUELLO CHE SO BORDER È DA UTILIZZARE NELLO STYLE -->
 		<table border="1" cellpadding="8">
 			<tr>
 				

@@ -1,10 +1,10 @@
 <?php
 	session_start(); //controllare dov'è inizializzata la sessione e come richiamarne i parametri
-	if (!isset($_SESSION['user_id'])) {
+	if (!isset($_SESSION['LoggedUser'])) {
 		header('Location: login.php');
 		exit;
 	}
-
+	// FIXME: UTILIZZIAMO ELOQUENT, NON OCCORRE PDO
 	$pdo = new PDO("mysql:host=localhost;dbname=ecommerce", "root", "password");
 
 	// Carica i dati dell'utente
