@@ -53,7 +53,7 @@
     <div class="container-fluid">
         <div class="category-section my-4">
             <div class="category-header text-center mb-4">
-                <h1 class="category-title"><?php echo htmlspecialchars($category->descrizione); ?></h1>
+                <a href="home.php"><i class="bi bi-arrow-left"></i></a><h1 class="category-title"><?php echo htmlspecialchars($category->descrizione); ?></h1>
             </div>
 
             <div class="product-grid d-flex flex-wrap justify-content-center gap-4">

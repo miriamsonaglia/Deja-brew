@@ -4,7 +4,7 @@
         <!-- INSERT HERE ALL CSS NECESSARY IMPORTS -->
         <link rel="stylesheet" href="./dist/bootstrap5/icons/bootstrap-icons.css">
         <link rel="stylesheet" href="./dist/bootstrap5/css/bootstrap.min.css">
-        <link rel="stylesheet" href="./dist/custom/css/style.css">
+        <link rel="stylesheet" href="./dist/custom/css/new-style.css">
 
         <?php
             // This in-page script initialize all the required php imports and populates the datasets.
