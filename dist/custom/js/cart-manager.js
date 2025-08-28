@@ -43,6 +43,60 @@ async function updateCartQuantity(productId, quantity) {
         }
 }
 
+async function removeFromCart(productId) {
+    try {
+        const response = await fetch('./remove-product.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                productID: productId,
+                type: 'carrello'
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        await updateCartCount();
+
+        const data = await response.json();
+        console.log('Product removed:', data);
+
+        // Rimuovi elemento DOM
+        const productRow = document.querySelector(`.cart-item[data-product-id="${productId}"]`);
+        if (productRow) {
+            productRow.remove();
+        }
+
+        // Ricalcola i totali
+        recalculateCartTotals();
+
+        // Se il carrello è vuoto, mostra stato "vuoto"
+        const remainingItems = document.querySelectorAll('.cart-item');
+        if (remainingItems.length === 0) {
+            document.querySelector('.cart-content').remove();
+            document.querySelector('.container-fluid').innerHTML += `
+                <div class="empty-state">
+                <i class="bi bi-cart-x display-1 text-muted mb-4"></i>
+                <h3 class="text-primary-brown mb-3">Il tuo carrello è vuoto</h3>
+                <p class="text-muted mb-4">Aggiungi alcuni prodotti per iniziare i tuoi acquisti!</p>
+                <a href="home.php" class="btn btn-primary-custom">
+                    <i class="bi bi-shop me-2"></i>
+                    Inizia lo Shopping
+                </a>
+            </div>
+            `;
+        }
+
+    } catch (error) {
+        console.error('Error removing product from cart:', error);
+    }
+}
+
+
 // Enhanced cart functionality that works on both home and product pages
 document.addEventListener('DOMContentLoaded', function() {
 

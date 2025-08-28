@@ -61,7 +61,7 @@
                                     $total += $subtotal;
                                     $item_count += intval($cart_item->quantita);
                             ?>
-                            <div class="cart-item" data-product-id="<?php echo $product->id; ?>">
+                            <div class="cart-item" data-product-id="<?php echo $product->id;?>">
                                 <div class="row align-items-center">
                                     <!-- Product Image -->
                                     <div class="col-md-2 col-sm-3">
@@ -117,7 +117,7 @@
                                     <!-- Remove Button -->
                                     <div class="col-md-1 col-sm-1 text-end">
                                         <button class="btn btn-outline-danger btn-sm" 
-                                                onclick="removeCartItem(<?php echo $product->id; ?>)"
+                                                onclick="removeFromCart(<?php echo $product->id;?>)"
                                                 title="Rimuovi dal carrello">
                                             <i class="bi bi-trash"></i>
                                         </button>
