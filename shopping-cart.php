@@ -77,7 +77,7 @@
                                                class="cart-product-name text-decoration-none mb-1">
                                                 <?php echo htmlspecialchars($product->nome); ?>
                                             </a>
-                                            <small class="text-muted">
+                                            <small class="text-muted" data-price="<?php echo $product->prezzo;?>">
                                                 € <?php echo number_format($product->prezzo, 2); ?> cad.
                                             </small>
                                         </div>
@@ -106,11 +106,13 @@
                                     
                                     <!-- Subtotal -->
                                     <div class="col-md-2 col-sm-1 text-end">
-                                        <div class="fw-bold text-secondary-red" 
-                                             data-product-id="<?php echo $product->id; ?>">
+                                        <div class="fw-bold text-secondary-red cart-subtotal" 
+                                             data-subtotal-id="<?php echo $product->id;?>">
                                             € <?php echo number_format($subtotal, 2); ?>
                                         </div>
                                     </div>
+
+
                                     
                                     <!-- Remove Button -->
                                     <div class="col-md-1 col-sm-1 text-end">
@@ -213,15 +215,16 @@
         <script src="./dist/custom/js/cart-manager.js"></script>
 
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                updateCartCount();
-            });
-            // Funzioni per aumentare/diminuire la quantità
+            const SHIPPING_COST = 5.90;
+            const TAX_RATE = 0.22;
+
             function increaseQuantity(productId) {
                 const input = document.querySelector(`input[data-product-id='${productId}']`);
                 let currentValue = parseInt(input.value);
                 input.value = currentValue + 1;
-                updateCartQuantity(productId, 1);
+            
+                updateCartQuantity(productId, 1); // Esistente
+                updatePrices(productId, currentValue + 1);
             }
 
             function decreaseQuantity(productId) {
@@ -229,9 +232,47 @@
                 let currentValue = parseInt(input.value);
                 if (currentValue > 1) {
                     input.value = currentValue - 1;
+                
+                    updateCartQuantity(productId, -1); // Esistente
+                    updatePrices(productId, currentValue - 1);
                 }
-                updateCartQuantity(productId, -1);
             }
+
+            function updatePrices(productId, newQuantity) {
+                // Prendi il prezzo unitario dal DOM
+                const productContainer = document.querySelector(`input[data-product-id='${productId}']`).closest('.cart-item');
+                const priceElement = productContainer.querySelector("small[data-price]");
+                const unitPrice = parseFloat(priceElement.getAttribute("data-price"));
+            
+                // Calcola nuovo subtotale
+                const newSubtotal = unitPrice * newQuantity;
+            
+                // Aggiorna il DOM del subtotale per il singolo prodotto
+                const subtotalElement = document.querySelector(`[data-subtotal-id='${productId}']`);
+                subtotalElement.innerText = '€ ' + newSubtotal.toFixed(2);
+            
+                // Ricalcola tutto il carrello
+                recalculateCartTotals();
+            }
+
+            function recalculateCartTotals() {
+                let subtotal = 0;
+            
+                // Per ogni subtotale nel carrello
+                document.querySelectorAll('.cart-subtotal').forEach(item => {
+                    const priceText = item.innerText.replace('€', '').replace(',', '.').trim();
+                    const amount = parseFloat(priceText);
+                    subtotal += amount;
+                });
+            
+                const tax = subtotal * TAX_RATE;
+                const total = subtotal + SHIPPING_COST + tax;
+            
+                // Aggiorna i valori nel DOM
+                document.getElementById('cart-subtotal').innerText = '€ ' + subtotal.toFixed(2);
+                document.getElementById('tax-amount').innerText = '€ ' + tax.toFixed(2);
+    document.getElementById('cart-total').innerText = '€ ' + total.toFixed(2);
+}
         </script>
     </body>
 </html>
