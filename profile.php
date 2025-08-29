@@ -1,52 +1,49 @@
 <?php
-	//TODO sostituire i ? con il modo per estrarre l'idUtente della sessione
-	//controllare come si apre la sessione
-	session_start();
-	if (!isset($_SESSION['user_id'])) {
-		header('Location: login.php');
-		//mettere magari un popup di spiegazione
-		exit;
-	}
-	$pdo = new PDO("mysql:host=localhost;dbname=ecommerce", "root", "password");
+require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/Models/Utente.php';
+require_once __DIR__ . '/Models/ImpostazioniUtente.php';
+
+session_start();
+
+// --- Controllo utente loggato ---
+if (!isset($_SESSION['LoggedUser'])) {
+	die("Devi effettuare il login per accedere al Profilo.");
+}
 
 
-	// Dati profilo
-	$stmt = $pdo->prepare("
-		SELECT u.username, u.immagine_profilo, v.descrizione
-		FROM utente u
-		JOIN utenteVenditore v ON u.id = v.id_utente
-		WHERE u.id = ?
-	");
-	$stmt->execute([$profile_id]);
-	$profile = $stmt->fetch(PDO::FETCH_ASSOC);
+// Dati profilo
+$stmt = $pdo->prepare("
+	SELECT u.username, u.immagine_profilo, v.descrizione
+	FROM utente u
+	JOIN utenteVenditore v ON u.id = v.id_utente
+	WHERE u.id = ?
+");
+$stmt->execute([$profile_id]);
+$profile = $stmt->fetch(PDO::FETCH_ASSOC);
 
-	//controllare se utile
-	if (!$user) {
-		die("Utente non esistente.");
-	}
+// Ordini acquistati
+$stmt = $pdo->prepare("
+	SELECT o.*, p.nome AS product_name
+	FROM ordine o
+	JOIN prodotto p ON o.id_prodotto = p.id
+	WHERE o.id_utente = ?
+	ORDER BY o.id DESC
+");
+$stmt->execute([$profile_id]);
+$orders_acq = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-	// Ordini acquistati
-	$stmt = $pdo->prepare("
-		SELECT o.*, p.nome AS product_name
-		FROM ordine o
-		JOIN prodotto p ON o.id_prodotto = p.id
-		WHERE o.id_utente = ?
-		ORDER BY o.id DESC
-	");
-	$stmt->execute([$profile_id]);
-	$orders_acq = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// Ordini venduti
+$stmt = $pdo->prepare("
+	SELECT o.*, p.nome AS product_name
+	FROM ordine o
+	JOIN prodotto p ON o.id_prodotto = p.id
+	JOIN utenteVenditore v ON p.id_venditore = v.id
+	WHERE v.id_utente = ?
+	ORDER BY o.id DESC
+");
+$stmt->execute([$profile_id]);
+$orders_vend = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-	// Ordini venduti
-	$stmt = $pdo->prepare("
-		SELECT o.*, p.nome AS product_name
-		FROM ordine o
-		JOIN prodotto p ON o.id_prodotto = p.id
-		JOIN utenteVenditore v ON p.id_venditore = v.id
-		WHERE v.id_utente = ?
-		ORDER BY o.id DESC
-	");
-	$stmt->execute([$profile_id]);
-	$orders_vend = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -86,15 +83,7 @@
 			color: #555;
 		}
 	</style>
-	<script>
-		function switchTab(tab) {
-			document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-			document.querySelectorAll('.tab-content').forEach(div => div.style.display = 'none');
-			document.getElementById(tab + '-btn').classList.add('active');
-			document.getElementById(tab + '-content').style.display = 'block';
-		}
-		window.onload = () => switchTab('acquistati');
-	</script>
+
 </head>
 <body>
 
