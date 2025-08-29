@@ -1,37 +1,43 @@
 <?php
 
-	//controllare come si apre la sessione
-	session_start();
-	if (!isset($_SESSION['user_id'])) {
-		header('Location: login.php');
-		//mettere magari un popup di spiegazione
-		exit;
-	}
-	$pdo = new PDO("mysql:host=localhost;dbname=ecommerce", "root", "password");
+require_once __DIR__ . '/Models/Utente.php';
+require_once __DIR__ . '/Models/ImpostazioniUtente.php';
 
-	$userId = $_SESSION['user_id'];
+use App\Models\Utente;
+use App\Models\ImpostazioniUtente;
 
-	// Crea le impostazioni predefinite se non esistono
-	$pdo->exec("INSERT IGNORE INTO impostazioniUtente (id_utente, tema, notifiche)
-    						VALUES ($userId, 'chiaro', 1)
-	");
+session_start();
 
-	// Se il form viene inviato, aggiorna le impostazioni
-	$stmt = $pdo->prepare(
-		"UPDATE impostazioniUtente SET
-        tema = ?,
-		notifiche = ?
-		WHERE id_utente = ?
-");
-$stmt->execute([
-    $_POST['tema'],
-    $_POST['notifiche'],
-    $userId
-]);
+// --- Controllo utente loggato ---
+if (!isset($_SESSION['LoggedUser'])) {
+	die("Devi effettuare il login per accedere al checkout.");
+}
 
-	// Carica le impostazioni attuali
-	$stmt = $pdo->prepare("SELECT * FROM impostazioniUtente WHERE id_utente = ?");
-	$stmt->execute([$userId]);
+$userId = $_SESSION['user_id'];
+
+// Crea le impostazioni predefinite se non esistono
+ImpostazioniUtente::firstOrCreate(
+    ['id_utente' => $userId], // Condizione di ricerca
+    [                           
+        'tema' => 'chiaro',
+        'notifiche_mail' => 1,
+		'notifiche_push' => 1
+    ]
+);
+
+// Carica le impostazioni attuali
+$impostazioni = ImpostazioniUtente::where('id_utente', $userId)->first();
+
+// Se il form viene inviato, aggiorna le impostazioni
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+	ImpostazioniUtente::where('id_utente', $userId)->update([
+		//Con due opzioni posso usare comodamente un operatore binario
+        'tema' => $$_POST['tema'] === 'on' ? 1 : 0,
+        'notifiche_mail' => $$_POST['notifiche_mail'] === 'on' ? 1 : 0,
+        'notifiche_push' => $$_POST['notifiche_push'] === 'on' ? 1 : 0,
+    ]);
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -62,17 +68,17 @@ $stmt->execute([
 
 		<label>
 			Notifiche Email
-			<select name="email_notifications">
-				<option value="on" <?= $settings['email_notifications'] === 'on' ? 'selected' : '' ?>>Attive</option>
-				<option value="off" <?= $settings['email_notifications'] === 'off' ? 'selected' : '' ?>>Disattive</option>
+			<select name="notifiche_mail">
+				<option value="on" <?= $settings['notifiche_mail'] === 'on' ? 'selected' : '' ?>>Attive</option>
+				<option value="off" <?= $settings['notifiche_mail'] === 'off' ? 'selected' : '' ?>>Disattive</option>
 			</select>
 		</label>
 
 		<label>
 			Notifiche Push
-			<select name="push_notifications">
-				<option value="on" <?= $settings['push_notifications'] === 'on' ? 'selected' : '' ?>>Attive</option>
-				<option value="off" <?= $settings['push_notifications'] === 'off' ? 'selected' : '' ?>>Disattive</option>
+			<select name="notifiche_push">
+				<option value="on" <?= $settings['notifiche_push'] === 'on' ? 'selected' : '' ?>>Attive</option>
+				<option value="off" <?= $settings['notifiche_push'] === 'off' ? 'selected' : '' ?>>Disattive</option>
 			</select>
 		</label>
 
@@ -81,18 +87,9 @@ $stmt->execute([
 
 		<label>
 			Modalità Scura
-			<select name="dark_mode">
-				<option value="on" <?= $settings['dark_mode'] === 'on' ? 'selected' : '' ?>>Attiva</option>
-				<option value="off" <?= $settings['dark_mode'] === 'off' ? 'selected' : '' ?>>Disattiva</option>
-			</select>
-		</label>
-
-		<label>
-			Dimensione del Testo
-			<select name="text_size">
-				<option value="small" <?= $settings['text_size'] === 'small' ? 'selected' : '' ?>>Piccolo</option>
-				<option value="medium" <?= $settings['text_size'] === 'medium' ? 'selected' : '' ?>>Medio</option>
-				<option value="large" <?= $settings['text_size'] === 'large' ? 'selected' : '' ?>>Grande</option>
+			<select name="tema">
+				<option value="on" <?= $settings['tema'] === 'on' ? 'selected' : '' ?>>Attiva</option>
+				<option value="off" <?= $settings['tema'] === 'off' ? 'selected' : '' ?>>Disattiva</option>
 			</select>
 		</label>
 
