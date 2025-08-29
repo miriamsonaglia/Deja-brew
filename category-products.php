@@ -1,31 +1,30 @@
+<?php
+    require_once __DIR__ . '/bootstrap.php';
+    require_once __DIR__ . '/utilities.php';
+    require_once __DIR__ . '/Models/Categoria.php';
+    require_once __DIR__ . '/Models/Prodotto.php';
+    require_once __DIR__ . '/Models/UtenteCompratore.php';
+    require_once __DIR__ . '/Models/Aroma.php';
+    require_once __DIR__ . '/role.php';
+    use App\Models\Prodotto;
+    use App\Models\Categoria;
+    use App\Models\UtenteCompratore;
+    session_start();
+    $utenteCompratore = UtenteCompratore::where('id_utente', $_SESSION['LoggedUser']['id'])->first();
+    $category = Categoria::find($_GET['category']);
+    $products = Prodotto::where("categoria_id", $category->id)->get();
+?>
 <!DOCTYPE html>
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>Home - Deja-brew</title>
+    <title><?php echo $category->descrizione; ?> - Deja-brew</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
     <!-- CSS -->
     <link rel="stylesheet" href="./dist/bootstrap5/icons/bootstrap-icons.css">
     <link rel="stylesheet" href="./dist/bootstrap5/css/bootstrap.min.css">
     <link rel="stylesheet" href="./dist/custom/css/new-style.css">
-
-    <?php
-        require_once __DIR__ . '/bootstrap.php';
-        require_once __DIR__ . '/utilities.php';
-        require_once __DIR__ . '/Models/Categoria.php';
-        require_once __DIR__ . '/Models/Prodotto.php';
-        require_once __DIR__ . '/Models/UtenteCompratore.php';
-        require_once __DIR__ . '/Models/Aroma.php';
-        require_once __DIR__ . '/role.php';
-        use App\Models\Prodotto;
-        use App\Models\Categoria;
-        use App\Models\UtenteCompratore;
-        session_start();
-        $utenteCompratore = UtenteCompratore::where('id_utente', $_SESSION['LoggedUser']['id'])->first();
-        $category = Categoria::find($_GET['category']);
-        $products = Prodotto::where("categoria_id", $_GET['category'])->get();
-    ?>
 </head>
 <body>
 <header></header>
