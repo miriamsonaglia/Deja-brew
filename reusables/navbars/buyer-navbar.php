@@ -61,7 +61,7 @@
                 </a>
             </li>
             <li>
-                <a href="#" class="nav-link text-danger" onclick="logout()">
+                <a href="./logout.php" class="nav-link text-danger" onclick="logout()">
                     <i class="bi bi-box-arrow-right me-2"></i>Logout
                 </a>
             </li>

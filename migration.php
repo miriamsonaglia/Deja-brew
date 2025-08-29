@@ -115,6 +115,7 @@ function createRecensioneTable()
         $table->id();
         $table->foreignId('id_utente')->constrained('utente')->onDelete('cascade');
         $table->foreignId('id_prodotto')->constrained('prodotto')->onDelete('cascade');
+        $table->text('testo')->nullable();
         $table->tinyInteger('stelle')->unsigned()->default(1);
         // $table->timestamps(); // Rimosso per disabilitare created_at e updated_at
     });

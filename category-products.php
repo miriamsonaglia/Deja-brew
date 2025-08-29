@@ -33,13 +33,19 @@
 <main>
     <div class="container-fluid">
         <div class="category-section my-4">
-            <div class="category-header text-center mb-4">
-                <a href="./home.php"><i class="bi bi-arrow-left"></i></a><h1 class="category-title"><?php echo htmlspecialchars($category->descrizione); ?></h1>
-            </div>
+            <!-- Sostituisci questo blocco nel tuo category-products.php: -->
+            <div class="category-section my-4">
+                <div class="category-header">
+                    <a href="./home.php" class="back-button" title="Torna alla home">
+                        <i class="bi bi-arrow-left"></i>
+                    </a>
+                    <h1 class="category-title"><?php echo htmlspecialchars($category->descrizione); ?></h1>
+                </div>
 
-            <div class="product-grid d-flex flex-wrap justify-content-center gap-4">
-                <?php foreach ($products as $product): ?>
-                    <div class="slider-object card card-product" style="width: 18rem;" 
+                <div class="product-grid d-flex flex-wrap justify-content-center gap-4">
+                    <!-- Il resto del codice rimane uguale -->
+                    <?php foreach ($products as $product): ?>
+                                            <div class="slider-object card card-product" style="width: 18rem;" 
                         data-product-id="<?php echo $product->id; ?>"
                         data-product-name="<?php echo htmlspecialchars($product->nome); ?>"
                         data-product-price="<?php echo $product->prezzo; ?>"
@@ -85,7 +91,8 @@
                                 <?php endif; ?>
                         </div>
                     </div>
-                <?php endforeach; ?>
+                    <?php endforeach; ?>
+                </div>
             </div>
         </div>
     </div>

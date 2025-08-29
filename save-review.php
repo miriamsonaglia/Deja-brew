@@ -29,6 +29,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'testo'       => $testo
     ]);
 
-    header("Location: product-buyer.php?id=" . $idProdotto);
+    header("Location: product.php?id=" . $idProdotto);
     exit;
 }
