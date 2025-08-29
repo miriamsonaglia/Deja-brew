@@ -9,7 +9,7 @@ header("Access-Control-Allow-Origin: *");
 $input = json_decode(file_get_contents('php://input'), true);
 
 // Verifica che i dati siano presenti
-if (!isset($input['productID']) || !isset($input['type'])) {
+if (!isset($input['productID'])) {
     http_response_code(400); // Bad Request
     echo json_encode(['error' => 'Dati mancanti']);
     exit;

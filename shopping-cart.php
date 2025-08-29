@@ -64,24 +64,29 @@
                             <div class="cart-item" data-product-id="<?php echo $product->id;?>">
                                 <div class="row align-items-center">
                                     <!-- Product Image -->
-                                    <div class="col-md-2 col-sm-3">
-                                        <img src="<?php echo htmlspecialchars($product->fotografia); ?>" 
-                                             alt="<?php echo htmlspecialchars($product->nome); ?>" 
-                                             class="cart-product-image img-fluid rounded">
-                                    </div>
-                                    
-                                    <!-- Product Info -->
-                                    <div class="col-md-4 col-sm-5">
-                                        <div class="d-flex flex-column">
-                                            <a href="product.php?id=<?php echo $product->id; ?>" 
-                                               class="cart-product-name text-decoration-none mb-1">
-                                                <?php echo htmlspecialchars($product->nome); ?>
-                                            </a>
-                                            <small class="text-muted" data-price="<?php echo $product->prezzo;?>">
-                                                € <?php echo number_format($product->prezzo, 2); ?> cad.
-                                            </small>
-                                        </div>
-                                    </div>
+                            <div class="col-md-2 col-sm-3">
+                                <img src="<?php echo htmlspecialchars(empty($prodotto->fotografia) ? './images/products/Standard_Blend.png' : $prodotto->fotografia); ?>" 
+                                     alt="<?php echo htmlspecialchars($product->nome); ?>" 
+                                     class="wishlist-product-image img-fluid rounded">
+                            </div>
+                            
+                            <!-- Product Info -->
+                            <div class="col-md-4 col-sm-5">
+                                <div class="d-flex flex-column">
+                                    <a href="product.php?id=<?php echo $product->id; ?>" 
+                                        class="cart-product-name text-decoration-none mb-1">
+                                        <?php echo htmlspecialchars($product->nome); ?>
+                                    </a>
+                                    <small class="text-muted" data-price="<?php echo $product->prezzo;?>">
+                                        € <?php echo number_format($product->prezzo, 2); ?> cad.
+                                    </small>
+                                    <?php if($product->descrizione): ?>
+                                    <small class="text-muted mt-1">
+                                        <?php echo htmlspecialchars(substr($product->descrizione, 0, 100)); ?>...
+                                    </small>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
                                     
                                     <div class="col-md-3 col-sm-2">
                                         <div class="d-flex align-items-center justify-content-center">
@@ -104,7 +109,7 @@
                                     </div>
                                     
                                     <!-- Subtotal -->
-                                    <div class="col-md-2 col-sm-1 text-end">
+                                    <div class="col-md-2 col-sm-1 text-center">
                                         <div class="fw-bold text-secondary-red cart-subtotal" 
                                              data-subtotal-id="<?php echo $product->id;?>">
                                             € <?php echo number_format($subtotal, 2); ?>
