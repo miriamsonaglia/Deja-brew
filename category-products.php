@@ -12,13 +12,17 @@
 
     <?php
         require_once __DIR__ . '/bootstrap.php';
+        require_once __DIR__ . '/utilities.php';
         require_once __DIR__ . '/Models/Categoria.php';
         require_once __DIR__ . '/Models/Prodotto.php';
+        require_once __DIR__ . '/Models/UtenteCompratore.php';
         require_once __DIR__ . '/Models/Aroma.php';
         require_once __DIR__ . '/role.php';
         use App\Models\Prodotto;
         use App\Models\Categoria;
+        use App\Models\UtenteCompratore;
         session_start();
+        $utenteCompratore = UtenteCompratore::where('id_utente', $_SESSION['LoggedUser']['id'])->first();
         $category = Categoria::find($_GET['category']);
         $products = Prodotto::where("categoria_id", $_GET['category'])->get();
     ?>
@@ -30,7 +34,7 @@
     <div class="container-fluid">
         <div class="category-section my-4">
             <div class="category-header text-center mb-4">
-                <a href="home.php"><i class="bi bi-arrow-left"></i></a><h1 class="category-title"><?php echo htmlspecialchars($category->descrizione); ?></h1>
+                <a href="./home.php"><i class="bi bi-arrow-left"></i></a><h1 class="category-title"><?php echo htmlspecialchars($category->descrizione); ?></h1>
             </div>
 
             <div class="product-grid d-flex flex-wrap justify-content-center gap-4">
@@ -66,12 +70,19 @@
                                         data-product-price="<?php echo $product->prezzo; ?>">
                                     Aggiungi al carrello
                                 </button>
-
-                                <button class="btn btn-outline-primary-custom w-100 wish-button"
+                                <?php if(wished($product->id, $utenteCompratore->id)): ?>
+                                    <button class="btn btn-outline-danger wish-button"
+                                            data-product-id="<?php echo $product->id; ?>"
+                                            title="Rimuovi dalla wishlist">
+                                        <i class="bi bi-heart-fill"></i>
+                                    </button>
+                                <?php else: ?>
+                                <button class="btn btn-outline-primary-custom wish-button"
                                         data-product-id="<?php echo $product->id; ?>"
                                         title="Aggiungi alla wishlist">
-                                    <i class="bi bi-heart me-2"></i>
+                                    <i class="bi bi-heart"></i>
                                 </button>
+                                <?php endif; ?>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -94,6 +105,7 @@
     <script src="./dist/custom/js/filter.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            updateCartCount();
             new Filter();
         });
     </script>
