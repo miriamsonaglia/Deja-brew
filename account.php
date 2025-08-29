@@ -2,11 +2,11 @@
 
 use App\Models\Utente;
 use App\Models\UtenteVenditore;
-//TODO far funzionare gli elementi
+//TODO far funzionare gli elementi, aggiungere a prodotti con js gli elementi a scorrimento
 session_start(); //controllare dov'è inizializzata la sessione e come richiamarne i parametri
-if (!isset($_SESSION['LoggedUser'])&&$_SESSION['UserRole']===Role::VENDOR->value) {
+if (!isset($_SESSION['LoggedUser'])&&$_SESSION['UserRole']===Role::BUYER->value) {
 	header('Location: login.php');
-	die("Devi essere Venditore per accedere ad Account.");
+	die("Devi essere Compratore per visualizzare il profilo di un venditore.");
 }
 
 	// Carica i dati dell'utente
