@@ -46,6 +46,11 @@
                 </a>
             </li>
             <li>
+                <a href="#" class="nav-link" onclick="showList()">
+                    <i class="bi bi-heart me-2"></i>Lista dei desideri
+                </a>
+            </li>
+            <li>
                 <a href="#" class="nav-link" onclick="showSettings()">
                     <i class="bi bi-gear me-2"></i>Impostazioni
                 </a>

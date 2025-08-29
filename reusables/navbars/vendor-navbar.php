@@ -8,13 +8,6 @@
         
         <!-- Logo/Brand centrato -->
         <span class="navbar-brand mx-auto fw-bold fs-3">Deja-brew</span>
-        
-        <!-- Barra di ricerca e carrello -->
-        <div class="d-flex align-items-center">
-            <form class="d-flex me-3" role="search">
-                <input class="form-control" type="search" placeholder="Cerca..." aria-label="Search" style="min-width: 200px;">
-            </form>
-        </div>
     </div>
 </nav>
 
@@ -28,6 +21,11 @@
     </div>
     <div class="offcanvas-body">
         <ul class="list-unstyled">
+            <li>
+                <a href="#" class="nav-link" onclick="showAccount()">
+                    <i class="bi bi-person me-2"></i>Account
+                </a>
+            </li>
             <li>
                 <a href="#" class="nav-link" onclick="showNotifications()">
                     <i class="bi bi-bell me-2"></i>Notifiche

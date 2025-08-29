@@ -15,6 +15,7 @@ class AuthController
 {
     public function login()
     {
+        session_unset();
         $email = $_POST['email'] ?? '';
         $password = $_POST['password'] ?? '';
         $role = $_POST['role'] ?? '';
@@ -29,18 +30,18 @@ class AuthController
         // FOR THE MOMENT CHANGED FROM: password_verify($password, $utente->password) TO:
         if ($utente && $password === $utente->password) {
             $_SESSION['LoggedUser'] = $utente->toArray();
-
             if ($role === 'acquirente') {
                 if (!$utente->utenteCompratore()) {
-                    UtenteCompratore::create(['id_utente' => $utente->id]);
+                    header('Location: /login.php');
+                    exit("LE CREDENZIALI NON SONO CORRETTE PER IL RUOLO SELEZIONATO");
+                    //UtenteCompratore::create(['id_utente' => $utente->id]);
                 }
-                // FIXME PLEASE: NEVER ASSIGN ENTIRE ENUM OR CLASS TO SESSION!! IT WILL CAUSE SERIALIZATION ERRORS!
-                // WRONG: $_SESSION['UserRole'] = Role::BUYER;
-                // RIGHT:
                 $_SESSION['UserRole'] = Role::BUYER->value;
             } else {
                 if (!$utente->utenteVenditore()) {
-                    UtenteVenditore::create(['id_utente' => $utente->id]);
+                    header('Location: /login.php');
+                    exit("LE CREDENZIALI NON SONO CORRETTE PER IL RUOLO SELEZIONATO");
+                    //UtenteVenditore::create(['id_utente' => $utente->id]);
                 }
                 $_SESSION['UserRole'] = Role::VENDOR->value;
             }
