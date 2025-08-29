@@ -13,9 +13,6 @@ require_once __DIR__ . '/utilities.php';
 use App\Models\Prodotto;
 use App\Models\Recensione;
 use App\Models\UtenteVenditore;
-use App\Models\Categoria;
-use App\Models\Utente;
-use App\Models\Aroma;
 
 session_start();
 $userRole = $_SESSION['UserRole'] ?? Role::GUEST->value;
