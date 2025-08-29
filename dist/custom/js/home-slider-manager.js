@@ -17,7 +17,7 @@ class ProductSlider {
         
         this.init();
     }
-    
+
     init() {
         this.updateItemsToShow();
         this.createIndicators();

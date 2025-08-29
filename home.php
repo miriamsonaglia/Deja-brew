@@ -111,7 +111,7 @@
             document.addEventListener('DOMContentLoaded', function() {
                 // Initialize sliders for each category
                 <?php foreach($categories as $category): ?>
-                    new ProductSlider('category-<?php echo $category->id; ?>-slider');
+                    new ProductSlider('category-<?php echo $category->id;?>-slider');
                 <?php endforeach; ?>
                 <?php if(isset($userRole) && ($userRole === Role::BUYER->value)): ?>
                     updateCartCount();
