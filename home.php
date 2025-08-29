@@ -26,16 +26,29 @@
         <header><!-- ?? Possible header template ?? --></header>
         <?php require_once __DIR__ . '/navbar-selector.php'; ?>
         <div class="container-fluid">
+         <div class="search-wrapper position-relative mx-auto" style="max-width: 600px;">
+            <input type="text" 
+                   class="search-bar form-control" 
+                   id="live-search" 
+                   placeholder="Search for products..." 
+                   autocomplete="off"/>
+
+            <ul id="search-results" 
+                class="list-group position-absolute w-100" 
+                style="z-index: 1050; top: 100%; display: none;"></ul>
+        </div>
+
+
             <!-- Categories with Enhanced Slider -->
             <?php 
             foreach($categories as $index => $category):
-                $products = Prodotto::where('categoria_id', $category->id)->get();
+                $products = Prodotto::where('categoria_id', $category->id)->limit(50)->get();
                 $sliderId = 'category-' . $category->id;
             ?>
             <section class="category-section">
                 <div class="category-header">
                     <h1 class="category-title"><?php echo htmlspecialchars($category->descrizione); ?></h1>
-                    <a href="http://localhost:8080/category-products.php?category=<?php echo $category->id; ?>" class="view-all-link">Vedi tutti</a>
+                    <a href="./category-products.php?category=<?php echo $category->id; ?>" class="view-all-link">Vedi tutti</a>
                 </div>
                 
                 <div class="slider-wrapper">
@@ -99,7 +112,7 @@
         <!-- INSERT HERE ALL JAVASCRIPT NECESSARY IMPORTS -->
         <script src="./dist/bootstrap5/js/bootstrap.min.js"></script>
         <script src="./dist/custom/js/home-slider-manager.js"></script>
-
+        <script src="./dist/custom/js/searchbar-manager.js"></script>
         <?php if(isset($userRole) && ($userRole === Role::BUYER->value)): ?>
             <script src="./dist/custom/js/wishlist-manager.js"></script>
             <script src="./dist/custom/js/cart-manager.js"></script>
@@ -117,6 +130,8 @@
                     updateCartCount();
                 <?php endif; ?>
             });
+
+            
         </script>
     </body>
 </html>

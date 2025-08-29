@@ -11,10 +11,6 @@
         
         <!-- Barra di ricerca e carrello -->
         <div class="d-flex align-items-center">
-            <form class="d-flex me-3" role="search">
-                <input class="form-control" type="search" placeholder="Cerca..." aria-label="Search" style="min-width: 200px;">
-            </form>
-            
             <!-- Carrello -->
             <div class="cart-container">
                 <a href="./shopping-cart.php" class="cart-link">
