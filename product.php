@@ -25,7 +25,7 @@ $userRole = $_SESSION['UserRole'] ?? Role::GUEST->value;
 // ---------------------------------------------------------------------------------------------
  $id = $_GET['id'] ?? 1;
  $prodotto = Prodotto::find($id);
- $immagini = [$prodotto->fotografia];
+ $immagini = [empty($prodotto->fotografia) ? './images/products/Standard_Blend.png' : $prodotto->fotografia];
  $mediaRecensioni = Recensione::where('id_prodotto', $id)->avg('stelle') ?? 0;
  $venditore = UtenteVenditore::with('user')->find($prodotto->id_venditore);
  $recensioni = Recensione::where('id_prodotto', $id)
@@ -57,7 +57,7 @@ function renderStars($media) {
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-  <link href="/dist/custom/css/style.css" rel="stylesheet">
+  <link href="/dist/custom/css/new-style.css" rel="stylesheet">
   
   <style>
     /* Custom styles to match home page functionality */
@@ -322,7 +322,7 @@ function renderStars($media) {
 
 <!-- JavaScript imports -->
 <script src="./dist/custom/js/sidebar-manager.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="./dist/bootstrap5/js/bootstrap.min.js"></script>
 
 <?php if(isset($userRole) && ($userRole === Role::BUYER->value)): ?>
   <script src="./dist/custom/js/wishlist-manager.js"></script>
