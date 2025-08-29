@@ -1,47 +1,49 @@
 <?php
 
-//TODO ancora da fixare
-
-	session_start(); //controllare dov'è inizializzata la sessione e come richiamarne i parametri
-	if (!isset($_SESSION['LoggedUser'])&&$_SESSION['UserRole']===Role::VENDOR->value) {
-		header('Location: login.php');
-		die("Devi essere Venditore per accedere ad Account.");
-	}
-	// FIXME: UTILIZZIAMO ELOQUENT, NON OCCORRE PDO
-	$pdo = new PDO("mysql:host=localhost;dbname=ecommerce", "root", "password");
+use App\Models\Utente;
+use App\Models\UtenteVenditore;
+//TODO far funzionare gli elementi
+session_start(); //controllare dov'è inizializzata la sessione e come richiamarne i parametri
+if (!isset($_SESSION['LoggedUser'])&&$_SESSION['UserRole']===Role::VENDOR->value) {
+	header('Location: login.php');
+	die("Devi essere Venditore per accedere ad Account.");
+}
 
 	// Carica i dati dell'utente
-	$stmt = $pdo->prepare("SELECT display_name, description, immagine_profilo FROM users WHERE id = ?");
-	$stmt->execute([$_SESSION['user_id']]);
-	$user = $stmt->fetch(PDO::FETCH_ASSOC);
+$user = Utente::select('display_name', 'description', 'immagine_profilo')
+				->where('id', $_SESSION['user_id'])
+				->first();
 
-	// Aggiorna i dati se viene inviato il form
-	if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
-		$username    = $_POST['username'] ?? '';
-		$description = $_POST['descrizione'] ?? '';
-		
-		// Gestione immagine
-		//TODO controllare dove mandare le immagini caricate
-		$profileImage = $user['immagine_profilo']; // valore attuale
-		if (!empty($_FILES['immagine_profilo']['tmp_name'])) {
-			$uploadDir = 'uploads/';
-			$fileName = basename($_FILES['immagine_profilo']['name']);
-			$targetFile = $uploadDir . uniqid() . "_" . $fileName;
-			move_uploaded_file($_FILES['immagine_profilo']['tmp_name'], $targetFile);
-			$profileImage = $targetFile;
+// Aggiorna i dati se viene inviato il form
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
+    $username    = $_POST['username'] ?? '';
+    $description = $_POST['descrizione'] ?? '';
+	$profileImage = $user->immagine_profilo;
+
+	if (!empty($_FILES['immagine_profilo']['tmp_name'])) {
+		$uploadDir = __DIR__ . '/images/profiles/'; // directory fisica
+		$fileName = basename($_FILES['immagine_profilo']['name']);
+		$targetFile = $uploadDir . uniqid() . "_" . $fileName;
+
+		if (move_uploaded_file($_FILES['immagine_profilo']['tmp_name'], $targetFile)) {
+			// Salvo solo il percorso relativo (così è più facile da usare nell’HTML)
+			$profileImage = 'images/profiles/' . basename($targetFile);
 		}
-
-		// Aggiorna tabella utente
-		$stmt = $pdo->prepare("UPDATE utente SET username = ?, immagine_profilo = ? WHERE id = ?");
-		$stmt->execute([$username, $profileImage, $_SESSION['user_id']]);
-
-		// Aggiorna tabella utenteVenditore
-		$stmt2 = $pdo->prepare("UPDATE utenteVenditore SET descrizione = ? WHERE id_utente = ?");
-		$stmt2->execute([$description, $_SESSION['user_id']]);
-
-		header("Location: account.php?updated=1");
-		exit;
 	}
+
+    // Aggiorna tabella utente
+    $utente = Utente::find($_SESSION['user_id']);
+    $utente->username = $username;
+    $utente->immagine_profilo = $profileImage; // $profileImage gestito come nell’upload
+    $utente->save();
+
+    // Aggiorna tabella utenteVenditore
+    UtenteVenditore::where('id_utente', $_SESSION['user_id'])
+        ->update(['descrizione' => $description]);
+
+    header("Location: account.php?updated=1");
+    exit;
+}
 ?>
 
 <!DOCTYPE html>
@@ -49,15 +51,27 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Il Mio Account</title>
-	<script>
-		function switchTab(tab) {
-			document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-			document.querySelectorAll('.tab-content').forEach(div => div.style.display = 'none');
-			document.getElementById(tab + '-btn').classList.add('active');
-			document.getElementById(tab + '-content').style.display = 'block';
-		}
-		window.onload = () => switchTab('acquistati');
-	</script>
+<!--TODO da mettere in file style -->
+<style>
+	.tab-button {
+		cursor: pointer;
+		padding: 5px 10px;
+		display: inline-block;
+		border: 1px solid #ccc;
+		margin-right: 5px;
+	}
+
+	.tab-button.active {
+		background-color: #eee;
+		font-weight: bold;
+	}
+
+	.tab-content {
+		border: 1px solid #ccc;
+		padding: 10px;
+		margin-top: 5px;
+	}
+</style>
 </head>
 <body>
 	<h1>Il Mio Account</h1>
@@ -92,53 +106,73 @@
     <button type="submit" name="update_profile">Aggiorna Profilo</button>
 </form>
 
+<div class="tabs">
+    <div>
+        <span class="tab-button active" data-tab="acquistati">Ordini Acquistati</span>
+        <span class="tab-button" data-tab="prodotti">Prodotti</span>
+    </div>
 
-<?php if ($isOwner): ?>
-		<div class="tabs">
-			<div>
-				<span id="acquistati-btn" class="tab-button" onclick="switchTab('acquistati')">Ordini Acquistati</span>
-				<span id="venduti-btn" class="tab-button" onclick="switchTab('venduti')">Ordini Venduti</span>
-			</div>
+    <!-- Tab Acquistati -->
+    <div class="tab-content" data-tab="acquistati">
+        <h3>Ordini Acquistati</h3>
+        <?php if (empty($orders_acq)): ?>
+            <p>Nessun ordine acquistato.</p>
+        <?php else: ?>
+            <table>
+                <tr><th>Data</th><th>Prodotto</th><th>Quantità</th><th>Totale</th></tr>
+                <?php foreach ($orders_acq as $o): ?>
+                    <tr>
+                        <td><?= $o['order_date'] ?></td>
+                        <td><?= htmlspecialchars($o['product_name']) ?></td>
+                        <td><?= $o['quantity'] ?></td>
+                        <td>€ <?= number_format($o['price'] * $o['quantity'], 2) ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </table>
+        <?php endif; ?>
+    </div>
 
-			<div id="acquistati-content" class="tab-content">
-				<h3>Ordini Acquistati</h3>
-				<?php if (empty($orders_acq)): ?>
-					<p>Nessun ordine acquistato.</p>
-				<?php else: ?>
-					<table>
-						<tr><th>Data</th><th>Prodotto</th><th>Quantità</th><th>Totale</th></tr>
-						<?php foreach ($orders_acq as $o): ?>
-							<tr>
-								<td><?= $o['order_date'] ?></td>
-								<td><?= htmlspecialchars($o['product_name']) ?></td>
-								<td><?= $o['quantity'] ?></td>
-								<td>€ <?= number_format($o['price'] * $o['quantity'], 2) ?></td>
-							</tr>
-						<?php endforeach; ?>
-					</table>
-				<?php endif; ?>
-			</div>
-
-			<div id="venduti-content" class="tab-content" style="display: none;">
-				<h3>Ordini Venduti</h3>
-				<?php if (empty($orders_vend)): ?>
-					<p>Nessun ordine venduto.</p>
-				<?php else: ?>
-					<table>
-						<tr><th>Data</th><th>Prodotto</th><th>Quantità</th><th>Totale</th></tr>
-						<?php foreach ($orders_vend as $o): ?>
-							<tr>
-								<td><?= $o['order_date'] ?></td>
-								<td><?= htmlspecialchars($o['product_name']) ?></td>
-								<td><?= $o['quantity'] ?></td>
-								<td>€ <?= number_format($o['price'] * $o['quantity'], 2) ?></td>
-							</tr>
-						<?php endforeach; ?>
-					</table>
-				<?php endif; ?>
-			</div>
-		</div>
-	<?php endif; ?>
+    <!-- Tab Prodotti -->
+    <div class="tab-content" data-tab="prodotti" style="display: none;">
+        <h3>Prodotti</h3>
+        <?php if (empty($orders_vend)): ?>
+            <p>Nessun ordine venduto.</p>
+        <?php else: ?>
+            <table>
+                <tr><th>Data</th><th>Prodotto</th><th>Quantità</th><th>Totale</th></tr>
+                <?php foreach ($orders_vend as $o): ?>
+                    <tr>
+                        <td><?= $o['order_date'] ?></td>
+                        <td><?= htmlspecialchars($o['product_name']) ?></td>
+                        <td><?= $o['quantity'] ?></td>
+                        <td>€ <?= number_format($o['price'] * $o['quantity'], 2) ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </table>
+        <?php endif; ?>
+    </div>
+</div>
 
 </body>
+<script>
+	function switchTab(tabName) {
+		// Aggiorna lo stato dei bottoni
+		document.querySelectorAll('.tab-button').forEach(btn => {
+			btn.classList.toggle('active', btn.dataset.tab === tabName);
+		});
+
+		// Mostra/nasconde i contenuti
+		document.querySelectorAll('.tab-content').forEach(content => {
+			content.style.display = content.dataset.tab === tabName ? 'block' : 'none';
+		});
+	}
+
+	// Collega tutti i bottoni
+	document.querySelectorAll('.tab-button').forEach(btn => {
+		btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+	});
+
+	// Mostra tab di default all'avvio
+	window.addEventListener('DOMContentLoaded', () => switchTab('acquistati'));
+</script>
 </html>
