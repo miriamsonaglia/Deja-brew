@@ -20,7 +20,7 @@
     <meta charset="UTF-8">
     <title><?php echo $category->descrizione; ?> - Deja-brew</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    
+
     <!-- CSS -->
     <link rel="stylesheet" href="./dist/bootstrap5/icons/bootstrap-icons.css">
     <link rel="stylesheet" href="./dist/bootstrap5/css/bootstrap.min.css">
@@ -44,49 +44,50 @@
                 <div class="product-grid d-flex flex-wrap justify-content-center gap-4">
                     <!-- Il resto del codice rimane uguale -->
                     <?php foreach ($products as $product): ?>
-                                            <div class="slider-object card card-product" style="width: 18rem;" 
+                                            <div class="slider-object card card-product" style="width: 18rem;"
                         data-product-id="<?php echo $product->id; ?>"
                         data-product-name="<?php echo htmlspecialchars($product->nome); ?>"
                         data-product-price="<?php echo $product->prezzo; ?>"
                         data-product-aroma="<?php echo htmlspecialchars($product->aroma ? $product->aroma->gusto : ''); ?>"
                         data-product-provenienza="<?php echo htmlspecialchars($product->provenienza ?? ''); ?>"
                         data-product-weight="<?php echo $product->peso ?? 0; ?>">
-                        
-                        <img src="<?php echo (empty($product->fotografia) ? './images/products/Standard_Blend.png' : htmlspecialchars($product->fotografia)); ?>" 
+
+                        <img src="<?php echo (empty($product->fotografia) ? './images/products/Standard_Blend.png' : htmlspecialchars($product->fotografia)); ?>"
                              class="card-img-top"
                              alt="<?php echo htmlspecialchars($product->nome); ?>">
-                        
+
                         <div class="card-body text-center">
                             <div class="product-name mb-2"><?php echo htmlspecialchars($product->nome); ?></div>
                             <div class="product-price mb-3"><?php echo number_format($product->prezzo, 2); ?> €</div>
+                                <?php if($_SESSION['UserRole'] === Role::BUYER->value): ?>
+                                    <div class="d-flex align-items-center justify-content-center gap-2 mb-3">
+                                        <input type="number"
+                                               step="1"
+                                               value="1"
+                                               min="1"
+                                               class="quantity-input"
+                                               data-product-id="<?php echo $product->id; ?>">
+                                    </div>
 
-                                <div class="d-flex align-items-center justify-content-center gap-2 mb-3">
-                                    <input type="number"
-                                           step="1"
-                                           value="1"
-                                           min="1"
-                                           class="quantity-input"
-                                           data-product-id="<?php echo $product->id; ?>">
-                                </div>
-
-                                <button class="btn btn-primary-custom w-100 mb-2 cart-button"
-                                        data-product-id="<?php echo $product->id; ?>"
-                                        data-product-name="<?php echo htmlspecialchars($product->nome); ?>"
-                                        data-product-price="<?php echo $product->prezzo; ?>">
-                                    Aggiungi al carrello
-                                </button>
-                                <?php if(wished($product->id, $utenteCompratore->id)): ?>
-                                    <button class="btn btn-outline-danger wish-button"
+                                    <button class="btn btn-primary-custom w-100 mb-2 cart-button"
                                             data-product-id="<?php echo $product->id; ?>"
-                                            title="Rimuovi dalla wishlist">
-                                        <i class="bi bi-heart-fill"></i>
+                                            data-product-name="<?php echo htmlspecialchars($product->nome); ?>"
+                                            data-product-price="<?php echo $product->prezzo; ?>">
+                                        Aggiungi al carrello
                                     </button>
-                                <?php else: ?>
-                                <button class="btn btn-outline-primary-custom wish-button"
-                                        data-product-id="<?php echo $product->id; ?>"
-                                        title="Aggiungi alla wishlist">
-                                    <i class="bi bi-heart"></i>
-                                </button>
+                                    <?php if(wished($product->id, $utenteCompratore->id)): ?>
+                                        <button class="btn btn-outline-danger wish-button"
+                                                data-product-id="<?php echo $product->id; ?>"
+                                                title="Rimuovi dalla wishlist">
+                                            <i class="bi bi-heart-fill"></i>
+                                        </button>
+                                    <?php else: ?>
+                                    <button class="btn btn-outline-primary-custom wish-button"
+                                            data-product-id="<?php echo $product->id; ?>"
+                                            title="Aggiungi alla wishlist">
+                                        <i class="bi bi-heart"></i>
+                                    </button>
+                                    <?php endif; ?>
                                 <?php endif; ?>
                         </div>
                     </div>
