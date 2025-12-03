@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $prodotto->intensita    = $_POST['intensita'] ?? null;
     $prodotto->categoria_id = $_POST['categoria_id'] ?? null;
     $prodotto->aroma_id     = $_POST['aroma_id'] ?? null;
-    $prodotto->descrizione  = $_POST['descrizione'] ?? null;
+    //$prodotto->descrizione  = $_POST['descrizione'] ?? null;
     $prodotto->id_venditore = 1; // TODO: cambia con ID dinamico se uso sessioni!!!!!!!
 
     // Salvataggio temporaneo
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    header('Location: success.php');
+    header('Location: home.php');
     exit;
 }
 ?>
@@ -79,10 +79,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="carousel slide product-carousel" data-bs-ride="carousel">
           <div class="carousel-inner rounded">
             <div class="carousel-item active">
-              <img src="https://via.placeholder.com/500x300" class="d-block w-100" alt="...">
+              <img src="./images/products/Standard_Blend.png" class="d-block w-100" alt="...">
             </div>
             <div class="carousel-item">
-              <img src="https://via.placeholder.com/500x300?text=2" class="d-block w-100" alt="...">
+              <img src="./uploads/prodotti/1764774382_IMG-20250315-WA0041.jpg" class="d-block w-100" alt="...">
             </div>
           </div>
           <button class="carousel-control-prev" type="button" data-bs-target=".product-carousel" data-bs-slide="prev">
@@ -151,7 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="mb-3">
           <label class="form-label fw-semibold">Descrizione</label>
-          <textarea class="form-control product-description" name="descrizione" rows="5" required></textarea>
+          <textarea class="form-control product-description" name="descrizione" rows="5"></textarea>
         </div>
 
         <button type="submit" class="btn btn-info w-100 fw-semibold">Aggiungi prodotto</button>

@@ -41,23 +41,23 @@
                 </a>
             </li>
             <li>
-                <a href="#" class="nav-link" onclick="showOrders()">
+                <a href="./orders-buyer.php" class="nav-link" onclick="showOrders()">
                     <i class="bi bi-bag me-2"></i>Ordini
                 </a>
             </li>
             <li>
-                <a href="#" class="nav-link" onclick="showList()">
+                <a href="./wishlist.php" class="nav-link" onclick="showList()">
                     <i class="bi bi-heart me-2"></i>Lista dei desideri
                 </a>
             </li>
             <li>
-                <a href="#" class="nav-link" onclick="showSettings()">
+                <a href="./settings.php" class="nav-link" onclick="showSettings()">
                     <i class="bi bi-gear me-2"></i>Impostazioni
                 </a>
             </li>
             <li><hr class="my-3"></li>
             <li>
-                <a href="#" class="nav-link" onclick="showProfile()">
+                <a href="./profile.php" class="nav-link" onclick="showProfile()">
                     <i class="bi bi-person me-2"></i>Profilo
                 </a>
             </li>
