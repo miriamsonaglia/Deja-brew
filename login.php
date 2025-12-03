@@ -122,7 +122,7 @@
 
         <div class="text-center mt-1 small">
             <span>oppure</span><br>
-            <a href="guest.php" class="text-decoration-underline text-primary fw-semibold">Prosegui senza registrarti</a>
+            <a href="home.php" class="text-decoration-underline text-primary fw-semibold">Prosegui senza registrarti</a>
         </div>
     </div>
 </div>
