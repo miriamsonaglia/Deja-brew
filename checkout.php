@@ -14,6 +14,7 @@ use App\Models\Lista;
 
 session_start();
 
+
 // --- Controllo utente loggato ---
 if (!isset($_SESSION['LoggedUser'])) {
     die("Devi effettuare il login per accedere al checkout.");
@@ -56,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_c
     $numeroPulito = str_replace(' ', '', $numero);
     if (!preg_match('/^\d{16}$/', $numeroPulito)) $errors[] = "Numero carta non valido.";
     if (!preg_match('/^\d{3,4}$/', $cvv)) $errors[] = "CVV non valido.";
-    if (strtotime($scadenza_anno . '-' . $scadenza_mese . '-01') < strtotime(date('Y-m-01'))) $errors[] = "La data di scadenza deve essere futura.";
+    if (strtotime(date($scadenza_anno . '/' . $scadenza_mese)) > strtotime(date('Y-m'))) $errors[] = "La data di scadenza deve essere futura.";
 
     if ($errors) {
         $_SESSION['error'] = implode('<br>', $errors);
@@ -187,7 +188,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_c
           </div>
           <div class="mb-3">
             <label for="scadenza" class="form-label">Data scadenza</label>
-            <input type="month" id="scadenza" name="scadenza" class="form-control" required>
+            <input type="date" id="scadenza" name="scadenza" class="form-control" required>
           </div>
           <div class="mb-3">
             <label for="cvvNuova" class="form-label">CVV</label>
@@ -224,6 +225,14 @@ document.getElementById('checkoutForm').addEventListener('submit', function(e) {
     }
 
     document.querySelector('.container').appendChild(esito);
+});
+document.getElementById('modalNuovaCarta').addEventListener('submit', (e) => {
+    const scadenzaInserita = Date.parse(document.getElementById('scadenza').value);
+    const oggi = Date.now()
+    if(oggi >= scadenzaInserita) {
+        e.preventDefault();
+        alert("Data inserita non valida.")
+    }
 });
 </script>
 
