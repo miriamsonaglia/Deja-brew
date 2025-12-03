@@ -19,7 +19,7 @@ function createUtenteTable()
         $table->rememberToken();
         // $table->timestamps(); // Rimosso per disabilitare created_at e updated_at
     });
-    
+
     echo "Utente table created successfully!\n";
 }
 
@@ -31,7 +31,7 @@ function createUtenteCompratoreTable()
         $table->foreignId('id_utente')->constrained('utente')->onDelete('cascade');
         // $table->timestamps(); // Rimosso per disabilitare created_at e updated_at
     });
-    
+
     echo "UtenteCompratore table created successfully!\n";
 }
 
@@ -44,7 +44,7 @@ function createUtenteVenditoreTable()
         $table->text('descrizione')->nullable();
         // $table->timestamps(); // Rimosso per disabilitare created_at e updated_at
     });
-    
+
     echo "UtenteVenditore table created successfully!\n";
 }
 
@@ -56,7 +56,7 @@ function createCategoriaTable()
         $table->string('descrizione');
         // $table->timestamps(); // Rimosso per disabilitare created_at e updated_at
     });
-    
+
     echo "Categoria table created successfully!\n";
 }
 
@@ -68,7 +68,7 @@ function createAromaTable()
         $table->string('gusto');
         // $table->timestamps(); // Rimosso per disabilitare created_at e updated_at
     });
-    
+
     echo "Aroma table created successfully!\n";
 }
 
@@ -89,7 +89,7 @@ function createProdottoTable()
         $table->foreignId('aroma_id')->constrained('aroma')->onDelete('cascade');
         // $table->timestamps(); // Rimosso per disabilitare created_at e updated_at
     });
-    
+
     echo "Prodotto table created successfully!\n";
 }
 
@@ -104,7 +104,7 @@ function createOrdineTable()
         $table->decimal('prezzo_totale', 10, 2);
         // $table->timestamps(); // Rimosso per disabilitare created_at e updated_at
     });
-    
+
     echo "Ordine table created successfully!\n";
 }
 
@@ -119,7 +119,7 @@ function createRecensioneTable()
         $table->tinyInteger('stelle')->unsigned()->default(1);
         // $table->timestamps(); // Rimosso per disabilitare created_at e updated_at
     });
-    
+
     echo "Recensione table created successfully!\n";
 }
 
@@ -133,11 +133,11 @@ function createListaTable()
         $table->enum('tipo', ['desideri', 'carrello']);
         $table->integer('quantita')->unsigned()->default(1);
         // $table->timestamps(); // Rimosso per disabilitare created_at e updated_at
-        
+
         // Indice unico per evitare duplicati
         $table->unique(['id_utente_compratore', 'id_prodotto', 'tipo']);
     });
-    
+
     echo "Lista table created successfully!\n";
 }
 
@@ -151,7 +151,7 @@ function createFatturaTable()
         $table->foreignId('id_ordine')->constrained('ordine')->onDelete('cascade');
         // $table->timestamps(); // Rimosso per disabilitare created_at e updated_at
     });
-    
+
     echo "Fattura table created successfully!\n";
 }
 
@@ -164,9 +164,11 @@ function createCartaDiCreditoTable()
         $table->string('circuito_pagamento'); // Visa, MasterCard, etc.
         $table->string('codice_carta'); // Criptato
         $table->string('cvv_carta'); // Criptato
+        $table->smallInteger('scadenza_mese');
+        $table->smallInteger('scadenza_anno');
         // $table->timestamps(); // Rimosso per disabilitare created_at e updated_at
     });
-    
+
     echo "CartaDiCredito table created successfully!\n";
 }
 
@@ -180,7 +182,7 @@ function createImpostazioniUtenteTable()
         $table->boolean('notifiche')->default(true);
         // $table->timestamps(); // Rimosso per disabilitare created_at e updated_at
     });
-    
+
     echo "ImpostazioniUtente table created successfully!\n";
 }
 
@@ -193,7 +195,7 @@ function createNotificaTable()
         $table->boolean('impostazione')->default(true);
         // $table->timestamps(); // Rimosso per disabilitare created_at e updated_at
     });
-    
+
     echo "Notifica table created successfully!\n";
 }
 
@@ -218,7 +220,7 @@ $migrations = [
 try {
     echo "Starting database migrations...\n";
     echo "================================\n";
-    
+
     foreach ($migrations as $tableName => $functionName) {
         if (!Capsule::schema()->hasTable($tableName)) {
             echo "Creating table: $tableName\n";
@@ -227,10 +229,10 @@ try {
             echo "Table $tableName already exists, skipping...\n";
         }
     }
-    
+
     echo "================================\n";
     echo "All migrations completed successfully!\n";
-    
+
 } catch (Exception $e) {
     echo "Migration error: " . $e->getMessage() . "\n";
     echo "Stack trace: " . $e->getTraceAsString() . "\n";

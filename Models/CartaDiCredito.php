@@ -13,7 +13,8 @@ class CartaDiCredito extends BaseModel
         'circuito_pagamento',
         'codice_carta',
         'cvv_carta',
-        'scadenza' // aggiunta la colonna scadenza
+        'scadenza_mese',
+        'scadenza_anno' // aggiunta la colonna scadenza
     ];
 
     protected $hidden = [
