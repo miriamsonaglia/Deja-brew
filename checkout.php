@@ -226,6 +226,7 @@ document.getElementById('checkoutForm').addEventListener('submit', function(e) {
 
     document.querySelector('.container').appendChild(esito);
 });
+
 document.getElementById('modalNuovaCarta').addEventListener('submit', (e) => {
     const scadenzaInserita = Date.parse(document.getElementById('scadenza').value);
     const oggi = Date.now()
