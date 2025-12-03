@@ -45,7 +45,8 @@ $carte = CartaDiCredito::where('id_utente', $idUtente)->get();
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_card') {
     $circuito = $_POST['circuito'] ?? '';
     $numero = $_POST['numero'] ?? '';
-    $scadenza = $_POST['scadenza'] ?? '';
+    $scadenza_mese = $_POST['scadenza_mese'] ?? '';
+    $scadenza_anno = $_POST['scadenza_anno'] ?? '';
     $cvv = $_POST['cvv'] ?? '';
 
     $errors = [];
@@ -55,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_c
     $numeroPulito = str_replace(' ', '', $numero);
     if (!preg_match('/^\d{16}$/', $numeroPulito)) $errors[] = "Numero carta non valido.";
     if (!preg_match('/^\d{3,4}$/', $cvv)) $errors[] = "CVV non valido.";
-    if (strtotime($scadenza . '-01') < strtotime(date('Y-m-01'))) $errors[] = "La data di scadenza deve essere futura.";
+    if (strtotime($scadenza_anno . '-' . $scadenza_mese . '-01') < strtotime(date('Y-m-01'))) $errors[] = "La data di scadenza deve essere futura.";
 
     if ($errors) {
         $_SESSION['error'] = implode('<br>', $errors);
@@ -65,7 +66,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_c
         $carta->circuito_pagamento = $circuito;
         $carta->codice_carta = $numeroPulito;
         $carta->cvv_carta = $cvv;
-        $carta->scadenza = $scadenza;
+        $carta->scadenza_mese = $scadenza_mese;
+        $carta->scadenza_anno = $scadenza_anno;
         $carta->save();
         $_SESSION['success'] = "Carta aggiunta con successo!";
     }
@@ -181,7 +183,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_c
           </div>
           <div class="mb-3">
             <label for="numeroCarta" class="form-label">Numero carta</label>
-            <input type="text" id="numeroCarta" name="numero" class="form-control" placeholder="1234 5678 9012 3456" required pattern="\d{4} \d{4} \d{4} \d{4}">
+            <input type="text" id="numeroCarta" name="numero" class="form-control" placeholder="1234 5678 9012 3456" required pattern="\d{16}">
           </div>
           <div class="mb-3">
             <label for="scadenza" class="form-label">Data scadenza</label>
