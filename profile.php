@@ -1,152 +1,130 @@
-<?php
-require_once __DIR__ . '/bootstrap.php';
-require_once __DIR__ . '/Models/Utente.php';
-require_once __DIR__ . '/Models/ImpostazioniUtente.php';
-
-session_start();
-
-// --- Controllo utente loggato ---
-if (!isset($_SESSION['LoggedUser'])) {
-	die("Devi effettuare il login per accedere al Profilo.");
-}
-
-
-// Dati profilo
-$stmt = $pdo->prepare("
-	SELECT u.username, u.immagine_profilo, v.descrizione
-	FROM utente u
-	JOIN utenteVenditore v ON u.id = v.id_utente
-	WHERE u.id = ?
-");
-$stmt->execute([$profile_id]);
-$profile = $stmt->fetch(PDO::FETCH_ASSOC);
-
-// Ordini acquistati
-$stmt = $pdo->prepare("
-	SELECT o.*, p.nome AS product_name
-	FROM ordine o
-	JOIN prodotto p ON o.id_prodotto = p.id
-	WHERE o.id_utente = ?
-	ORDER BY o.id DESC
-");
-$stmt->execute([$profile_id]);
-$orders_acq = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-// Ordini venduti
-$stmt = $pdo->prepare("
-	SELECT o.*, p.nome AS product_name
-	FROM ordine o
-	JOIN prodotto p ON o.id_prodotto = p.id
-	JOIN utenteVenditore v ON p.id_venditore = v.id
-	WHERE v.id_utente = ?
-	ORDER BY o.id DESC
-");
-$stmt->execute([$profile_id]);
-$orders_vend = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-?>
-
 <!DOCTYPE html>
 <html lang="it">
-<head>
-	<meta charset="UTF-8">
-	<title>Profilo di <?= htmlspecialchars($user['display_name']) ?></title>
-	<style>
-		body { font-family: sans-serif; margin: 30px auto; max-width: 800px; }
-		img.profile { width: 120px; height: 120px; object-fit: cover; border-radius: 50%; }
-		.tabs { margin-top: 30px; }
-		.tab-button { display: inline-block; padding: 10px 20px; cursor: pointer; background: #eee; border: 1px solid #ccc; border-bottom: none; margin-right: 4px; }
-		.tab-button.active { background: #fff; font-weight: bold; }
-		.tab-content { border: 1px solid #ccc; padding: 20px; }
-		table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-		th, td { padding: 8px; border: 1px solid #ccc; text-align: left; }
-		.profile-header {
-			display: flex;
-			align-items: center;
-			gap: 20px;
-		}
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-		.profile-pic {
-			width: 120px;
-			height: 120px;
-			border-radius: 50%;
-			object-fit: cover;
-		}
+        <title>Profilo - Deja-brew</title>
+        <!-- Bootstrap 5 CSS -->
+        <link rel="stylesheet" href="./dist/bootstrap5/css/bootstrap.min.css">
+        <link rel="stylesheet" href="./dist/bootstrap5/icons/bootstrap-icons.css">
+        <link rel="stylesheet" href="./dist/custom/css/new-style.css">
 
-		.profile-info h2 {
-			margin: 0;
-			font-size: 1.8rem;
-		}
+        <?php
+            // PHP initialization code remains the same
+            use App\Models\Prodotto;
+            use App\Models\Lista;
+			use App\Models\Utente;
+			use App\Models\UtenteCompratore;
+			use App\Models\UtenteVenditore;
+			use App\reusables\navbars;
+            require_once __DIR__ . '/bootstrap.php';
+            require_once __DIR__ . '/Models/UtenteVenditore.php';
+            require_once __DIR__ . '/Models/UtenteCompratore.php';
+            require_once __DIR__ . '/Models/Utente.php';
+            require_once __DIR__ . '/Models/Prodotto.php';
+            require_once __DIR__ . '/Models/Lista.php';
+            require_once __DIR__ . '/utilities.php';
+            require_once __DIR__ . '/role.php';
+            session_start();
+            
+            if(!isset($_SESSION['LoggedUser']['id'])){
+                header("Location: login.php");
+                exit;
+            }
+            // --- Recupero dati utente senza usare la relazione ---
+			
+			$datiUtente = Utente::where('id', $_SESSION['LoggedUser']['id'])->first();
+			
+			if ($_SESSION['UserRole'] == Role::VENDOR ->value){
+				$descSeller = UtenteVenditore::where('id', $_SESSION['LoggedUser']['id'])->select('descrizione')->first();
+			}
 
-		.profile-info p {
-			margin: 5px 0 0;
-			color: #555;
-		}
-	</style>
-
-</head>
+        ?>
+		
+    </head>
 <body>
+	<?php require_once __DIR__ . '/navbar-selector.php'; ?>
 
-	<h1>Profilo: <?= htmlspecialchars($user['display_name']) ?></h1>
+	<h1>Profilo: <?= htmlspecialchars($_SESSION['LoggedUser']['username']) ?></h1>
 
     <div class="profile-header">
-	<?php if (!empty($user['profile_image'])): ?>
-		<img class="profile" src="<?= htmlspecialchars($user['profile_image']) ?>" alt="Immagine profilo" class="profile-pic">
-	<?php endif; ?>
 	
+	<?php if ($datiUtente->immagine_profilo != null): ?>
+		<img src="<?= htmlspecialchars($datiUtente->immagine_profilo) ?> alt="Immagine profilo" class="profile-pic">
+	<?php else: ?>
+		<img src="/images/profiles/Default_Profile_Image.jpg" alt="Immagine profilo di default" class="profile-pic">
+	
+	<?php endif; ?>
+
 	<!-- Da mettere un if che cambia il tipo di elemento dipendentemente se chi accede è il venditore o un utente qualsiasi -->
     <div class="profile-info">
-        <h2><?= htmlspecialchars($profile['username']) ?> alt="Username"</h2>
-        <p><?= htmlspecialchars($profile['descrizione']) ?> alt"Descrizione"</p>
+        <h2><?= htmlspecialchars($datiUtente->username) ?> </h2>
+        
+
+		<?php if ($_SESSION['UserRole'] == Role::VENDOR ->value): ?>
+			<?php if ($descSeller->descrizione != null): ?>
+				<p><?= htmlspecialchars($descSeller->descrizione) ?> </p>
+			<?php else: ?>
+				<p>Nessuna descrizione.</p>
+			<?php endif; ?>
+		<?php endif; ?>
     </div>
 </div>
 
-	<?php if ($isOwner): ?>
+	
 		<div class="tabs">
 			<div>
-				<span id="acquistati-btn" class="tab-button" onclick="switchTab('acquistati')">Ordini Acquistati</span>
-				<span id="venduti-btn" class="tab-button" onclick="switchTab('venduti')">Ordini Venduti</span>
-			</div>
-
-			<div id="acquistati-content" class="tab-content">
-				<h3>Ordini Acquistati</h3>
-				<?php if (empty($orders_acq)): ?>
-					<p>Nessun ordine acquistato.</p>
+				<?php if ($_SESSION['UserRole'] == Role::BUYER->value): ?>
+					<span id="acquistati-btn" class="tab-button" onclick="switchTab('acquistati')">Ordini Acquistati</span>
 				<?php else: ?>
-					<table>
-						<tr><th>Data</th><th>Prodotto</th><th>Quantità</th><th>Totale</th></tr>
-						<?php foreach ($orders_acq as $o): ?>
-							<tr>
-								<td><?= $o['order_date'] ?></td>
-								<td><?= htmlspecialchars($o['product_name']) ?></td>
-								<td><?= $o['quantity'] ?></td>
-								<td>€ <?= number_format($o['price'] * $o['quantity'], 2) ?></td>
-							</tr>
-						<?php endforeach; ?>
-					</table>
+					<span id="venduti-btn" class="tab-button" onclick="switchTab('venduti')">Ordini Venduti</span>
 				<?php endif; ?>
 			</div>
 
-			<div id="venduti-content" class="tab-content" style="display: none;">
-				<h3>Ordini Venduti</h3>
-				<?php if (empty($orders_vend)): ?>
-					<p>Nessun ordine venduto.</p>
-				<?php else: ?>
-					<table>
-						<tr><th>Data</th><th>Prodotto</th><th>Quantità</th><th>Totale</th></tr>
-						<?php foreach ($orders_vend as $o): ?>
-							<tr>
-								<td><?= $o['order_date'] ?></td>
-								<td><?= htmlspecialchars($o['product_name']) ?></td>
-								<td><?= $o['quantity'] ?></td>
-								<td>€ <?= number_format($o['price'] * $o['quantity'], 2) ?></td>
-							</tr>
-						<?php endforeach; ?>
-					</table>
-				<?php endif; ?>
-			</div>
+			<?php if ($_SESSION['UserRole'] == Role::BUYER->value): ?>
+				<div id="acquistati-content" class="tab-content">
+					<h3>Ordini Acquistati</h3>
+					<?php if (empty($orders_acq)): ?>
+						<p>Nessun ordine acquistato.</p>
+					<?php else: ?>
+						<table>
+							<tr><th>Data</th><th>Prodotto</th><th>Quantità</th><th>Totale</th></tr>
+							<?php foreach ($orders_acq as $o): ?>
+								<tr>
+									<td><?= $o['order_date'] ?></td>
+									<td><?= htmlspecialchars($o['product_name']) ?></td>
+									<td><?= $o['quantity'] ?></td>
+									<td>€ <?= number_format($o['price'] * $o['quantity'], 2) ?></td>
+								</tr>
+							<?php endforeach; ?>
+						</table>
+					<?php endif; ?>
+				</div>
+			<?php endif; ?>
+			
+			<?php if ($_SESSION['UserRole'] == Role::VENDOR ->value): ?>
+				<div id="venduti-content" class="tab-content" style="display: none;">
+					<h3>Ordini Venduti</h3>
+					<?php if (empty($orders_vend)): ?>
+						<p>Nessun ordine venduto.</p>
+					<?php else: ?>
+						<table>
+							<tr><th>Data</th><th>Prodotto</th><th>Quantità</th><th>Totale</th></tr>
+							<?php foreach ($orders_vend as $o): ?>
+								<tr>
+									<td><?= $o['order_date'] ?></td>
+									<td><?= htmlspecialchars($o['product_name']) ?></td>
+									<td><?= $o['quantity'] ?></td>
+									<td>€ <?= number_format($o['price'] * $o['quantity'], 2) ?></td>
+								</tr>
+							<?php endforeach; ?>
+						</table>
+					<?php endif; ?>
+				</div>
+			<?php endif; ?>
 		</div>
-	<?php endif; ?>
+	
 
 </body>
 </html>
