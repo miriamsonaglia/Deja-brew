@@ -22,7 +22,7 @@
     <div class="offcanvas-body">
         <ul class="list-unstyled">
             <li>
-                <a href="#" class="nav-link" onclick="showAccount()">
+                <a href="account.php" class="nav-link" onclick="showAccount()">
                     <i class="bi bi-person me-2"></i>Account
                 </a>
             </li>
@@ -33,23 +33,23 @@
                 </a>
             </li>
             <li>
-                <a href="#" class="nav-link" onclick="showOrders()">
+                <a href="orders-seller.php" class="nav-link" onclick="showOrders()">
                     <i class="bi bi-bag me-2"></i>Ordini
                 </a>
             </li>
             <li>
-                <a href="#" class="nav-link" onclick="showSettings()">
+                <a href="./settings.php" class="nav-link" onclick="showSettings()">
                     <i class="bi bi-gear me-2"></i>Impostazioni
                 </a>
             </li>
             <li><hr class="my-3"></li>
             <li>
-                <a href="#" class="nav-link" onclick="showProfile()">
+                <a href="./profile.php" class="nav-link" onclick="showProfile()">
                     <i class="bi bi-person me-2"></i>Profilo
                 </a>
             </li>
             <li>
-                <a href="#" class="nav-link text-danger" onclick="logout()">
+                <a href="./logout.php" class="nav-link text-danger" onclick="logout()">
                     <i class="bi bi-box-arrow-right me-2"></i>Logout
                 </a>
             </li>
