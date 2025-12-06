@@ -20,11 +20,37 @@ class AuthController
         $password = $_POST['password'] ?? '';
         $role = $_POST['role'] ?? '';
 
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL) || !$password || !in_array($role, ['acquirente', 'venditore'])) {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL) || !$password) {
             $_SESSION['error'] = "Dati non validi.";
             header('Location: /login.php');
             exit;
         }
+        
+        $utente = Utente::where('email', $email)->first();
+
+        if (!$utente) {
+            $_SESSION['error'] = "Credenziali errate.";
+            header('Location: /login.php');
+            exit;
+        }
+
+        $isCompratore = UtenteCompratore::where('id_utente', $utente->id)->exists();
+        $isVenditore  = UtenteVenditore::where('id_utente', $utente->id)->exists();
+
+        if ($role === 'acquirente' && !$isCompratore) {
+            $_SESSION['error'] = "Il tuo account non è registrato come acquirente.";
+            header('Location: /login.php');
+            exit;
+        }
+
+        if ($role === 'venditore' && !$isVenditore) {
+            $_SESSION['error'] = "Il tuo account non è registrato come venditore.";
+            header('Location: /login.php');
+            exit;
+        }
+
+
+        
         $utente = Utente::where('email', $email)->first();
         echo $utente;
         // FOR THE MOMENT CHANGED FROM: password_verify($password, $utente->password) TO:
@@ -118,7 +144,7 @@ class AuthController
     {
         session_destroy();
         // BETTER GO ON LOGIN PAGE :D NOT INDEX
-        header('Location: ./index.php');
+        header('Location: ./login.php');
         exit;
     }
 }
