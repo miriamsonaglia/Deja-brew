@@ -35,7 +35,7 @@
     <div class="offcanvas-body">
         <ul class="list-unstyled">
             <li>
-                <a href="#" class="nav-link" onclick="showNotifications()">
+                <a href="./notifications.php" class="nav-link">
                     <i class="bi bi-bell me-2"></i>Notifiche
                     <span class="badge bg-danger ms-auto">3</span>
                 </a>
