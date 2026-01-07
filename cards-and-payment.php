@@ -1,126 +1,117 @@
-<?php
-
-	//TODO sostituire i ? con i campi di sessione
-	session_start();
-	if (!isset($_SESSION['user_id'])) {
-		header("Location: login.php");
-		exit;
-	}
-
-	$userId = $_SESSION['user_id'];
-	$pdo = new PDO("mysql:host=localhost;dbname=ecommerce", "root", "password");
-
-	// Rimuovi carta
-	$stmt = $pdo->prepare("DELETE FROM cartaDiCredito WHERE id = ? AND id_utente = ?");
-	$stmt->execute([$_GET['remove'], $userId]);
-
-	// Aggiungi carta
-	$stmt = $pdo->prepare("
-		INSERT INTO cartaDiCredito (id_utente, circuito_pagamento, codice_carta, cvv_carta, scadenza)
-		VALUES (?, ?, ?, ?, ?)
-	");
-	$stmt->execute([
-		$userId,
-		$_POST['brand'],
-		$_POST['card_number'],
-		$_POST['cvv'],
-		$_POST['expiry']
-	]);
-
-	// Recupera carte
-	$cards = $pdo->prepare("SELECT * FROM cartaDiCredito WHERE id_utente = ?");
-	$cards->execute([$userId]);
-	$cards = $cards->fetchAll(PDO::FETCH_ASSOC);
-
-	// Recupera pagamenti (fatture collegate agli ordini)
-	$payments = $pdo->prepare("
-		SELECT f.*, o.id AS ordine_id, p.nome AS product_name
-		FROM fattura f
-		JOIN ordine o ON f.id_ordine = o.id
-		JOIN prodotto p ON o.id_prodotto = p.id
-		WHERE f.id_utente = ?
-	");
-	$payments->execute([$userId]);
-	$payments = $payments->fetchAll(PDO::FETCH_ASSOC);
-?>
-
 <!DOCTYPE html>
-<html lang="it">
-<head>
-	<meta charset="UTF-8">
-	<title>Pagamento e Fatturazione</title>
-	<style>
-		body { font-family: sans-serif; max-width: 800px; margin: 20px auto; }
-		h2 { border-bottom: 1px solid #ccc; padding-bottom: 5px; }
-		table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-		th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-		form { margin-top: 20px; }
-		input, select { padding: 6px; margin: 5px 0; width: 100%; max-width: 300px; }
-		.danger { color: red; }
-	</style>
-</head>
-<body>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Payment - Deja Brew</title>
+		<?php
+			session_start();
+						
+						if(!isset($_SESSION['LoggedUser']['id'])){
+							header("Location: login.php");
+							exit;
+						}
 
-	<h1>Gestione Pagamenti e Fatturazione</h1>
+			require_once __DIR__ . '/bootstrap.php';
+			require_once __DIR__ . '/Models/CartaDiCredito.php';
+			use App\Models\CartaDiCredito;
 
-	<!-- METODI DI PAGAMENTO -->
-	<h2>Metodi di Pagamento Salvati</h2>
-	<?php if (empty($cards)): ?>
-		<p>Nessuna carta salvata.</p>
-	<?php else: ?>
-		<table>
-			<tr><th>Intestatario</th><th>Ultime 4 cifre</th><th>Brand</th><th>Scadenza</th><th></th></tr>
-			<?php foreach ($cards as $card): ?>
-				<tr>
-					<td><?= htmlspecialchars($card['card_holder']) ?></td>
-					<td>**** **** **** <?= $card['last4'] ?></td>
-					<td><?= htmlspecialchars($card['brand']) ?></td>
-					<td><?= htmlspecialchars($card['expiry']) ?></td>
-					<td><a class="danger" href="?remove=<?= $card['id'] ?>" onclick="return confirm('Rimuovere questa carta?')">Rimuovi</a></td>
-				</tr>
-			<?php endforeach; ?>
-		</table>
-	<?php endif; ?>
+			// Mock order data (replace with database query)
+			$orders = [
+				['id' => 1, 'item' => 'Espresso', 'price' => 2.50, 'quantity' => 2],
+				['id' => 2, 'item' => 'Cappuccino', 'price' => 3.50, 'quantity' => 1],
+			];
 
-	<!-- AGGIUNTA CARTA -->
-	<h2>Aggiungi Nuovo Metodo di Pagamento</h2>
-	<form method="POST">
-		<label>Intestatario Carta: <input type="text" name="card_holder" required></label><br>
-		<label>Numero Carta: <input type="text" name="card_number" maxlength="16" required></label><br>
-		<label>Brand: 
-			<select name="brand">
-				<option value="Visa">Visa</option>
-				<option value="MasterCard">MasterCard</option>
-				<option value="Amex">American Express</option>
-			</select>
-		</label><br>
-		<label>Scadenza: <input type="month" name="expiry" required></label><br>
-		<button type="submit">Salva Carta</button>
-	</form>
+			$total = array_sum(array_map(fn($o) => $o['price'] * $o['quantity'], $orders));
 
-	<!-- STORICO PAGAMENTI -->
-	<h2>Storico Pagamenti</h2>
-	<?php if (empty($payments)): ?>
-		<p>Nessun pagamento registrato.</p>
-	<?php else: ?>
-		<table>
-			<tr><th>Data</th><th>Ordine</th><th>Importo</th><th>Fattura</th></tr>
-			<?php foreach ($payments as $p): ?>
-				<tr>
-					<td><?= $p['paid_at'] ?></td>
-					<td><?= htmlspecialchars($p['product_name'] ?? 'Ordine #' . $p['order_id']) ?></td>
-					<td>€ <?= number_format($p['amount'], 2) ?></td>
-					<td>
-						<?php if ($p['invoice_file']): ?>
-							<a href="<?= htmlspecialchars($p['invoice_file']) ?>" target="_blank">Scarica</a>
-						<?php else: ?>
-							-
-						<?php endif; ?>
-					</td>
-				</tr>
-			<?php endforeach; ?>
-		</table>
-	<?php endif; ?>
+			// Load saved cards from database
+			$savedCards = CartaDiCredito::where('id_utente', $_SESSION['LoggedUser']['id'])->get()->map(function($card) {
+				return [
+					'id' => $card->id,
+					'last_four' => substr($card->numero_carta, -4),
+					'brand' => $card->circuito_pagamento,
+					'expiry' => $card->scadenza_mese . '/' . $card->scadenza_anno
+				];
+			})->toArray();
+		?>
+		
+	</head>
+	<body>
+		<?php require_once __DIR__ . '/navbar-selector.php'; ?>
+		<div class="container">
+			<!-- Order Review -->
+			<div class="card">
+				<h2>📋 Order Review</h2>
+				<?php foreach ($orders as $order): ?>
+					<div class="order-item">
+						<span><?= htmlspecialchars($order['item']) ?> x<?= $order['quantity'] ?></span>
+						<span>$<?= number_format($order['price'] * $order['quantity'], 2) ?></span>
+					</div>
+				<?php endforeach; ?>
+				<div class="total">Total: $<?= number_format($total, 2) ?></div>
+			</div>
 
-</body>
+			<!-- Payment Form -->
+			<div class="card">
+				<h2>💳 Payment Method</h2>
+				<?php
+				if (isset($_SESSION['errors'])) {
+					foreach ($_SESSION['errors'] as $error) {
+						echo "<div class='alert alert-danger'>$error</div>";
+					}
+					unset($_SESSION['errors']);
+				}
+				if (isset($_SESSION['success'])){
+					echo "<div class='alert alert-success'>{$_SESSION['success']}</div>";
+					unset($_SESSION['success']);
+				}
+				?>
+				
+				<!-- Saved Cards -->
+				<h3>Your Saved Cards</h3>
+				<div class="cards-list">
+					<?php if (empty($savedCards)): ?>
+						<p>No saved cards yet.</p>
+					<?php else: ?>
+						<?php foreach ($savedCards as $card): ?>
+							<div class="card-item">
+								<button type="submit" name="selected_card" value="<?=$card['id'] ?>" class="card-button">Edit Card</button>
+								<label for="card_<?= $card['id'] ?>">
+									<!--TODO da modificare quando verrà aggiunta la colonna data nel database-->
+									<?=htmlspecialchars($card['brand']) ?> •••• <?=$card['last_four'] ?> (Expires <?=$card['expiry'] ?>)
+								</label>
+							</div>
+						<?php endforeach; ?>
+					<?php endif; ?>
+				</div>
+
+				<!-- Add New Card Form -->
+				<h3>Add New Card</h3>
+				<form action="actions/add_card.php" method="POST">
+					<div class="form-group">
+						<label>Cardholder Name</label>
+						<input type="text" name="card_name" required>
+					</div>
+
+					<div class="form-group">
+						<label>Card Number</label>
+						<input type="text" name="card_number" placeholder="1234 5678 9012 3456" required>
+					</div>
+
+					<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+						<div class="form-group">
+							<label>Expiry Date</label>
+							<input type="text" name="expiry" placeholder="MM/YY" required>
+						</div>
+						<div class="form-group">
+							<label>CVV</label>
+							<input type="text" name="cvv" placeholder="123" required>
+						</div>
+					</div>
+
+					<button type="submit">Add Payment Method</button>
+				</form>
+			</div>
+		</div>
+	</body>
 </html>
