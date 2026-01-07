@@ -55,6 +55,11 @@
                     <i class="bi bi-gear me-2"></i>Impostazioni
                 </a>
             </li>
+            <li>
+                <a href="./cards-and-payment.php" class="nav-link" onclick="showCards()">
+                    <i class="bi bi-credit-card me-2"></i>Carte e pagamenti
+                </a>
+            </li>
             <li><hr class="my-3"></li>
             <li>
                 <a href="./profile.php" class="nav-link" onclick="showProfile()">

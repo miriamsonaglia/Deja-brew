@@ -56,7 +56,7 @@
 	?>
 </head>
 <body>
-
+	<?php require_once __DIR__ . '/navbar-selector.php'; ?>
 	<h1>Impostazioni</h1>
 	
 	<?php

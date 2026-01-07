@@ -1,4 +1,6 @@
 <?php
+    require_once __DIR__ . '/role.php';
+
     $userRole = $_SESSION['UserRole'] ?? Role::GUEST->value;
     switch ($userRole) {
         case Role::GUEST->value:

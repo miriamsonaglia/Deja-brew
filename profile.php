@@ -5,10 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title>Profilo - Deja-brew</title>
-        <!-- Bootstrap 5 CSS -->
-        <link rel="stylesheet" href="./dist/bootstrap5/css/bootstrap.min.css">
-        <link rel="stylesheet" href="./dist/bootstrap5/icons/bootstrap-icons.css">
-        <link rel="stylesheet" href="./dist/custom/css/new-style.css">
+    
 
         <?php
             // PHP initialization code remains the same
@@ -17,7 +14,6 @@
 			use App\Models\Utente;
 			use App\Models\UtenteCompratore;
 			use App\Models\UtenteVenditore;
-			use App\reusables\navbars;
             require_once __DIR__ . '/bootstrap.php';
             require_once __DIR__ . '/Models/UtenteVenditore.php';
             require_once __DIR__ . '/Models/UtenteCompratore.php';
