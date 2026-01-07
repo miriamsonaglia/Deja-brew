@@ -1,71 +1,92 @@
-<?php
-require_once __DIR__ . '/bootstrap.php';
-require_once __DIR__ . '/Models/Utente.php';
-require_once __DIR__ . '/Models/ImpostazioniUtente.php';
-
-use App\Models\Utente;
-use App\Models\ImpostazioniUtente;
-
-session_start();
-
-// --- Controllo utente loggato ---
-if (!isset($_SESSION['LoggedUser'])) {
-	die("Devi effettuare il login per accedere al checkout.");
-}
-
-$userId = $_SESSION['user_id'];
-
-// Crea le impostazioni predefinite se non esistono
-ImpostazioniUtente::firstOrCreate(
-    ['id_utente' => $userId], // Condizione di ricerca
-    [                           
-        'tema' => 'chiaro',
-        'notifiche_mail' => 1,
-		'notifiche_push' => 1
-    ]
-);
-
-// Carica le impostazioni attuali
-$impostazioni = ImpostazioniUtente::where('id_utente', $userId)->first();
-
-// Se il form viene inviato, aggiorna le impostazioni
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-	ImpostazioniUtente::where('id_utente', $userId)->update([
-		//Con due opzioni posso usare comodamente un operatore binario
-        'tema' => $$_POST['tema'] === 'on' ? 1 : 0,
-        'notifiche_mail' => $$_POST['notifiche_mail'] === 'on' ? 1 : 0,
-        'notifiche_push' => $$_POST['notifiche_push'] === 'on' ? 1 : 0,
-    ]);
-}
-
-?>
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
 	<meta charset="UTF-8">
 	<title>Impostazioni Utente</title>
-	<style>
-		body { font-family: sans-serif; max-width: 800px; margin: 0 auto; }
-		h2 { border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-top: 30px; }
-		form { margin-top: 20px; }
-		label { display: block; margin-top: 10px; }
-		select { width: 100%; max-width: 300px; padding: 6px; margin-top: 4px; }
-		.success { color: green; font-weight: bold; }
-	</style>
+
+	<!--
+	Per aggiungere delle nuove impostazioni aggiungere dei nuovi elementi
+	copiati da quelli sopra, i passaggi sono:
+	1. Aggiungere il campo nel database (tabella impostazioniUtente)
+	2. Aggiungere il campo nell'array $fillable e $casts in Models/ImpostazioniUtente.php
+	3. Aggiungere la logica di validazione e salvataggio in actions/update_settings.php
+	4. Aggiungere il campo a firstOrCreate qui di seguito
+	5. Aggiungere il campo nel form HTML qua sotto
+	-->
+
+	<?php
+		require_once __DIR__ . '/bootstrap.php';
+		require_once __DIR__ . '/Models/Utente.php';
+		require_once __DIR__ . '/Models/ImpostazioniUtente.php';
+
+		use App\Models\Utente;
+		use App\Models\ImpostazioniUtente;
+
+		session_start();
+
+		// --- Controllo utente loggato ---
+		$datiUtente = Utente::where('id', $_SESSION['LoggedUser']['id'])->first();
+		if ($datiUtente === null) {
+			// Handle missing user data: redirect or show error
+			echo '<div class="alert alert-danger">Errore: dati utente non trovati.</div>';
+			exit;
+		}
+
+		// Crea le impostazioni predefinite se non esistono
+		ImpostazioniUtente::firstOrCreate(
+			['id_utente' => $datiUtente->id],
+			[                           
+				'tema' => 'chiaro',
+				'notifiche' => 1,
+				//'notifiche_mail' => 1,
+				//'notifiche_push' => 1
+			]
+		);
+
+		// Carica le impostazioni attuali
+		$impostazioni = ImpostazioniUtente::where('id_utente', $datiUtente->id)->first();
+		$settings = [
+			'tema' => $impostazioni->tema,
+			'notifiche' => $impostazioni->notifiche ? 'on' : 'off'
+			//'notifiche_mail' => $impostazioni->notifiche_mail ? 'on' : 'off',
+			//'notifiche_push' => $impostazioni->notifiche_push ? 'on' : 'off',
+			//'cookie_tracking' => $impostazioni->cookie_tracking ? 'enabled' : 'disabled'
+		];
+
+	?>
 </head>
 <body>
 
 	<h1>Impostazioni</h1>
-	<?php if (isset($_GET['saved'])): ?>
-		<p class="success">Impostazioni salvate con successo!</p>
-	<?php endif; ?>
+	
+	<?php
+    if (isset($_SESSION['errors'])) {
+        foreach ($_SESSION['errors'] as $error) {
+            echo "<div class='alert alert-danger'>$error</div>";
+        }
+        unset($_SESSION['errors']);
+    }
+    ?>
 
-	<form method="POST">
+    <?php if (isset($_GET['saved'])): ?>
+        <p class="success">Impostazioni salvate con successo!</p>
+    <?php endif; ?>
+
+	<form action="actions/update_settings.php" method="POST">
 
 		<!-- Notifiche -->
 		<h2>Notifiche</h2>
 
+
+
+		<label>
+			Notifiche Generali
+			<select name="notifiche">
+				<option value="on" <?= $settings['notifiche'] === 'on' ? 'selected' : '' ?>>Attive</option>
+				<option value="off" <?= $settings['notifiche'] === 'off' ? 'selected' : '' ?>>Disattive</option>
+			</select>
+		</label>
+		<!--
 		<label>
 			Notifiche Email
 			<select name="notifiche_mail">
@@ -81,21 +102,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				<option value="off" <?= $settings['notifiche_push'] === 'off' ? 'selected' : '' ?>>Disattive</option>
 			</select>
 		</label>
-
+	-->
 		<!-- Accessibilità -->
 		<h2>Accessibilità</h2>
 
 		<label>
 			Modalità Scura
 			<select name="tema">
-				<option value="on" <?= $settings['tema'] === 'on' ? 'selected' : '' ?>>Attiva</option>
-				<option value="off" <?= $settings['tema'] === 'off' ? 'selected' : '' ?>>Disattiva</option>
+				<option value="chiaro" <?= $settings['tema'] === 'chiaro' ? 'selected' : '' ?>>Chiaro</option>
+				<option value="scuro" <?= $settings['tema'] === 'scuro' ? 'selected' : '' ?>>Scuro</option>
 			</select>
 		</label>
 
 		<!-- Privacy -->
 		<h2>Privacy</h2>
 
+		<!--
 		<label>
 			Tracciamento dei Cookie
 			<select name="cookie_tracking">
@@ -103,10 +125,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				<option value="disabled" <?= $settings['cookie_tracking'] === 'disabled' ? 'selected' : '' ?>>Disabilitato</option>
 			</select>
 		</label>
+		-->
 
 		<br><br>
 		<button type="submit">Salva Impostazioni</button>
 	</form>
+
+	<script>
+		
+	</script>
 
 </body>
 </html>

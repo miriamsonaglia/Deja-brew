@@ -10,14 +10,14 @@ class ImpostazioniUtente extends BaseModel
     //con tema si intende modalità scura, quindi ad 1 sarà attiva, invece con 0 ci si aspetta la visualizzazione normale
     protected $fillable = [
         'id_utente',
-        'temaScuro',
+        'tema',
         'notifiche'
         //'notifiche_mail',
         //'notifiche_push'
     ];
 
     protected $casts = [
-        'temaScuro' => 'boolean',
+        'tema' => 'string',
         'notifiche' => 'boolean',
         //'notifiche_mail' => 'boolean',
         //'notifiche_push' => 'boolean',
