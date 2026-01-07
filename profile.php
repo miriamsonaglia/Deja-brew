@@ -73,14 +73,14 @@
 					<?php else: ?>
 						<p>Nessuna descrizione.</p>
 					<?php endif; ?>
-				<?php endif; ?>
-				<form id="edit_description_form" action="actions/edit_description.php" method="post">	
-					<div class="mb-3">
-						<label for="descrizione" class="form-label">Modifica Descrizione:</label>
-						<textarea class="form-control" id="descrizione" name="descrizione" rows="3" required><?= isset($descSeller->descrizione) ? '' : '' ?></textarea>
-					</div>
-					<button type="submit" class="btn btn-primary">Aggiorna Descrizione</button>
-				</form>
+					<form id="edit_description_form" action="actions/edit_description.php" method="post">	
+						<div class="mb-3">
+							<label for="descrizione" class="form-label">Modifica Descrizione:</label>
+							<textarea class="form-control" id="descrizione" name="descrizione" rows="3" required><?= isset($descSeller->descrizione) ? '' : '' ?></textarea>
+						</div>
+						<button type="submit" class="btn btn-primary">Aggiorna Descrizione</button>
+					</form>
+					<?php endif; ?>
 
 			</div>
 		</div>
