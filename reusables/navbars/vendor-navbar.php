@@ -33,16 +33,12 @@
                 </a>
             </li>
             <li>
-                <a href="./settings.php" class="nav-link" onclick="showSettings()">
-                    <i class="bi bi-gear me-2"></i>Impostazioni
+                <a href="./profile-settings.php" class="nav-link" onclick="showSettings()">
+                    <i class="bi bi-gear me-2"></i>Impostazioni Profilo
                 </a>
             </li>
             <li><hr class="my-3"></li>
-            <li>
-                <a href="./profile.php" class="nav-link" onclick="showProfile()">
-                    <i class="bi bi-person me-2"></i>Profilo
-                </a>
-            </li>
+            
             <li>
                 <a href="./logout.php" class="nav-link text-danger" onclick="logout()">
                     <i class="bi bi-box-arrow-right me-2"></i>Logout

@@ -75,7 +75,7 @@
 
 			<!-- Da mettere un if che cambia il tipo di elemento dipendentemente se chi accede è il venditore o un utente qualsiasi -->
 			<div class="profile-info">
-				<h2><?= htmlspecialchars($datiUtente->username) ?> </h2>
+				<h2><?= htmlspecialchars($utente->username) ?> </h2>
 				
 
 				<?php if ($_SESSION['UserRole'] == Role::VENDOR->value): ?>
