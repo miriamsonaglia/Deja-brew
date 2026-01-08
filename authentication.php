@@ -25,7 +25,7 @@ class AuthController
             header('Location: /login.php');
             exit;
         }
-        
+
         $utente = Utente::where('email', $email)->first();
 
         if (!$utente) {
@@ -50,7 +50,7 @@ class AuthController
         }
 
 
-        
+
         $utente = Utente::where('email', $email)->first();
         echo $utente;
         // FOR THE MOMENT CHANGED FROM: password_verify($password, $utente->password) TO:
@@ -124,6 +124,12 @@ class AuthController
             'email' => $data['email'],
             'password' => password_hash($data['password'], PASSWORD_DEFAULT),
         ]);
+
+        if(!$utente) {
+            $_SESSION['errors'] = 'Errore durante la registrazione. Riprova.';
+            header('Location: /register.php');
+            exit;
+        }
 
         $_SESSION['user'] = $utente->toArray();
 
