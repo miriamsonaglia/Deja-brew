@@ -30,6 +30,8 @@
 			$savedCards = CartaDiCredito::where('id_utente', $_SESSION['LoggedUser']['id'])->get()->map(function($card) {
 				return [
 					'id' => $card->id,
+					//'card_owner' => $card->nome_titolare,
+					'card_owner' => "PlaceHolder", //TODO da modificare quando verrà aggiunta la colonna nome_titolare nel database
 					'codice_carta' => $card->codice_carta,
 					'circuito_pagamento' => $card->circuito_pagamento,
 					'scadenza_mese' => "05", //TODO da modificare quando verrà aggiunta la colonna data nel database
@@ -91,8 +93,7 @@
 										Edit Card
 								</button>
 								<label for="card_<?= $card['id'] ?>">
-									<!--TODO da modificare quando verrà aggiunta la colonna data nel database-->
-									<?=htmlspecialchars($card['circuito_pagamento']) ?> <?=$card['codice_carta'] ?> | Scadenza <?=$card['scadenza_mese'] ?>-<?=$card['scadenza_anno'] ?>
+									<?=htmlspecialchars($card['card_owner']) ?> | <?=$card['circuito_pagamento'] ?> | <?=$card['codice_carta'] ?> | Scadenza <?=$card['scadenza_mese'] ?>-<?=$card['scadenza_anno'] ?>
 								</label>
 							</div>
 						<?php endforeach; ?>
@@ -140,7 +141,7 @@
 		<div class="modal fade" id="modalModificaCarta" tabindex="-1" aria-labelledby="modalModificaCartaLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
-				<form id="formNuovaCarta" method="POST">	
+				<form id="formModificaCarta" action="actions/update_card.php" method="POST">	
 				<div class="modal-header">
 					<h5 class="modal-title" id="modalModificaCartaLabel">Modifica la carta di credito selezionata</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
@@ -158,8 +159,8 @@
 						</select>
 					</div>
 					<div class="mb-3">
-						<label for="codiceCarta" class="form-label">Numero carta</label>
-						<input type="text" id="modal-codice_carta" name="codiceCarta" class="form-control" placeholder="1234 5678 9012 3456" required pattern="\d{16}">
+						<label for="codice_carta" class="form-label">Numero carta</label>
+						<input type="text" id="modal-codice_carta" name="codice_carta" class="form-control" placeholder="1234 5678 9012 3456" required pattern="\d{16}">
 					</div>
 					<div class="mb-3">
 						<label for="scadenza" class="form-label">Data scadenza</label>
