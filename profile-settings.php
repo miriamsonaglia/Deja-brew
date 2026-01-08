@@ -39,10 +39,35 @@
 				$venditore = UtenteVenditore::where('id_utente', $utente->id)->first();
 			}
 
-			$avatar = !empty($utente->immagine_profilo)
-				? $utente->immagine_profilo
-				: './images/profiles/Default_Profile_Image.jpg';
+			// Determine profile image path and if the path contains a file
+			if(!empty($utente->immagine_profilo)){
+				$avatar = 'uploads/profile_images/' . $utente->immagine_profilo;
+				if(!file_exists($avatar)){
+					$avatar = './images/profiles/Default_Profile_Image.jpg';
+				}
+			} else {
+				$avatar = './images/profiles/Default_Profile_Image.jpg';
+			}
+			
 		?>
+		<style>
+			#drop-zone {
+				border: 2px dashed #ccc;
+				border-radius: 10px;
+				padding: 20px;
+				text-align: center;
+				cursor: pointer;
+			}
+			#drop-zone:hover {
+				background-color: #f0f0f0;
+			}
+			#preview {
+				max-height: 65vh;
+				width: auto;         /* maintain aspect ratio */
+				display: block;      /* ensure block-level for consistent sizing */
+				object-fit: contain; /* optional: fit inside box without stretching */
+			}
+		</style>
 	</head>
 	<body>
 		<?php require_once __DIR__ . '/navbar-selector.php'; ?>
@@ -51,7 +76,7 @@
 			<div class="row g-4 align-items-center">
 				<div class="col-12 col-md-4 text-center">
 					<img src="<?= htmlspecialchars($avatar) ?>" alt="Immagine profilo" class="img-fluid rounded-circle shadow" style="max-width: 220px;">
-					<button class="btn btn-secondary mt-3">Modifica Immagine Profilo</button>
+					<button class="btn btn-secondary mt-3" data-bs-toggle="modal" data-bs-target="#modalUploadImg">Modifica Immagine Profilo</button>
 				</div>
 				<div class="col-12 col-md-8">
 					<div class="card shadow-sm">
@@ -146,6 +171,37 @@
 
 		</div>
 
+		<div class="modal fade" id="modalUploadImg" tabindex="-1" aria-labelledby="modalUploadImgLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+				<form id="formUploadImg" action="actions/upload_image.php" method="POST" enctype="multipart/form-data">	
+				<div class="modal-header">
+					<h5 class="modal-title" id="modalUploadImgLabel">Carica una nuova immagine profilo</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+					</div>
+					<input type="hidden" id="modal-user_id" name="user_id">
+					<div class="modal-body">
+					
+						
+						<div id="drop-zone">
+							Drop image here or click to upload
+							<input type="file" name="image" accept="image/*" hidden>
+						</div>
+						<img id="preview" class="img-fluid mt-3 d-none" />
+
+					
+
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Annulla</button>
+						<button type="submit" class="btn btn-success">Carica Immagine</button>
+					</div>
+				</form>
+				</div>
+			</div>
+		</div>
+
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 		<script>
 
@@ -180,6 +236,38 @@
 				}
 
 			});
+
+		
+			const dropZone = document.getElementById('drop-zone');
+			const fileInput = dropZone.querySelector('input');
+
+			dropZone.addEventListener('click', () => fileInput.click());
+
+			dropZone.addEventListener('dragover', e => {
+				e.preventDefault();
+				dropZone.classList.add('dragover');
+			});
+
+			dropZone.addEventListener('dragleave', () => {
+				dropZone.classList.remove('dragover');
+			});
+
+			dropZone.addEventListener('drop', e => {
+				e.preventDefault();
+				dropZone.classList.remove('dragover');
+				fileInput.files = e.dataTransfer.files;
+			});
+			
+			fileInput.addEventListener('change', () => {
+				const file = fileInput.files[0];
+				if (!file) return;
+
+				const img = document.getElementById('preview');
+				img.src = URL.createObjectURL(file);
+				img.classList.remove('d-none');
+			});
+
+
 		</script>
 	</body>
 </html>
