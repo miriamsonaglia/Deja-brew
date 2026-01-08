@@ -5,10 +5,22 @@
         <button class="btn navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-label="Apri menu">
             <span class="navbar-toggler-icon"></span>
         </button>
-        
+
         <!-- Logo/Brand centrato -->
         <span href='./home.php' class="navbar-brand mx-auto fw-bold fs-3">Deja-brew</span>
+        <!-- Barra di ricerca e carrello -->
+    <div class="d-flex align-items-center">
+        <!-- Carrello -->
+        <div class="cart-container">
+            <a href="./add-product.php">
+                <button class="position-relative">
+                    <i class="bi bi-plus-lg fs-4"></i> Nuovo prodotto
+                </button>
+            </a>
+        </div>
     </div>
+    </div>
+
 </nav>
 
 <!-- Sidebar (Offcanvas) -->
