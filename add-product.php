@@ -131,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
 <?php include __DIR__ . '/reusables/navbars/vendor-navbar.php'; ?>
-<div class="container form-section">
+<div class="container form-section mb-5">
   <h2 class="mb-4 text-center fw-bold">Aggiungi un nuovo prodotto</h2>
   
   <?php if (isset($_SESSION['success'])): ?>
@@ -222,7 +222,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endforeach; ?>
           </select>
         </div>
-        <button type="submit" class="btn btn-info w-100 fw-semibold">Aggiungi prodotto</button>
+        <button type="submit" class="btn btn-primary-custom w-100 fw-semibold">
+          <i class="bi bi-plus-circle me-2"></i>Aggiungi prodotto
+        </button>
       </div>
     </div>
   </form>
