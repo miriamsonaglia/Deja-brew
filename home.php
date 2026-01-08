@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="it">
     <head>
         <!-- INSERT HERE ALL CSS NECESSARY IMPORTS -->
         <link rel="stylesheet" href="./dist/bootstrap5/icons/bootstrap-icons.css">
@@ -29,6 +29,7 @@
         <?php require_once __DIR__ . '/navbar-selector.php'; ?>
         <div class="container-fluid">
          <div class="search-wrapper position-relative mx-auto" style="max-width: 600px;">
+            <label for="live-search" class="visually-hidden">Cerca prodotti</label>
             <input type="text"
                    class="search-bar form-control"
                    id="live-search"
@@ -55,16 +56,16 @@
                     <a href="./category-products.php?category=<?php echo $category->id; ?>" class="view-all-link">Vedi tutti</a>
                 </div>
 
-                <div class="slider-wrapper">
-                    <button class="slider-backward" data-slider="<?php echo $sliderId; ?>">
-                        <i class="bi bi-arrow-left"></i>
+                <div class="slider-wrapper" role ="region" aria-label="Prodotti della categoria <?php echo htmlspecialchars($category->descrizione); ?>">
+                    <button class="slider-backward" data-slider="<?php echo $sliderId; ?>" aria-label="Scorri indietro i prodotti della categoria <?php echo htmlspecialchars($category->descrizione); ?>">
+                        <i class="bi bi-arrow-left" aria-hidden="true"></i>
                     </button>
 
                     <div class="slider-container">
                         <ul class="slider-list" id="<?php echo $sliderId; ?>-slider">
                             <?php foreach($products as $product): ?>
                             <li class="slider-object" data-product-id="<?php echo $product->id; ?>">
-                                <a href="product.php?id=<?php echo $product->id; ?>" class="text-decoration-none text-dark">
+                                <a href="product.php?id=<?php echo $product->id; ?>" class="text-decoration-none text-dark" aria-label="Vai alla pagina del prodotto <?php echo htmlspecialchars($product->nome); ?>">
                                     <img src="<?php echo (empty($product->fotografia) ? './images/products/Standard_Blend.png' : htmlspecialchars($product->fotografia)); ?>"
                                         alt="<?php echo htmlspecialchars($product->nome); ?>">
                                     <div class="product-name"><?php echo htmlspecialchars($product->nome); ?></div>
@@ -72,6 +73,9 @@
                                 <div class="product-price"><?php echo number_format($product->prezzo, 2); ?> €</div>
 
                                 <?php if(isset($userRole) && ($userRole == Role::BUYER->value)): ?>
+                                    <label for="quantity-<?php echo $product->id; ?>" class="visually-hidden">
+                                        Quantità per <?php echo htmlspecialchars($product->nome); ?>
+                                    </label>
                                     <input type="number"
                                         step="1"
                                         value="1"
@@ -88,10 +92,10 @@
                                             data-product-id="<?php echo $product->id; ?>"
                                     <?php if(wished($product->id, $utenteCompratore->id)): ?>
                                             title="Rimuovi dalla wishlist">
-                                            <i class="bi bi-heart-fill"></i>
+                                            <i class="bi bi-heart-fill" aria-hidden="true"></i>
                                         <?php else: ?>
                                             title="Aggiungi alla wishlist">
-                                            <i class="bi bi-heart"></i>
+                                            <i class="bi bi-heart" aria-hidden="true"></i>
                                         <?php endif; ?>
                                     </button>
                                 <?php endif; ?>
@@ -100,8 +104,8 @@
                         </ul>
                     </div>
 
-                    <button class="slider-forward" data-slider="<?php echo $sliderId; ?>">
-                        <i class="bi bi-arrow-right"></i>
+                    <button class="slider-forward" data-slider="<?php echo $sliderId; ?>" aria-label="Scorri avanti i prodotti della categoria <?php echo htmlspecialchars($category->descrizione); ?>">
+                        <i class="bi bi-arrow-right" aria-hidden="true"></i>
                     </button>
                 </div>
 

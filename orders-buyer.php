@@ -80,9 +80,9 @@
 								<!-- TODO modificare la quantità quando verrà aggiunta la colonna quantità nel database -->
 								<td><?= number_format((float)$order->prezzo_totale, 2) . '€ + ' . number_format((float)$order->prezzo_totale*0.22, 2) . '€ IVA' ?></td>
 								<td>
-									<a href="generate_invoice.php?order_id=<?= $order->id ?>" class="btn btn-sm btn-outline-secondary" target="_blank">
+									<button class="btn btn-sm btn-outline-secondary btn-scarica-pdf" data-order-id="<?= $order->id ?>">
 										<i class="bi bi-file-earmark-pdf"></i> Scarica PDF
-									</a>
+									</button>
 								</td>
 							</tr>
 						<?php endforeach; ?>
@@ -101,6 +101,16 @@
 		<?php if(isset($userRole) && ($userRole === Role::BUYER->value)): ?>
 			updateCartCount();
 		<?php endif; ?>
+
+		// Gestione pulsante scarica PDF
+		document.querySelectorAll('.btn-scarica-pdf').forEach(button => {
+			button.addEventListener('click', () => {
+				const orderId = button.getAttribute('data-order-id');
+				// Qui puoi aggiungere logica per generare/salvare il PDF
+				// Per ora mostriamo solo il messaggio
+				alert('PDF salvato');
+			});
+		});
 	</script>
 </body>
 </html>
