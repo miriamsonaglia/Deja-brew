@@ -84,26 +84,14 @@
             table { width: 100%; border-collapse: collapse; margin-top: 10px; }
             th, td { padding: 8px; border: 1px solid #ccc; text-align: left; }
         </style>
-        <script>
-            function switchTab(tab) {
-                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(div => div.style.display = 'none');
-                document.getElementById(tab + '-btn').classList.add('active');
-                document.getElementById(tab + '-content').style.display = 'block';
-            }
-            window.onload = () => switchTab('informazioni');
-        </script>
+        
     </head>
     <body>
         <?php require_once __DIR__ . '/navbar-selector.php'; ?>
-        <div class="profile">
+        <div class="profile text-center mb-4">
             <h2><?= htmlspecialchars($user->username ?? 'No Name') ?></h2>
-            <div class="col-12 col-md-4 text-center">
-                <img src="<?= htmlspecialchars($avatar) ?>" alt="Immagine profilo" class="img-fluid rounded-circle shadow" style="max-width: 220px;">
-            </div>
-            
+                <img src="<?= htmlspecialchars($avatar) ?>" alt="Immagine profilo" class="img-fluid rounded-circle shadow" style="max-height: 500px;">
         </div>
-
 
         <div class="tabs">
 			<div>
@@ -164,5 +152,14 @@
             </div>
 				
 		</div>
+        <script>
+            function switchTab(tab) {
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(div => div.style.display = 'none');
+                document.getElementById(tab + '-btn').classList.add('active');
+                document.getElementById(tab + '-content').style.display = 'block';
+            }
+            window.onload = () => switchTab('informazioni');
+        </script>
     </body>
 </html>
