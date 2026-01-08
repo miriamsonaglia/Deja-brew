@@ -2,7 +2,7 @@
 <html lang="it">
 	<head>
 		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 		<title>Carte - Deja Brew</title>
@@ -32,7 +32,11 @@
 					'id' => $card->id,
 					'codice_carta' => $card->codice_carta,
 					'circuito_pagamento' => $card->circuito_pagamento,
-					'scadenza' => $card->scadenza_mese . '/' . $card->scadenza_anno
+					'scadenza_mese' => "05", //TODO da modificare quando verrà aggiunta la colonna data nel database
+					'scadenza_anno' => "2025", //TODO da modificare quando verrà aggiunta la colonna data nel database
+
+					//'scadenza_mese' => $card->scadenza_mese,
+					//'scadenza_anno' => $card->scadenza_anno,
 				];
 			})->toArray();
 		?>
@@ -80,14 +84,15 @@
 								<button type="button" class="card-button edit-card-btn" 
 										data-card-id="<?= $card['id'] ?>" 
 										data-circuito="<?= $card['circuito_pagamento'] ?>" 
-										data-scadenza="<?= $card['scadenza'] ?>" 
-										data-codiceCarta="<?= $card['codice_carta'] ?>" 
+										data-scadenzamese="<?= $card['scadenza_mese'] ?>" 
+										data-scadenzaanno="<?= $card['scadenza_anno'] ?>" 
+										data-codicecarta="<?= $card['codice_carta'] ?>" 
 										data-bs-toggle="modal" data-bs-target="#modalModificaCarta">
 										Edit Card
 								</button>
 								<label for="card_<?= $card['id'] ?>">
 									<!--TODO da modificare quando verrà aggiunta la colonna data nel database-->
-									<?=htmlspecialchars($card['circuito_pagamento']) ?> <?=$card['codice_carta'] ?> (Expires <?=$card['scadenza'] ?>)
+									<?=htmlspecialchars($card['circuito_pagamento']) ?> <?=$card['codice_carta'] ?> | Scadenza <?=$card['scadenza_mese'] ?>-<?=$card['scadenza_anno'] ?>
 								</label>
 							</div>
 						<?php endforeach; ?>
@@ -99,7 +104,7 @@
 				<form action="actions/add_card.php" method="POST">
 					<div class="form-group">
 						<label>Cardholder Name</label>
-						<input type="text" name="card_name" required>
+						<input type="text" name="card_owner" required>
 					</div>
 
 					<div class="form-group">
@@ -119,7 +124,7 @@
 					<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
 						<div class="form-group">
 							<label>Scadenza Carta</label>
-							<input type="text" name="scadenza" placeholder="MM/YY" required>
+							<input type="month" id="scadenza" name="scadenza" required>
 						</div>
 						<div class="form-group">
 							<label>CVV</label>
@@ -140,11 +145,11 @@
 					<h5 class="modal-title" id="modalModificaCartaLabel">Modifica la carta di credito selezionata</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
 					</div>
-					<input type="hidden" id="card_id" name="card_id">
+					<input type="hidden" id="modal-card_id" name="card_id">
 					<div class="modal-body">
 					<div class="mb-3">
 						<label for="circuito_pagamento" class="form-label">Circuito della carta</label>
-						<select id="circuito_pagamento" name="circuito_pagamento" class="form-select" required>
+						<select id="modal-circuito_pagamento" name="circuito_pagamento" class="form-select" required>
 						<option value="">Seleziona</option>
 						<option value="Visa">Visa</option>
 						<option value="MasterCard">MasterCard</option>
@@ -154,15 +159,15 @@
 					</div>
 					<div class="mb-3">
 						<label for="codiceCarta" class="form-label">Numero carta</label>
-						<input type="text" id="codiceCarta" name="codiceCarta" class="form-control" placeholder="1234 5678 9012 3456" required pattern="\d{16}">
+						<input type="text" id="modal-codice_carta" name="codiceCarta" class="form-control" placeholder="1234 5678 9012 3456" required pattern="\d{16}">
 					</div>
 					<div class="mb-3">
 						<label for="scadenza" class="form-label">Data scadenza</label>
-						<input type="date" id="scadenza" name="scadenza" class="form-control" required>
+						<input type="month" id="modal-scadenza" name="scadenza" class="form-control" required>
 					</div>
 					<div class="mb-3">
 						<label for="cvvNuova" class="form-label">CVV</label>
-						<input type="password" id="cvvNuova" name="cvv_carta" class="form-control" placeholder="***" required pattern="\d{3,4}">
+						<input type="password" id="modal-cvv" name="cvv_carta" class="form-control" placeholder="***" required pattern="\d{3,4}">
 					</div>
 					</div>
 					<div class="modal-footer">
@@ -178,18 +183,36 @@
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 		<script>
+
+			const scadenzaInput = document.getElementById('scadenza');
+
+			if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
+				// Firefox doesn't support month picker UI
+				scadenzaInput.setAttribute('placeholder', 'YYYY-MM'); // guide the user
+				// Optional: attach a JS month picker library here
+			} else {
+				scadenzaInput.setAttribute('type', 'month'); // other browsers show calendar UI
+			}
+
 			const modal = document.getElementById('modalModificaCarta');
 			modal.addEventListener('show.bs.modal', event => {
 
 				const button = event.relatedTarget;
-				const cardId = button.dataset.cardId;
 
-				modal.querySelector('#card_id').value = cardId;
-				modal.querySelector('#circuito_pagamento').value = button.dataset.circuito;
-				modal.querySelector('#codiceCarta').value = button.dataset.codiceCarta;
-				modal.querySelector('#scadenza').value = button.dataset.scadenza;
+				modal.querySelector('#modal-card_id').value = button.dataset.cardId;
+				modal.querySelector('#modal-circuito_pagamento').value = button.dataset.circuito;
+				
+    			//console.log(button.dataset);
+				//very important, the button data-* sets all the fields names as lowercase and doesn't work with -, _ or / as separators
+				
+				const month = button.dataset.scadenzamese;
+				const year = button.dataset.scadenzaanno;
+				modal.querySelector('#modal-scadenza').value = `${year}-${month}`;
+				modal.querySelector('#modal-codice_carta').value = button.dataset.codicecarta;
 
 			});
+
+			
 
 
 		</script>
