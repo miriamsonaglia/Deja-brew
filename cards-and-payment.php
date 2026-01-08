@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Payment - Deja Brew</title>
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+		<title>Carte - Deja Brew</title>
 		<?php
 			session_start();
 						
@@ -21,16 +23,16 @@
 				['id' => 1, 'item' => 'Espresso', 'price' => 2.50, 'quantity' => 2],
 				['id' => 2, 'item' => 'Cappuccino', 'price' => 3.50, 'quantity' => 1],
 			];
-
+			$selected_card = 0;
 			$total = array_sum(array_map(fn($o) => $o['price'] * $o['quantity'], $orders));
 
 			// Load saved cards from database
 			$savedCards = CartaDiCredito::where('id_utente', $_SESSION['LoggedUser']['id'])->get()->map(function($card) {
 				return [
 					'id' => $card->id,
-					'last_four' => substr($card->numero_carta, -4),
-					'brand' => $card->circuito_pagamento,
-					'expiry' => $card->scadenza_mese . '/' . $card->scadenza_anno
+					'codice_carta' => $card->codice_carta,
+					'circuito_pagamento' => $card->circuito_pagamento,
+					'scadenza' => $card->scadenza_mese . '/' . $card->scadenza_anno
 				];
 			})->toArray();
 		?>
@@ -75,10 +77,17 @@
 					<?php else: ?>
 						<?php foreach ($savedCards as $card): ?>
 							<div class="card-item">
-								<button type="submit" name="selected_card" value="<?=$card['id'] ?>" class="card-button">Edit Card</button>
+								<button type="button" class="card-button edit-card-btn" 
+										data-card-id="<?= $card['id'] ?>" 
+										data-circuito="<?= $card['circuito_pagamento'] ?>" 
+										data-scadenza="<?= $card['scadenza'] ?>" 
+										data-codiceCarta="<?= $card['codice_carta'] ?>" 
+										data-bs-toggle="modal" data-bs-target="#modalModificaCarta">
+										Edit Card
+								</button>
 								<label for="card_<?= $card['id'] ?>">
 									<!--TODO da modificare quando verrà aggiunta la colonna data nel database-->
-									<?=htmlspecialchars($card['brand']) ?> •••• <?=$card['last_four'] ?> (Expires <?=$card['expiry'] ?>)
+									<?=htmlspecialchars($card['circuito_pagamento']) ?> <?=$card['codice_carta'] ?> (Expires <?=$card['scadenza'] ?>)
 								</label>
 							</div>
 						<?php endforeach; ?>
@@ -94,14 +103,23 @@
 					</div>
 
 					<div class="form-group">
-						<label>Card Number</label>
+						<label>Numero Carta</label>
 						<input type="text" name="card_number" placeholder="1234 5678 9012 3456" required>
+
+						<label>Circuito</label>
+						<select id="circuito_pagamento" name="circuito_pagamento" class="form-select" required>
+						<option value="">Seleziona</option>
+						<option value="Visa">Visa</option>
+						<option value="MasterCard">MasterCard</option>
+						<option value="American Express">American Express</option>
+						<option value="Maestro">Maestro</option>
+						</select>
 					</div>
 
 					<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
 						<div class="form-group">
-							<label>Expiry Date</label>
-							<input type="text" name="expiry" placeholder="MM/YY" required>
+							<label>Scadenza Carta</label>
+							<input type="text" name="scadenza" placeholder="MM/YY" required>
 						</div>
 						<div class="form-group">
 							<label>CVV</label>
@@ -113,5 +131,67 @@
 				</form>
 			</div>
 		</div>
+
+		<div class="modal fade" id="modalModificaCarta" tabindex="-1" aria-labelledby="modalModificaCartaLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+				<form id="formNuovaCarta" method="POST">	
+				<div class="modal-header">
+					<h5 class="modal-title" id="modalModificaCartaLabel">Modifica la carta di credito selezionata</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+					</div>
+					<input type="hidden" id="card_id" name="card_id">
+					<div class="modal-body">
+					<div class="mb-3">
+						<label for="circuito_pagamento" class="form-label">Circuito della carta</label>
+						<select id="circuito_pagamento" name="circuito_pagamento" class="form-select" required>
+						<option value="">Seleziona</option>
+						<option value="Visa">Visa</option>
+						<option value="MasterCard">MasterCard</option>
+						<option value="American Express">American Express</option>
+						<option value="Maestro">Maestro</option>
+						</select>
+					</div>
+					<div class="mb-3">
+						<label for="codiceCarta" class="form-label">Numero carta</label>
+						<input type="text" id="codiceCarta" name="codice_carta" class="form-control" placeholder="1234 5678 9012 3456" required pattern="\d{16}">
+					</div>
+					<div class="mb-3">
+						<label for="scadenza" class="form-label">Data scadenza</label>
+						<input type="date" id="scadenza" name="scadenza" class="form-control" required>
+					</div>
+					<div class="mb-3">
+						<label for="cvvNuova" class="form-label">CVV</label>
+						<input type="password" id="cvvNuova" name="cvv_carta" class="form-control" placeholder="***" required pattern="\d{3,4}">
+					</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Chiudi</button>
+						<button type="submit" formaction="actions/update_card.php" class="btn btn-success">Modifica carta</button>
+						<button type="submit" formaction="actions/delete_card.php" class="btn btn-danger" onclick="return confirm('Sei sicuro di voler eliminare questa carta?')">Elimina carta</button>
+					</div>
+				</form>
+				</div>
+			</div>
+		</div>
+
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+		<script>
+			const modal = document.getElementById('modalModificaCarta');
+			modal.addEventListener('show.bs.modal', event => {
+
+				const button = event.relatedTarget;
+				const cardId = button.dataset.cardId;
+
+				modal.querySelector('#card_id').value = cardId;
+				modal.querySelector('#circuito_pagamento').value = button.dataset.circuito;
+				modal.querySelector('#codiceCarta').value = button.dataset.codiceCarta;
+				modal.querySelector('#scadenza').value = button.dataset.scadenza;
+
+			});
+
+
+		</script>
 	</body>
 </html>

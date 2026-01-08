@@ -12,8 +12,9 @@
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $card_name = trim($_POST['card_name'] ?? '');
+        $circuito = trim($_POST['circuito_pagamento'] ?? '');
         $card_number = trim($_POST['card_number'] ?? '');
-        $expiry = trim($_POST['expiry'] ?? '');
+        $expiry = trim($_POST['scadenza'] ?? '');
         $cvv = trim($_POST['cvv'] ?? '');
 
         $errors = [];
@@ -50,15 +51,6 @@
             header("Location: ../cards-and-payment.php");
             exit;
         }
-
-        // Determina circuito (semplice basato sul primo numero)
-        $first_digit = substr(str_replace(' ', '', $card_number), 0, 1);
-        $circuito = match ($first_digit) {
-            '4' => 'Visa',
-            '5' => 'Mastercard',
-            '3' => 'American Express',
-            default => 'Altro'
-        };
 
         // Inserisci nel database
         CartaDiCredito::create([
