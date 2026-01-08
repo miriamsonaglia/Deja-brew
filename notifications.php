@@ -343,13 +343,8 @@ if ($userRole !== Role::GUEST->value && $userId) {
             const data = await response.json();
 
             if (data.success) {
-                // Aggiorna UI
-                selectedButton.classList.remove('btn-primary-custom', 'btn-outline-primary-custom');
-                selectedButton.classList.add('btn-secondary');
-                selectedButton.innerHTML = '<i class="bi bi-check me-1"></i>Completato';
-
-                // Opzionale: aggiorna l'intera pagina o l'accordion
-                // location.reload(); // Se vuoi ricaricare per vedere cambiamenti
+                // Ricarica la pagina per aggiornare notifiche e badge
+                location.reload();
             } else {
                 alert(data.message || 'Errore durante l\'aggiornamento');
                 selectedButton.disabled = false;

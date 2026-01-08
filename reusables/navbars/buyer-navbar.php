@@ -1,3 +1,7 @@
+<?php
+require_once __DIR__ . '/../../notification-count.php';
+$notificationCount = getNotificationCount();
+?>
 <!-- Navbar -->
 <nav class="navbar bg-light border-bottom">
     <div class="container-fluid justify-content-between align-items-center">
@@ -42,7 +46,9 @@
             <li>
                 <a href="./notifications.php" class="nav-link">
                     <i class="bi bi-bell me-2"></i>Notifiche
-                    <span class="badge bg-danger ms-auto">3</span>
+                    <?php if ($notificationCount > 0): ?>
+                        <span class="badge bg-danger ms-auto"><?= $notificationCount ?></span>
+                    <?php endif; ?>
                 </a>
             </li>
             <li>
