@@ -21,22 +21,16 @@
             require_once __DIR__ . '/Models/Lista.php';
             require_once __DIR__ . '/utilities.php';
             require_once __DIR__ . '/role.php';
+
             session_start();
-            
-            if(!isset($_SESSION['LoggedUser']['id'])){
-                header("Location: login.php");
-                exit;
-            }
-            // --- Recupero dati utente senza usare la relazione ---
 			
-			$datiUtente = Utente::where('id', $_SESSION['LoggedUser']['id'])->first();
-			if ($datiUtente === null) {
+			$utente = Utente::where('id', $_SESSION['LoggedUser']['id'])->first();
+			if ($utente === null) {
 				// Handle missing user data: redirect or show error
 				echo '<div class="alert alert-danger">Errore: dati utente non trovati.</div>';
 				exit;
 			}
 
-			$utente = Utente::where('id', $_SESSION['LoggedUser']['id'])->first();
 			$isBuyer = isset($_SESSION['UserRole']) && $_SESSION['UserRole'] === Role::BUYER->value;
 			$isVendor = isset($_SESSION['UserRole']) && $_SESSION['UserRole'] === Role::VENDOR->value;
 

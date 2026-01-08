@@ -68,7 +68,9 @@
 									<?php endif; ?>
 								</td>
 								<td><?= htmlspecialchars($order->status) ?></td>
-								<td><?= number_format((float)$order->prezzo_totale, 2) ?> €</td>
+
+								<!-- TODO modificare la quantità quando verrà aggiunta la colonna quantità nel database -->
+								<td><?= number_format(2*(float)$order->prodotto->prezzo, 2) ?> €</td>
 								<td>
 									<a href="generate_invoice.php?order_id=<?= $order->id ?>" class="btn btn-sm btn-outline-secondary" target="_blank">
 										<i class="bi bi-file-earmark-pdf"></i> Scarica PDF

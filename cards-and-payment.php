@@ -5,18 +5,25 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-		<title>Carte - Deja Brew</title>
+		<title>Carte e Pagamentiv</title>
 		<?php
-			session_start();
-						
-						if(!isset($_SESSION['LoggedUser']['id'])){
-							header("Location: login.php");
-							exit;
-						}
+			
 
 			require_once __DIR__ . '/bootstrap.php';
 			require_once __DIR__ . '/Models/CartaDiCredito.php';
+			require_once __DIR__ . '/Models/Utente.php';
+			use App\Models\Utente;
 			use App\Models\CartaDiCredito;
+
+			session_start();
+
+			// --- Controllo utente loggato ---
+			$datiUtente = Utente::where('id', $_SESSION['LoggedUser']['id'])->first();
+			if ($datiUtente === null) {
+				// Handle missing user data: redirect or show error
+				echo '<div class="alert alert-danger">Errore: dati utente non trovati.</div>';
+				exit;
+			}
 
 			// Mock order data (replace with database query)
 			$orders = [
@@ -27,7 +34,7 @@
 			$total = array_sum(array_map(fn($o) => $o['price'] * $o['quantity'], $orders));
 
 			// Load saved cards from database
-			$savedCards = CartaDiCredito::where('id_utente', $_SESSION['LoggedUser']['id'])->get()->map(function($card) {
+			$savedCards = CartaDiCredito::where('id_utente', $datiUtente->id)->get()->map(function($card) {
 				return [
 					'id' => $card->id,
 					//'card_owner' => $card->nome_titolare,
