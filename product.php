@@ -55,7 +55,7 @@ function renderStars($media) {
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
   <link href="/dist/custom/css/new-style.css" rel="stylesheet">
-  
+
   <style>
     /* Custom styles to match home page functionality */
     .product-card {
@@ -65,7 +65,7 @@ function renderStars($media) {
       background: white;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-    
+
     .quantity-input {
       width: 80px;
       text-align: center;
@@ -73,7 +73,7 @@ function renderStars($media) {
       border-radius: 4px;
       padding: 6px;
     }
-    
+
     .cart-button, .wish-button {
       padding: 8px 16px;
       border-radius: 4px;
@@ -82,18 +82,18 @@ function renderStars($media) {
       font-size: 14px;
       transition: all 0.3s ease;
     }
-    
+
     .cart-button {
       background-color: #28a745;
       color: white;
       border-color: #28a745;
     }
-    
+
     .cart-button:hover {
       background-color: #218838;
       border-color: #1e7e34;
     }
-    
+
     .wish-button {
       background-color: transparent;
       color: #ff4444;
@@ -101,18 +101,18 @@ function renderStars($media) {
       padding: 8px 12px;
       margin-left: 8px;
     }
-    
+
     .wish-button:hover {
       background-color: rgba(255, 68, 68, 0.1);
     }
-    
+
     .product-actions {
       display: flex;
       align-items: center;
       gap: 10px;
       margin-top: 15px;
     }
-    
+
     .quantity-container {
       display: flex;
       align-items: center;
@@ -122,7 +122,7 @@ function renderStars($media) {
 </head>
 <body>
 
-<?php 
+<?php
     switch($userRole) {
         case Role::GUEST->value:
             include('./reusables/navbars/empty-navbar.php');
@@ -168,7 +168,7 @@ function renderStars($media) {
 
         <!-- Nome venditore -->
         <div class="mb-1">
-          <a href="vendor-profile.php?id=<?php echo $venditore->id; ?>" class="text-decoration-none">
+          <a href="vendor-profile.php?id=<?php echo $venditore->id_utente; ?>" class="text-decoration-none">
             <span class="fw-semibold text-primary">
               <?php echo $venditore->user->nome . ' ' . $venditore->user->cognome; ?>
             </span>
@@ -207,24 +207,24 @@ function renderStars($media) {
           <div class="product-actions">
             <div class="quantity-container">
               <label for="quantity-<?php echo $prodotto->id; ?>" class="form-label mb-0 me-2">Quantità:</label>
-              <input type="number" 
-                     step="1" 
-                     value="1" 
-                     min="1" 
+              <input type="number"
+                     step="1"
+                     value="1"
+                     min="1"
                      max="99"
                      class="quantity-input"
                      id="quantity-<?php echo $prodotto->id; ?>"
                      data-product-id="<?php echo $prodotto->id; ?>">
             </div>
-            
-            <button class="cart-button" 
+
+            <button class="cart-button"
                     data-product-id="<?php echo $prodotto->id; ?>"
                     data-product-name="<?php echo htmlspecialchars($prodotto->nome); ?>"
                     data-product-price="<?php echo $prodotto->prezzo; ?>">
               <i class="bi bi-cart-plus"></i> Aggiungi al carrello
             </button>
-            
-            <button class="wish-button" 
+
+            <button class="wish-button"
                     data-product-id="<?php echo $prodotto->id; ?>"
                     <?php if(wished($prodotto->id, $_SESSION['LoggedUser']['id'])): ?>
                       title="Rimuovi dalla wishlist">
