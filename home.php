@@ -40,12 +40,14 @@
                 style="z-index: 1050; top: 100%; display: none;"></ul>
         </div>
 
-
             <!-- Categories with Enhanced Slider -->
             <?php
             foreach($categories as $index => $category):
                 $products = Prodotto::where('categoria_id', $category->id)->limit(50)->get();
                 $sliderId = 'category-' . $category->id;
+                if($products->isEmpty()):
+                    continue;
+                else:
             ?>
             <section class="category-section">
                 <div class="category-header">
@@ -106,7 +108,10 @@
                 <!-- Slider Indicators -->
                 <div class="slider-indicators" id="<?php echo $sliderId; ?>-indicators"></div>
             </section>
-            <?php endforeach; ?>
+            <?php
+                endif;
+                endforeach;
+            ?>
         </div>
 
         <footer><!-- ?? Possible footer template ?? --></footer>

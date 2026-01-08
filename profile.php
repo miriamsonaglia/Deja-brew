@@ -23,7 +23,7 @@
             require_once __DIR__ . '/role.php';
 
             session_start();
-			
+
 			$utente = Utente::where('id', $_SESSION['LoggedUser']['id'])->first();
 			if ($utente === null) {
 				// Handle missing user data: redirect or show error
@@ -75,19 +75,11 @@
 
 			<!-- Da mettere un if che cambia il tipo di elemento dipendentemente se chi accede è il venditore o un utente qualsiasi -->
 			<div class="profile-info">
-				<h2><?= htmlspecialchars($datiUtente->username) ?> </h2>
-				
-
 				<?php if ($_SESSION['UserRole'] == Role::VENDOR->value): ?>
-					<?php if ($venditore->descrizione != null): ?>
-						<p><?= htmlspecialchars($venditore->descrizione) ?> </p>
-					<?php else: ?>
-						<p>Nessuna descrizione.</p>
-					<?php endif; ?>
-					<form id="edit_description_form" action="actions/edit_description.php" method="post">	
+					<form id="edit_description_form" action="actions/edit_description.php" method="post">
 						<div class="mb-3">
 							<label for="descrizione" class="form-label">Modifica Descrizione:</label>
-							<textarea class="form-control" id="descrizione" name="descrizione" rows="3" required><?= isset($descSeller->descrizione) ? '' : '' ?></textarea>
+							<textarea class="form-control" id="descrizione" name="descrizione" rows="3" required><?= isset($venditore->descrizione) ? $venditore->descrizione : '' ?></textarea>
 						</div>
 						<button type="submit" class="btn btn-primary">Aggiorna Descrizione</button>
 					</form>
@@ -133,21 +125,21 @@
 
 				<label for="new_password" class="form-label">Nuova Password</label>
 				<input type="password" class="form-control" id="new_password" name="new_password" required>
-				
+
 				<label for="new_password_confirm" class="form-label">Conferma nuova Password</label>
 				<input type="password" class="form-control" id="new_password_confirm" name="new_password_confirm" required>
-				
+
 				<button type="submit" class="btn btn-warning" disabled>Reset Password</button>
 			</div>
 		</form>
-		
+
 
 
 		<script>
 
 			document.getElementById('edit_description_form').reset();
 			document.getElementById('reset_password_form').reset();
-		
+
 
 			document.getElementById('reset_password_form').addEventListener('input', function() {
 				const newPassword = document.getElementById('new_password').value;
@@ -163,7 +155,7 @@
 					if (this.contains(valido)) {
 						this.removeChild(valido);
 					}
-					
+
 				} else{
 					submitButton.disabled = true;
 					valido.classList.add('error');
