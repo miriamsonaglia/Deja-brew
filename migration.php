@@ -142,7 +142,7 @@ function createFatturaTable()
         $table->foreignId('id_utente')->constrained('utente')->onDelete('cascade');
         $table->foreignId('id_venditore')->constrained('utenteVenditore')->onDelete('cascade');
         $table->foreignId('id_ordine')->nullable()->constrained('ordine')->onDelete('set null');
-        $table->string('transaction_id')->nullable(); // Campo aggiunto per gestire acquisti multi-prodotto
+        $table->unsignedInteger('transaction_id')->nullable(); // Campo aggiunto per gestire acquisti multi-prodotto
     });
 
     echo "Fattura table created successfully!\n";
@@ -155,7 +155,7 @@ function createCartaDiCreditoTable()
         $table->id();
         $table->foreignId('id_utente')->constrained('utente')->onDelete('cascade');
         $table->string('circuito_pagamento');
-        $table->string('codice_carta');
+        $table->unsignedInteger('codice_carta');
         $table->string('cvv_carta');
         $table->string('nome_titolare');              // Campo aggiunto
         $table->unsignedTinyInteger('scadenza_mese'); // 1-12

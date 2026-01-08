@@ -57,11 +57,11 @@
         // Inserisci nel database
         CartaDiCredito::create([
             'id_utente' => $_SESSION['LoggedUser']['id'],
-            //'nome_titolare' => $card_owner,
+            'nome_titolare' => $card_owner,
             'codice_carta' => str_replace(' ', '', $card_number), // Rimuovi spazi
             'circuito_pagamento' => $circuito,
-            //'scadenza_mese' => $month,
-            //'scadenza_anno' => $year,
+            'scadenza_mese' => $month,
+            'scadenza_anno' => $year,
             'cvv_carta' => $cvv
         ]);
 

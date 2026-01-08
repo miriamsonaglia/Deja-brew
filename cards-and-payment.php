@@ -37,15 +37,11 @@
 			$savedCards = CartaDiCredito::where('id_utente', $datiUtente->id)->get()->map(function($card) {
 				return [
 					'id' => $card->id,
-					//'card_owner' => $card->nome_titolare,
-					'card_owner' => "PlaceHolder", //TODO da modificare quando verrà aggiunta la colonna nome_titolare nel database
+					'card_owner' => $card->nome_titolare,
 					'codice_carta' => $card->codice_carta,
 					'circuito_pagamento' => $card->circuito_pagamento,
-					'scadenza_mese' => "05", //TODO da modificare quando verrà aggiunta la colonna data nel database
-					'scadenza_anno' => "2025", //TODO da modificare quando verrà aggiunta la colonna data nel database
-
-					//'scadenza_mese' => $card->scadenza_mese,
-					//'scadenza_anno' => $card->scadenza_anno,
+					'scadenza_mese' => $card->scadenza_mese,
+					'scadenza_anno' => $card->scadenza_anno,
 				];
 			})->toArray();
 		?>

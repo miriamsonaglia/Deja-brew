@@ -159,8 +159,8 @@ echo "✓ recensione popolata\n";
 
 // 12. Carte di credito (solo per i compratori)
 DB::table('cartaDiCredito')->insert([
-    ['id_utente' => $compratoriIds[0], 'circuito_pagamento' => 'Visa', 'codice_carta' => 'encrypted_4111111111111111', 'cvv_carta' => 'enc_123', 'nome_titolare' => 'Mario Rossi', 'scadenza_mese' => 12, 'scadenza_anno' => 2028],
-    ['id_utente' => $compratoriIds[1], 'circuito_pagamento' => 'MasterCard', 'codice_carta' => 'encrypted_5555555555554444', 'cvv_carta' => 'enc_456', 'nome_titolare' => 'Laura Bianchi', 'scadenza_mese' => 6, 'scadenza_anno' => 2027],
+    ['id_utente' => $compratoriIds[0], 'circuito_pagamento' => 'Visa', 'codice_carta' => '4111111111111111', 'cvv_carta' => 'enc_123', 'nome_titolare' => 'Mario Rossi', 'scadenza_mese' => 12, 'scadenza_anno' => 2028],
+    ['id_utente' => $compratoriIds[1], 'circuito_pagamento' => 'MasterCard', 'codice_carta' => '5555555555554444', 'cvv_carta' => 'enc_456', 'nome_titolare' => 'Laura Bianchi', 'scadenza_mese' => 6, 'scadenza_anno' => 2027],
 ]);
 
 echo "✓ cartaDiCredito popolata\n";
