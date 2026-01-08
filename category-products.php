@@ -75,7 +75,7 @@
                                             data-product-price="<?php echo $product->prezzo; ?>">
                                         Aggiungi al carrello
                                     </button>
-                                    <?php if(wished($product->id, $utenteCompratore->id)): ?>
+                                    <?php if(wished($product->id, $utenteCompratore->id_utente)): ?>
                                         <button class="btn btn-outline-danger wish-button"
                                                 data-product-id="<?php echo $product->id; ?>"
                                                 title="Rimuovi dalla wishlist">

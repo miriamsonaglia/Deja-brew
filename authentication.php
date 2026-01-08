@@ -140,7 +140,7 @@ class AuthController
             UtenteVenditore::create(['id_utente' => $utente->id]);
             $_SESSION['UserRole'] = Role::VENDOR->value;
         }
-
+        $_SESSION['LoggedUser'] = $utente->toArray();
         // Una sola home dinamica
         header('Location: ./home.php');
         exit;

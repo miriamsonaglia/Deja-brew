@@ -5,10 +5,10 @@
         <button class="btn navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-label="Apri menu">
             <span class="navbar-toggler-icon"></span>
         </button>
-        
+
         <!-- Logo/Brand centrato -->
         <a href='./home.php' class="nav-link-custom"><span class="navbar-brand mx-auto fw-bold fs-3">Deja-brew</span></a>
-        
+
         <!-- Barra di ricerca e carrello -->
         <div class="d-flex align-items-center">
             <!-- Carrello -->
@@ -41,33 +41,33 @@
                 </a>
             </li>
             <li>
-                <a href="./orders-buyer.php" class="nav-link" onclick="showOrders()">
+                <a href="./orders-buyer.php" class="nav-link">
                     <i class="bi bi-bag me-2"></i>Ordini
                 </a>
             </li>
             <li>
-                <a href="./wishlist.php" class="nav-link" onclick="showList()">
+                <a href="./wishlist.php" class="nav-link">
                     <i class="bi bi-heart me-2"></i>Lista dei desideri
                 </a>
             </li>
             <li>
-                <a href="./settings.php" class="nav-link" onclick="showSettings()">
+                <a href="./settings.php" class="nav-link">
                     <i class="bi bi-gear me-2"></i>Impostazioni
                 </a>
             </li>
             <li>
-                <a href="./cards-and-payment.php" class="nav-link" onclick="showCards()">
+                <a href="./cards-and-payment.php" class="nav-link">
                     <i class="bi bi-credit-card me-2"></i>Carte e pagamenti
                 </a>
             </li>
             <li><hr class="my-3"></li>
             <li>
-                <a href="./profile.php" class="nav-link" onclick="showProfile()">
+                <a href="./profile.php" class="nav-link">
                     <i class="bi bi-person me-2"></i>Profilo
                 </a>
             </li>
             <li>
-                <a href="./logout.php" class="nav-link text-danger" onclick="logout()">
+                <a href="./logout.php" class="nav-link text-danger">
                     <i class="bi bi-box-arrow-right me-2"></i>Logout
                 </a>
             </li>
