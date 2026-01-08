@@ -10,7 +10,6 @@ use App\Models\Prodotto;
 use Illuminate\Database\Capsule\Manager as DB;
 
 session_start();
-
 $userRole = $_SESSION['UserRole'] ?? Role::GUEST->value;
 $userId = $_SESSION['LoggedUser']['id'] ?? null;
 
@@ -288,7 +287,7 @@ if ($userRole !== Role::GUEST->value && $userId) {
 
 <!-- JS -->
 <script src="./dist/bootstrap5/js/bootstrap.min.js"></script>
-
+<script src="./dist//custom//js/cart-manager.js"></script>
 <script>
     let selectedButton = null;
     const modal = new bootstrap.Modal(document.getElementById('confirmActionModal'));
@@ -344,6 +343,10 @@ if ($userRole !== Role::GUEST->value && $userId) {
         modal.hide();
         selectedButton = null;
     });
+
+    <?php if(isset($userRole) && ($userRole === Role::BUYER->value)): ?>
+        updateCartCount();
+    <?php endif; ?>
 </script>
 
 </body>

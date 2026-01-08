@@ -9,6 +9,7 @@
 	use App\Models\Utente;
 
 	session_start();
+	$userRole = $_SESSION['UserRole'] ?? null;
 	if (!isset($_SESSION['LoggedUser']['id']) || ($_SESSION['UserRole'] ?? Role::GUEST->value) !== Role::BUYER->value) {
 		header('Location: ./login.php');
 		exit;
@@ -94,5 +95,12 @@
 	</div>
 
 	<script src="./dist/bootstrap5/js/bootstrap.min.js"></script>
+	<script src="./dist//custom//js/cart-manager.js"></script>
+
+	<script>
+		<?php if(isset($userRole) && ($userRole === Role::BUYER->value)): ?>
+			updateCartCount();
+		<?php endif; ?>
+	</script>
 </body>
 </html>
