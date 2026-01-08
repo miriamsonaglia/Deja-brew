@@ -7,7 +7,7 @@
         </button>
         
         <!-- Logo/Brand centrato -->
-        <span class="navbar-brand mx-auto fw-bold fs-3">Deja-brew</span>
+        <span href='./home.php' class="navbar-brand mx-auto fw-bold fs-3">Deja-brew</span>
     </div>
 </nav>
 
