@@ -51,6 +51,7 @@
 			<div class="row g-4 align-items-center">
 				<div class="col-12 col-md-4 text-center">
 					<img src="<?= htmlspecialchars($avatar) ?>" alt="Immagine profilo" class="img-fluid rounded-circle shadow" style="max-width: 220px;">
+					<button class="btn btn-secondary mt-3">Modifica Immagine Profilo</button>
 				</div>
 				<div class="col-12 col-md-8">
 					<div class="card shadow-sm">
@@ -72,11 +73,13 @@
 									<p class="mb-0"><?= htmlspecialchars($venditore->descrizione ?? 'Nessuna descrizione.') ?></p>
 								</div>
 							<?php endif; ?>
-
+						</div>
+					</div>
+				</div>
+			</div>	
 			<!-- Da mettere un if che cambia il tipo di elemento dipendentemente se chi accede è il venditore o un utente qualsiasi -->
 			<div class="profile-info">
-				<h2><?= htmlspecialchars($utente->username) ?> </h2>
-				
+				<h2 class="mt-5 mb-4">Impostazioni Profilo</h2>				
 
 				<?php if ($_SESSION['UserRole'] == Role::VENDOR->value): ?>
 					<?php if ($venditore->descrizione != null): ?>
@@ -87,60 +90,61 @@
 					<form id="edit_description_form" action="actions/edit_description.php" method="post">	
 						<div class="mb-3">
 							<label for="descrizione" class="form-label">Modifica Descrizione:</label>
-							<textarea class="form-control" id="descrizione" name="descrizione" rows="3" required><?= isset($descSeller->descrizione) ? '' : '' ?></textarea>
+							<textarea class="form-control" id="descrizione" name="descrizione" rows="3" required></textarea>
 						</div>
 						<button type="submit" class="btn btn-primary">Aggiorna Descrizione</button>
 					</form>
-					<?php endif; ?>
+				<?php endif; ?>
 
+				<hr class="my-5">
+
+				<h3>Reset Password</h3>
+
+				<?php
+					// Messaggi generali (se presenti)
+					if (isset($_SESSION['errors'])) {
+						foreach ($_SESSION['errors'] as $error) {
+							echo "<div class='alert alert-danger'>$error</div>";
+						}
+						unset($_SESSION['errors']);
+					}
+					if (isset($_SESSION['success'])) {
+						echo "<div class='alert alert-success'>{$_SESSION['success']}</div>";
+						unset($_SESSION['success']);
+					}
+				?>
+
+				<?php
+					// Messaggi specifici per reset password
+					if (isset($_SESSION['errors_reset'])) {
+						foreach ($_SESSION['errors_reset'] as $error) {
+							echo "<div class='alert alert-danger'>$error</div>";
+						}
+						unset($_SESSION['errors_reset']);
+					}
+					if (isset($_SESSION['success_reset'])) {
+						echo "<div class='alert alert-success'>{$_SESSION['success_reset']}</div>";
+						unset($_SESSION['success_reset']);
+					}
+				?>
+
+				<form id="reset_password_form" action="actions/reset_password.php" method="post">
+					<div class="mb-3">
+						<label for="current_password" class="form-label">Password Attuale</label>
+						<input type="password" class="form-control" id="current_password" name="current_password" required>
+
+						<label for="new_password" class="form-label">Nuova Password</label>
+						<input type="password" class="form-control" id="new_password" name="new_password" required>
+						
+						<label for="new_password_confirm" class="form-label">Conferma nuova Password</label>
+						<input type="password" class="form-control" id="new_password_confirm" name="new_password_confirm" required>
+						
+						<button type="submit" class="btn btn-warning" id="new_password_submit" disabled>Reset Password</button>
+					</div>
+				</form>
 			</div>
+
 		</div>
-
-		<h3>Reset Password</h3>
-
-        <?php
-			// Messaggi generali (se presenti)
-			if (isset($_SESSION['errors'])) {
-				foreach ($_SESSION['errors'] as $error) {
-					echo "<div class='alert alert-danger'>$error</div>";
-				}
-				unset($_SESSION['errors']);
-			}
-			if (isset($_SESSION['success'])) {
-				echo "<div class='alert alert-success'>{$_SESSION['success']}</div>";
-				unset($_SESSION['success']);
-			}
-        ?>
-
-		<?php
-			// Messaggi specifici per reset password
-			if (isset($_SESSION['errors_reset'])) {
-				foreach ($_SESSION['errors_reset'] as $error) {
-					echo "<div class='alert alert-danger'>$error</div>";
-				}
-				unset($_SESSION['errors_reset']);
-			}
-			if (isset($_SESSION['success_reset'])) {
-				echo "<div class='alert alert-success'>{$_SESSION['success_reset']}</div>";
-				unset($_SESSION['success_reset']);
-			}
-        ?>
-
-		<form id="reset_password_form" action="actions/reset_password.php" method="post">
-			<div class="mb-3">
-				<label for="current_password" class="form-label">Password Attuale</label>
-				<input type="password" class="form-control" id="current_password" name="current_password" required>
-
-				<label for="new_password" class="form-label">Nuova Password</label>
-				<input type="password" class="form-control" id="new_password" name="new_password" required>
-				
-				<label for="new_password_confirm" class="form-label">Conferma nuova Password</label>
-				<input type="password" class="form-control" id="new_password_confirm" name="new_password_confirm" required>
-				
-				<button type="submit" class="btn btn-warning" disabled>Reset Password</button>
-			</div>
-		</form>
-		
 
 
 		<script>
@@ -152,7 +156,7 @@
 			document.getElementById('reset_password_form').addEventListener('input', function() {
 				const newPassword = document.getElementById('new_password').value;
 				const confirmPassword = document.getElementById('new_password_confirm').value;
-				const submitButton = document.querySelector('#reset_password_form button[type="submit"]');
+				const submitButton = document.getElementById('new_password_submit');
 
 				const valido = document.getElementById('passwordCorrette') || document.createElement('div');
 				valido.id = 'passwordCorrette';

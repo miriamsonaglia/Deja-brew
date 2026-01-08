@@ -24,9 +24,7 @@ session_start();
             $errors[] = 'Utente non trovato.';
         } else {
             // Verifica la password attuale (Hashing incluso)
-            //if (!password_verify($current_password, $utente->password)) {
-            // Verifica senza hashing
-            if ($current_password !== $utente->password) {
+            if (!password_verify($current_password, $utente->password)) {
                 $errors[] = 'Password attuale errata.';
             }
         }
@@ -39,7 +37,7 @@ session_start();
 
         //Aggiorna la password
         $utente->update([
-            'password' => $new_password
+            'password' => password_hash($new_password, PASSWORD_DEFAULT)
         ]);
 
         // Aggiorna la password (Hashing incluso)
