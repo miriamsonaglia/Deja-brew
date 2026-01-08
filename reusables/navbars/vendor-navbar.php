@@ -8,17 +8,14 @@
 
         <!-- Logo/Brand centrato -->
         <span href='./home.php' class="navbar-brand mx-auto fw-bold fs-3">Deja-brew</span>
-        <!-- Barra di ricerca e carrello -->
-    <div class="d-flex align-items-center">
-        <!-- Carrello -->
-        <div class="cart-container">
-            <a href="./add-product.php">
-                <button class="position-relative">
-                    <i class="bi bi-plus-lg fs-4"></i> Nuovo prodotto
+        <!-- Pulsante aggiungi prodotto -->
+        <div class="d-flex align-items-center">
+            <a href="./add-product.php" class="text-decoration-none">
+                <button class="btn btn-primary-custom">
+                    <i class="bi bi-plus-lg me-2"></i>Nuovo prodotto
                 </button>
             </a>
         </div>
-    </div>
     </div>
 
 </nav>

@@ -11,6 +11,7 @@ use App\Models\Utente;
 use App\Models\UtenteCompratore;
 use App\Models\CartaDiCredito;
 use App\Models\Lista;
+use App\Models\Prodotto;
 
 session_start();
 
@@ -28,16 +29,35 @@ if (!$utente) die("Utente non trovato.");
 $utenteCompratore = UtenteCompratore::where('id_utente', $idUtente)->first();
 if (!$utenteCompratore) die("Utente compratore non trovato.");
 
-// --- Recupero prodotti nel carrello ---
-$carrello = Lista::where('id_utente_compratore', $utenteCompratore->id)
-                 ->carrello()
-                 ->with('prodotto')
-                 ->get();
+// --- Verifica se è un acquisto diretto da product.php ---
+$isBuyNow = isset($_POST['buy_now']) && $_POST['buy_now'] == '1';
+$idProdotto = $_POST['id_prodotto'] ?? null;
+$quantita = intval($_POST['quantita'] ?? 1);
 
-// Calcolo totale
-$totale = $carrello->sum(function($item) {
-    return $item->quantita * $item->prodotto->prezzo;
-});
+if ($isBuyNow && $idProdotto) {
+    // Acquisto diretto di un singolo prodotto
+    $prodotto = Prodotto::find($idProdotto);
+    if (!$prodotto) die("Prodotto non trovato.");
+    
+    $carrello = collect([(object)[
+        'prodotto' => $prodotto,
+        'quantita' => $quantita
+    ]]);
+    
+    $totale = $quantita * $prodotto->prezzo;
+} else {
+    // Acquisto dal carrello
+    $carrello = Lista::where('id_utente_compratore', $utenteCompratore->id)
+                     ->carrello()
+                     ->with('prodotto')
+                     ->get();
+
+    // Calcolo totale
+    $totale = $carrello->sum(function($item) {
+        return $item->quantita * $item->prodotto->prezzo;
+    });
+}
+
 $iva = $totale * 0.22;
 $totaleFinale = $totale + $iva;
 

@@ -238,13 +238,9 @@ function renderStars($media) {
 
           <!-- Buy now button -->
           <div class="mt-3">
-            <form method="POST" action="checkout.php" class="d-inline">
-              <input type="hidden" name="id_prodotto" value="<?php echo $prodotto->id; ?>">
-              <input type="hidden" id="buyNowQuantity" name="quantita" value="1">
-              <button type="submit" class="btn btn-warning">
-                <i class="bi bi-bag-check"></i> Acquista ora
-              </button>
-            </form>
+            <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalCheckout">
+              <i class="bi bi-bag-check"></i> Acquista ora
+            </button>
           </div>
         <?php endif; ?>
 
@@ -279,6 +275,51 @@ function renderStars($media) {
   <?php if (count($recensioni) > 2): ?>
     <button id="btnToggleRecensioni" class="btn btn-info">Vedi altre</button>
   <?php endif; ?>
+</div>
+
+<!-- MODAL CHECKOUT SINGOLO PRODOTTO -->
+<div class="modal fade" id="modalCheckout" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Completa l'acquisto</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form method="POST" action="checkout.php" class="modal-form">
+        <div class="modal-body">
+          <div class="mb-3">
+            <h6 class="fw-bold">Prodotto</h6>
+            <p class="mb-1"><?php echo $prodotto->nome; ?></p>
+            <small class="text-muted"><?php echo number_format($prodotto->prezzo, 2); ?> €</small>
+          </div>
+
+          <div class="mb-3">
+            <label for="modalQuantity" class="form-label">Quantità</label>
+            <input type="number" 
+                   id="modalQuantity" 
+                   name="quantita" 
+                   value="1" 
+                   min="1" 
+                   max="99" 
+                   class="form-control">
+          </div>
+
+          <div class="mb-3 p-3 bg-light rounded">
+            <h6 class="fw-bold mb-2">Totale</h6>
+            <h5 class="text-success" id="modalTotal"><?php echo number_format($prodotto->prezzo, 2); ?> €</h5>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+          <button type="submit" class="btn btn-success">
+            <i class="bi bi-credit-card"></i> Procedi al pagamento
+          </button>
+        </div>
+        <input type="hidden" name="id_prodotto" value="<?php echo $prodotto->id; ?>">
+        <input type="hidden" name="buy_now" value="1">
+      </form>
+    </div>
+  </div>
 </div>
 
 <!-- MODAL RECENSIONE -->
@@ -379,8 +420,35 @@ starIcons.forEach(icon => {
 // Sync quantity for buy now button
 <?php if(isset($userRole) && ($userRole === Role::BUYER->value)): ?>
 document.querySelector('.quantity-input').addEventListener('change', function() {
-  document.getElementById('buyNowQuantity').value = this.value;
+  // Aggiorna il totale nel modale
+  const modalQuantity = document.getElementById('modalQuantity');
+  if (modalQuantity) {
+    modalQuantity.value = this.value;
+    updateModalTotal();
+  }
 });
+
+// Aggiorna il totale quando cambia la quantità nel modale
+const modalQuantity = document.getElementById('modalQuantity');
+if (modalQuantity) {
+  modalQuantity.addEventListener('change', updateModalTotal);
+}
+
+function updateModalTotal() {
+  const quantity = parseInt(document.getElementById('modalQuantity').value) || 1;
+  const pricePerItem = <?php echo $prodotto->prezzo; ?>;
+  const total = (quantity * pricePerItem).toFixed(2);
+  document.getElementById('modalTotal').textContent = total + ' €';
+}
+
+// Sincronizza il campo nascosto quando il form viene inviato
+const checkoutForm = document.querySelector('.modal-form');
+if (checkoutForm) {
+  checkoutForm.addEventListener('submit', function() {
+    const quantityField = this.querySelector('input[name="quantita"]');
+    quantityField.value = document.getElementById('modalQuantity').value;
+  });
+}
 
 // Initialize cart count
 document.addEventListener('DOMContentLoaded', function() {
