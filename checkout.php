@@ -26,6 +26,7 @@ if (!isset($_SESSION['LoggedUser'])) {
 $idUtente = $_SESSION['LoggedUser']['id'];
 $utente = Utente::find($idUtente);
 if (!$utente) die("Utente non trovato.");
+$_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
 
 // --- Recupero utente compratore senza usare la relazione ---
 $utenteCompratore = UtenteCompratore::where('id_utente', $idUtente)->first();
@@ -251,7 +252,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_c
                     </select>
                 </div>
 
-                <button type="button" class="btn btn-link mb-3" data-bs-toggle="modal" data-bs-target="#modalNuovaCarta">
+                <button type="button" class="btn btn-link mb-3" data-bs-toggle="modal" data-bs-target="#modalAggiungiCarta">
                     <i class="bi bi-plus-circle"></i> Aggiungi nuova carta
                 </button>
 
@@ -269,46 +270,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_c
 </div>
 
 <!-- Modal nuova carta -->
-<div class="modal fade" id="modalNuovaCarta" tabindex="-1" aria-labelledby="modalNuovaCartaLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <form id="formNuovaCarta" method="POST" action="checkout.php">
-        <input type="hidden" name="action" value="add_card">
-        <div class="modal-header">
-          <h5 class="modal-title" id="modalNuovaCartaLabel">Aggiungi nuova carta di credito</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+<div class="modal fade" id="modalAggiungiCarta" tabindex="-1" aria-labelledby="modalAggiungiCartaLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="actions/add_card.php" method="POST" class="row g-3">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modifica la carta di credito selezionata</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+                </div>
+                <div class="modal-body">  
+                    <div class="mb-3">
+                        <label class="form-label">Nome intestatario</label>
+                        <input type="text" name="card_owner" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Numero carta</label>
+                        <input type="text" name="card_number" class="form-control" placeholder="1234 5678 9012 3456" inputmode="numeric" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Circuito</label>
+                        <select id="circuito_pagamento" name="circuito_pagamento" class="form-select" required>
+                            <option value="">Seleziona</option>
+                            <option value="Visa">Visa</option>
+                            <option value="MasterCard">MasterCard</option>
+                            <option value="American Express">American Express</option>
+                            <option value="Maestro">Maestro</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="mb-3">
+                            <label class="form-label">Scadenza</label>
+                            <input type="month" id="scadenza" name="scadenza" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">CVV</label>
+                            <input type="text" name="cvv" class="form-control" placeholder="123" inputmode="numeric" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3 modal-footer">
+                    <button type="submit" class="btn btn-success">Salva metodo di pagamento</button>
+                </div>
+            </form>
         </div>
-        <div class="modal-body">
-          <div class="mb-3">
-            <label for="circuito" class="form-label">Circuito della carta</label>
-            <select id="circuito" name="circuito" class="form-select" required>
-              <option value="">Seleziona</option>
-              <option value="Visa">Visa</option>
-              <option value="MasterCard">MasterCard</option>
-              <option value="American Express">American Express</option>
-              <option value="Maestro">Maestro</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label for="numeroCarta" class="form-label">Numero carta</label>
-            <input type="text" id="numeroCarta" name="numero" class="form-control" placeholder="1234 5678 9012 3456" required pattern="\d{16}">
-          </div>
-          <div class="mb-3">
-            <label for="scadenza" class="form-label">Data scadenza</label>
-            <input type="date" id="scadenza" name="scadenza" class="form-control" required>
-          </div>
-          <div class="mb-3">
-            <label for="cvvNuova" class="form-label">CVV</label>
-            <input type="password" id="cvvNuova" name="cvv" class="form-control" placeholder="***" required pattern="\d{3,4}">
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Chiudi</button>
-          <button type="submit" class="btn btn-success">Aggiungi carta</button>
-        </div>
-      </form>
     </div>
-  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

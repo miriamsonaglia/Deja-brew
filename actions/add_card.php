@@ -5,8 +5,13 @@
 
     session_start();
 
+    $returnTo = $_SESSION['return_to'] ?? '/';
+    unset($_SESSION['return_to']);
+
+
+
     if (!isset($_SESSION['LoggedUser']['id'])) {
-        header("Location: ../login.php");
+        header("Location: $returnTo");
         exit;
     }
 
@@ -18,6 +23,7 @@
         
         $scadenza = $_POST['scadenza']; // "yyyy-mm"
         if (!preg_match('/^\d{4}-\d{2}$/', $scadenza)) {
+            header("Location: $returnTo");
             die("Invalid month format!");
         }
         
@@ -50,7 +56,7 @@
 
         if ($errors) {
             $_SESSION['errors'] = $errors;
-            header("Location: ../cards-and-payment.php");
+            header("Location: $returnTo");
             exit;
         }
 
@@ -66,11 +72,11 @@
         ]);
 
         $_SESSION['success'] = 'Carta aggiunta con successo.';
-        header("Location: ../cards-and-payment.php");
+        header("Location: $returnTo");
         exit;
     } else {
         // Se non POST, reindirizza
-        header("Location: ../cards-and-payment.php");
+        header("Location: $returnTo");
         exit;
     }
 ?>
