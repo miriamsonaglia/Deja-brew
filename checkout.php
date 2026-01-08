@@ -64,6 +64,62 @@ $totaleFinale = $totale + $iva;
 // --- Recupero carte di credito ---
 $carte = CartaDiCredito::where('id_utente', $idUtente)->get();
 
+// --- Gestione pagamento ---
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'pay') {
+    $idCarta = $_POST['id_carta'] ?? '';
+    $cvvInserito = $_POST['cvv'] ?? '';
+
+    $errors = [];
+
+    // Valida che la carta sia stata selezionata
+    if (!$idCarta) {
+        $errors[] = "Seleziona una carta di credito.";
+    } else {
+        // Recupera la carta dal database
+        $carta = CartaDiCredito::where('id', $idCarta)
+                               ->where('id_utente', $idUtente)
+                               ->first();
+        
+        if (!$carta) {
+            $errors[] = "Carta non trovata o non autorizzata.";
+        } else {
+            // Valida il CVV inserito
+            if (!$cvvInserito) {
+                $errors[] = "Inserisci il CVV della carta.";
+            } elseif (!preg_match('/^\d{3,4}$/', $cvvInserito)) {
+                $errors[] = "CVV non valido (deve essere di 3 o 4 cifre).";
+            } elseif ($cvvInserito !== $carta->cvv_carta) {
+                $errors[] = "CVV errato. Verifica il codice inserito.";
+            }
+        }
+    }
+
+    if ($errors) {
+        $_SESSION['error'] = implode('<br>', $errors);
+        header('Location: checkout.php');
+        exit;
+    }
+
+    // Se tutto è corretto, procedi con il pagamento
+    $_SESSION['success'] = "Pagamento effettuato con successo!";
+    
+    if ($isBuyNow) {
+        // Acquisto diretto
+        header('Location: orders-buyer.php');
+    } else {
+        // Svuota il carrello per acquisto dal carrello
+        try {
+            Lista::where('id_utente_compratore', $utenteCompratore->id)
+                 ->carrello()
+                 ->delete();
+        } catch (Exception $e) {
+            // Log dell'errore se necessario
+        }
+        header('Location: orders-buyer.php');
+    }
+    exit;
+}
+
 // --- Gestione aggiunta nuova carta ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_card') {
     $circuito = $_POST['circuito'] ?? '';
@@ -151,10 +207,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_c
     <div class="card shadow-sm">
         <div class="card-header fw-bold">Metodo di pagamento</div>
         <div class="card-body">
-            <form id="checkoutForm">
+            <form method="POST" action="checkout.php">
+                <input type="hidden" name="action" value="pay">
                 <div class="mb-3">
                     <label for="carta" class="form-label">Seleziona carta di credito</label>
-                    <select class="form-select" id="carta" required>
+                    <select class="form-select" id="carta" name="id_carta" required>
                         <?php if ($carte->count() > 0): ?>
                             <?php foreach ($carte as $carta): ?>
                                 <option value="<?= $carta->id ?>">
@@ -173,7 +230,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_c
 
                 <div class="mb-3">
                     <label for="cvv" class="form-label">CVV</label>
-                    <input type="password" class="form-control" id="cvv" placeholder="***" required>
+                    <input type="password" class="form-control" id="cvv" name="cvv" placeholder="***" required>
                 </div>
 
                 <button type="submit" class="btn btn-success btn-lg">
@@ -228,49 +285,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_c
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-<script>
-const shouldClearCart = <?php echo $isBuyNow ? 'false' : 'true'; ?>;
-
-document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const carta = document.getElementById('carta').value;
-    const cvv = document.getElementById('cvv').value;
-
-    const esito = document.getElementById('esitoPagamento') || document.createElement('div');
-    esito.id = 'esitoPagamento';
-    esito.className = 'alert mt-4';
-
-    if (carta && cvv) {
-        esito.classList.add('alert-success');
-        esito.textContent = 'Pagamento effettuato con successo!';
-        document.querySelector('.container').appendChild(esito);
-
-        if (shouldClearCart) {
-            try {
-                await fetch('cart-clean.php', { method: 'POST' });
-            } catch (error) {
-                console.error('Impossibile svuotare il carrello', error);
-            }
-        }
-
-        window.location.href = 'orders-buyer.php';
-    } else {
-        esito.classList.add('alert-danger');
-        esito.textContent = 'Errore: compilare tutti i campi.';
-        document.querySelector('.container').appendChild(esito);
-    }
-});
-
-document.getElementById('modalNuovaCarta').addEventListener('submit', (e) => {
-    const scadenzaInserita = Date.parse(document.getElementById('scadenza').value);
-    const oggi = Date.now();
-    if (oggi >= scadenzaInserita) {
-        e.preventDefault();
-        alert('Data inserita non valida.');
-    }
-});
-</script>
 
 </body>
 </html>
