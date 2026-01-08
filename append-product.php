@@ -1,72 +1,79 @@
 <?php
-    // Imposta intestazione per rispondere in JSON
-    header('Content-Type: application/json');
-    // Abilita CORS se necessario
-    header("Access-Control-Allow-Origin: *");
+// Imposta intestazione per rispondere in JSON
+header('Content-Type: application/json');
+header("Access-Control-Allow-Origin: *");
 
-    // Recupera e decodifica il corpo della richiesta
-    $input = json_decode(file_get_contents('php://input'), true);
+// Recupera e decodifica il corpo della richiesta POST (JSON)
+$input = json_decode(file_get_contents('php://input'), true);
 
-    // Verifica che i dati siano presenti
-    if (!isset($input['productID']) || !isset($input['quantity'])) {
-        http_response_code(400); // Bad Request
-        echo json_encode(['error' => 'Dati mancanti']);
-        exit;
-    }
+if (!$input || !isset($input['productID']) || !isset($input['quantity'])) {
+    http_response_code(400);
+    echo json_encode(['error' => 'Dati mancanti: productID o quantity']);
+    exit;
+}
 
-    $productID = htmlspecialchars($input['productID']);
-    $quantity = (int)$input['quantity'];
-    $type = htmlspecialchars($input['type'] ?? 'desideri'); // Default to 'desideri'
+$productID = (int)$input['productID']; // ID prodotto deve essere intero
+$quantity  = max(1, (int)$input['quantity']); // Almeno 1
+$type      = in_array($input['type'] ?? '', ['carrello', 'desideri']) ? $input['type'] : 'desideri';
 
-    // Validazione base
-    if (empty($productID)) {
-        http_response_code(400);
-        echo json_encode(['error' => 'Dati non validi']);
-        exit;
-    }
+if ($productID <= 0) {
+    http_response_code(400);
+    echo json_encode(['error' => 'ID prodotto non valido']);
+    exit;
+}
 
-    require_once('./bootstrap.php');
-    require_once('./Models/Lista.php');
-    require_once('./Models/Utente.php');
-    require_once('./Models/UtenteCompratore.php');
-    use App\Models\Lista;
-    use App\Models\UtenteCompratore;
+// Avvia sessione e carica bootstrap + modelli
+session_start();
 
-    session_start();
-    // --- Recupero utente compratore senza usare la relazione ---
-    $utenteCompratore = UtenteCompratore::where('id_utente', $_SESSION['LoggedUser']['id'])->first();
+if (!isset($_SESSION['LoggedUser']['id'])) {
+    http_response_code(401);
+    echo json_encode(['error' => 'Utente non autenticato']);
+    exit;
+}
 
-    $productInCart = new Lista();
-    $productInCart->id_utente_compratore = $utenteCompratore->id;
-    $productInCart->id_prodotto = $productID;
-    $productInCart->tipo = $type;
-    $productInCart->quantita = $quantity;
-    try {
-        $productInCart->save();
-    } catch (Exception $e) {
-        $existingProduct = Lista::where([
-            'id_utente_compratore' => $productInCart->id_utente_compratore,
-            'id_prodotto' => $productInCart->id_prodotto,
-            'tipo' => $productInCart->tipo
-        ])->first();
-        if ($existingProduct) {
-            $productInCart = $existingProduct;
-        } else {
-            http_response_code(500);
-            echo json_encode(['error' => 'Errore interno del server']);
-            exit;
-        }
-        // Aggiorna la quantità
-        $productInCart->update(['quantita' => $productInCart->quantita + $quantity], [
-            'id_utente_compratore' => $productInCart->id_utente_compratore,
-            'id_prodotto' => $productInCart->id_prodotto,
-            'tipo' => $productInCart->tipo
-        ]);
-    }
+require_once __DIR__ . '/bootstrap.php';
+use App\Models\Lista;
+use App\Models\UtenteCompratore;
 
-    // Risposta al client
-    echo json_encode([
-        'success' => true,
-        'message' => 'Lista ' . $type . ' aggiornata'
+// Recupera l'utente compratore legato all'utente loggato
+$utenteCompratore = UtenteCompratore::where('id_utente', $_SESSION['LoggedUser']['id'])->first();
+
+if (!$utenteCompratore) {
+    http_response_code(404);
+    echo json_encode(['error' => 'Profilo compratore non trovato']);
+    exit;
+}
+
+$idUtenteCompratore = $utenteCompratore->id;
+
+// --- LOGICA PRINCIPALE: upsert (update or insert) ---
+$existing = Lista::where([
+    'id_utente_compratore' => $idUtenteCompratore,
+    'id_prodotto'          => $productID,
+    'tipo'                 => $type
+])->first();
+
+if ($existing) {
+    // Prodotto già presente → aggiorna quantità
+    $existing->quantita += $quantity;
+    $existing->save();
+    $message = "Quantità aggiornata nel " . ($type === 'carrello' ? 'carrello' : 'lista desideri');
+} else {
+    // Prodotto non presente → crea nuovo record
+    Lista::create([
+        'id_utente_compratore' => $idUtenteCompratore,
+        'id_prodotto'          => $productID,
+        'tipo'                 => $type,
+        'quantita'             => $quantity
     ]);
-?>
+    $message = "Prodotto aggiunto alla " . ($type === 'carrello' ? 'carrello' : 'lista desideri');
+}
+
+// Risposta di successo
+echo json_encode([
+    'success' => true,
+    'message' => $message,
+    'type'    => $type,
+    'productID' => $productID,
+    'quantity'  => $quantity
+]);

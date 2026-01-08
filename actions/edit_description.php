@@ -32,7 +32,7 @@
         }
 
         // Aggiorna la descrizione
-        UtenteVenditore::where('id', $_SESSION['LoggedUser']['id'])->update([
+        UtenteVenditore::where('id_utente', $_SESSION['LoggedUser']['id'])->update([
             'descrizione' => $descrizione
         ]);
 
