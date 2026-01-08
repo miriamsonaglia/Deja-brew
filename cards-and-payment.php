@@ -14,6 +14,7 @@
 			require_once __DIR__ . '/Models/Utente.php';
 			use App\Models\Utente;
 			use App\Models\CartaDiCredito;
+use App\Models\Ordine;
 
 			session_start();
 
@@ -26,12 +27,11 @@
 			}
 
 			// Mock order data (replace with database query)
-			$orders = [
-				['id' => 1, 'item' => 'Espresso', 'price' => 2.50, 'quantity' => 2],
-				['id' => 2, 'item' => 'Cappuccino', 'price' => 3.50, 'quantity' => 1],
-			];
+			$orders = Ordine::where('id_utente', $datiUtente->id)
+						->orderBy('id', 'desc')
+						->get();
 			$selected_card = 0;
-			$total = array_sum(array_map(fn($o) => $o['price'] * $o['quantity'], $orders));
+			
 
 			// Load saved cards from database
 			$savedCards = CartaDiCredito::where('id_utente', $datiUtente->id)->get()->map(function($card) {
@@ -53,13 +53,34 @@
 			<!-- Order Review -->
 			<div class="card">
 				<h2>📋 Order Review</h2>
-				<?php foreach ($orders as $order): ?>
-					<div class="order-item">
-						<span><?= htmlspecialchars($order['item']) ?> x<?= $order['quantity'] ?></span>
-						<span>$<?= number_format($order['price'] * $order['quantity'], 2) ?></span>
-					</div>
-				<?php endforeach; ?>
-				<div class="total">Total: $<?= number_format($total, 2) ?></div>
+					<table class="table table-striped mb-0 orders-table">
+						<thead>
+							<tr>
+								<th>Venditore</th>
+								<th>Prodotto</th>
+								<th>Status</th>
+								<th>Totale</th>
+							</tr>
+						</thead>
+						<tbody>
+							<?php foreach ($orders as $order): ?>
+								<tr>
+									<td><?= htmlspecialchars($order->prodotto->venditore->user->username ?? $order->prodotto->venditore->nome ?? '') ?></td>
+									<td>
+										<?php if ($order->prodotto): ?>
+											<a href="./product.php?id=<?= $order->prodotto->id ?>" class="text-decoration-none">
+												<?= htmlspecialchars($order->prodotto->nome) ?>
+											</a>
+										<?php else: ?>
+											Prodotto
+										<?php endif; ?>
+									</td>
+									<td><?= htmlspecialchars($order->status) ?></td>
+									<td><?= htmlspecialchars($order->prezzo_totale) ?></td>
+								</tr>
+							<?php endforeach; ?>
+						</tbody>
+					</table>
 			</div>
 
 			<!-- Payment Form -->

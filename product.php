@@ -108,7 +108,6 @@ function renderStars($media) {
 
     .product-actions {
       display: flex;
-      align-items: center;
       gap: 10px;
       margin-top: 15px;
     }
@@ -243,7 +242,7 @@ function renderStars($media) {
             </button>
           </div>
         <?php endif; ?>
-
+                    
         <!-- PULSANTI CONDIVIDI -->
         <div class="d-flex gap-2 mt-3">
           <button id="btnCondividi" class="btn btn-outline-secondary">
