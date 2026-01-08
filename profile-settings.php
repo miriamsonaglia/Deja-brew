@@ -23,7 +23,7 @@
             require_once __DIR__ . '/role.php';
 
             session_start();
-			
+			$userRole = $_SESSION['UserRole'] ?? null;
 			$utente = Utente::where('id', $_SESSION['LoggedUser']['id'])->first();
 			if ($utente === null) {
 				// Handle missing user data: redirect or show error
@@ -48,7 +48,7 @@
 			} else {
 				$avatar = './images/profiles/Default_Profile_Image.jpg';
 			}
-			
+
 		?>
 		<style>
 			#drop-zone {
@@ -101,10 +101,10 @@
 						</div>
 					</div>
 				</div>
-			</div>	
+			</div>
 			<!-- Da mettere un if che cambia il tipo di elemento dipendentemente se chi accede è il venditore o un utente qualsiasi -->
 			<div class="profile-info">
-				<h2 class="mt-5 mb-4">Impostazioni Profilo</h2>				
+				<h2 class="mt-5 mb-4">Impostazioni Profilo</h2>
 
 				<?php if ($_SESSION['UserRole'] == Role::VENDOR->value): ?>
 					<?php if ($venditore->descrizione != null): ?>
@@ -112,7 +112,7 @@
 					<?php else: ?>
 						<p>Nessuna descrizione.</p>
 					<?php endif; ?>
-					<form id="edit_description_form" action="actions/edit_description.php" method="post">	
+					<form id="edit_description_form" action="actions/edit_description.php" method="post">
 						<div class="mb-3">
 							<label for="descrizione" class="form-label">Modifica Descrizione:</label>
 							<textarea class="form-control" id="descrizione" name="descrizione" rows="3" required></textarea>
@@ -160,10 +160,10 @@
 
 						<label for="new_password" class="form-label">Nuova Password</label>
 						<input type="password" class="form-control" id="new_password" name="new_password" required>
-						
+
 						<label for="new_password_confirm" class="form-label">Conferma nuova Password</label>
 						<input type="password" class="form-control" id="new_password_confirm" name="new_password_confirm" required>
-						
+
 						<button type="submit" class="btn btn-warning" id="new_password_submit" disabled>Reset Password</button>
 					</div>
 				</form>
@@ -174,22 +174,22 @@
 		<div class="modal fade" id="modalUploadImg" tabindex="-1" aria-labelledby="modalUploadImgLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
-				<form id="formUploadImg" action="actions/upload_image.php" method="POST" enctype="multipart/form-data">	
+				<form id="formUploadImg" action="actions/upload_image.php" method="POST" enctype="multipart/form-data">
 				<div class="modal-header">
 					<h5 class="modal-title" id="modalUploadImgLabel">Carica una nuova immagine profilo</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
 					</div>
 					<input type="hidden" id="modal-user_id" name="user_id">
 					<div class="modal-body">
-					
-						
+
+
 						<div id="drop-zone">
 							Drop image here or click to upload
 							<input type="file" name="image" accept="image/*" hidden>
 						</div>
 						<img id="preview" class="img-fluid mt-3 d-none" />
 
-					
+
 
 					</div>
 					<div class="modal-footer">
@@ -202,12 +202,13 @@
 		</div>
 
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+		<script src="./dist//custom//js/cart-manager.js"></script>
 
 		<script>
 
 			document.getElementById('edit_description_form').reset();
 			document.getElementById('reset_password_form').reset();
-		
+
 
 			document.getElementById('reset_password_form').addEventListener('input', function() {
 				const newPassword = document.getElementById('new_password').value;
@@ -223,7 +224,7 @@
 					if (this.contains(valido)) {
 						this.removeChild(valido);
 					}
-					
+
 				} else{
 					submitButton.disabled = true;
 					valido.classList.add('error');
@@ -237,7 +238,7 @@
 
 			});
 
-		
+
 			const dropZone = document.getElementById('drop-zone');
 			const fileInput = dropZone.querySelector('input');
 
@@ -257,7 +258,7 @@
 				dropZone.classList.remove('dragover');
 				fileInput.files = e.dataTransfer.files;
 			});
-			
+
 			fileInput.addEventListener('change', () => {
 				const file = fileInput.files[0];
 				if (!file) return;
@@ -267,7 +268,9 @@
 				img.classList.remove('d-none');
 			});
 
-
+		<?php if(isset($userRole) && ($userRole === Role::BUYER->value)): ?>
+			updateCartCount();
+		<?php endif; ?>
 		</script>
 	</body>
 </html>

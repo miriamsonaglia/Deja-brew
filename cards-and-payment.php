@@ -10,6 +10,7 @@ use App\Models\Utente;
 
 session_start();
 
+$userRole = $_SESSION['UserRole'] ?? null;
 $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
 
 if (!isset($_SESSION['LoggedUser']['id'])) {
@@ -245,6 +246,7 @@ $savedCards = CartaDiCredito::where('id_utente', $datiUtente->id)->get()->map(fu
 	</div>
 
 	<script src="./dist/bootstrap5/js/bootstrap.bundle.min.js"></script>
+	<script src="./dist//custom//js/cart-manager.js"></script>
 	<script>
 		const scadenzaInput = document.getElementById('scadenza');
 		if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
@@ -263,6 +265,10 @@ $savedCards = CartaDiCredito::where('id_utente', $datiUtente->id)->get()->map(fu
 			modal.querySelector('#modal-scadenza').value = `${year}-${month}`;
 			modal.querySelector('#modal-codice_carta').value = button.dataset.codicecarta;
 		});
+
+		<?php if(isset($userRole) && ($userRole === Role::BUYER->value)): ?>
+			updateCartCount();
+		<?php endif; ?>
 	</script>
 </body>
 </html>
