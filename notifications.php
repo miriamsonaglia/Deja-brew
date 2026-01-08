@@ -13,29 +13,128 @@
     <?php
         require_once __DIR__ . '/bootstrap.php';
         require_once __DIR__ . '/role.php';
+        use App\Models\Ordine;
+        use App\Models\Notifica;
+        use App\Models\TipoNotifica;
+        use App\Models\UtenteVenditore;
+        use App\Models\Prodotto;
+        use Illuminate\Database\Capsule\Manager as DB;
+
         session_start();
 
         $userRole = $_SESSION['UserRole'] ?? Role::GUEST->value;
+        $userId = $_SESSION['LoggedUser']['id'] ?? null;
 
-        /*
-            DATI FAKE PER DESIGN
-            Struttura IDENTICA a quella che userà il backend
-        */
-        $orders = [
-            [
-                'order_id' => 12345,
-                'notifications' => [
-                    ['type' => 'ORDER_CONFIRMED', 'actionable' => true],
-                    ['type' => 'PRODUCT_SENT', 'actionable' => false]
-                ]
-            ],
-            [
-                'order_id' => 67890,
-                'notifications' => [
-                    ['type' => 'ORDER_CONFIRMED', 'actionable' => true]
-                ]
-            ]
-        ];
+        $orders = []; // Array per gli ordini reali
+
+        if ($userRole !== Role::GUEST->value && $userId) {
+            if ($userRole === Role::BUYER->value) {
+                // Per compratore: fetcha i suoi ordini
+                $orders = Ordine::where('id_utente', $userId)
+                    ->orderBy('id', 'desc')
+                    ->get()
+                    ->toArray();
+            } elseif ($userRole === Role::VENDOR->value) {
+                // Per venditore: fetcha gli ordini dei suoi prodotti
+                $venditore = UtenteVenditore::where('id_utente', $userId)->first();
+                if ($venditore) {
+                    $prodottiIds = Prodotto::where('id_venditore', $venditore->id)->pluck('id');
+                    $orders = Ordine::whereIn('id_prodotto', $prodottiIds)
+                        ->orderBy('id', 'desc')
+                        ->get()
+                        ->toArray();
+                }
+            }
+
+            // Fetcha i tipi di notifica dal DB
+            $tipiNotifica = TipoNotifica::pluck('descrizione', 'id')->toArray();
+
+            // Per ogni ordine, associa le notifiche basate sullo status
+            foreach ($orders as &$order) {
+                $notifications = [];
+
+                // Notifica base: Ordine confermato (sempre presente)
+                $notifications[] = [
+                    'type' => 'ORDER_CONFIRMED',
+                    'actionable' => false
+                ];
+
+                if ($order['status'] === 'spedito' || $order['status'] === 'ricevuto') {
+                    $notifications[] = [
+                        'type' => 'PRODUCT_SENT',
+                        'actionable' => ($userRole === Role::BUYER->value && $order['status'] === 'spedito')
+                    ];
+                }
+
+                if ($order['status'] === 'ricevuto') {
+                    $notifications[] = [
+                        'type' => 'PRODUCT_RECEIVED',
+                        'actionable' => false
+                    ];
+                }
+
+                $order['notifications'] = $notifications;
+                $order['order_id'] = $order['id']; // Usa ID reale
+            }
+        }
+
+        // Gestione aggiornamenti via POST (AJAX)
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $userId) {
+            header('Content-Type: application/json');
+
+            $orderId = (int)$_POST['order_id'] ?? 0;
+            $action = $_POST['action'] ?? '';
+
+            if ($orderId <= 0) {
+                echo json_encode(['success' => false, 'message' => 'ID ordine non valido']);
+                exit;
+            }
+
+            $ordine = Ordine::find($orderId);
+
+            if (!$ordine) {
+                echo json_encode(['success' => false, 'message' => 'Ordine non trovato']);
+                exit;
+            }
+
+            // Controlla permessi
+            if ($userRole === Role::VENDOR->value) {
+                // Verifica se è un ordine del venditore
+                $venditore = UtenteVenditore::where('id_utente', $userId)->first();
+                $prodotto = Prodotto::find($ordine->id_prodotto);
+                if (!$venditore || $prodotto->id_venditore !== $venditore->id) {
+                    echo json_encode(['success' => false, 'message' => 'Non autorizzato']);
+                    exit;
+                }
+            } elseif ($userRole === Role::BUYER->value) {
+                if ($ordine->id_utente !== $userId) {
+                    echo json_encode(['success' => false, 'message' => 'Non autorizzato']);
+                    exit;
+                }
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Ruolo non valido']);
+                exit;
+            }
+
+            if ($action === 'ship' && $userRole === Role::VENDOR->value && $ordine->status === 'confermato') {
+                $ordine->status = 'spedito';
+                $ordine->save();
+                // Crea notifica per compratore (opzionale)
+                $tipoId = TipoNotifica::where('descrizione', 'Prodotto spedito')->value('id');
+                Notifica::create(['id_tipo_notifica' => $tipoId, 'impostazione' => true]);
+                echo json_encode(['success' => true, 'new_status' => 'spedito']);
+            } elseif ($action === 'receive' && $userRole === Role::BUYER->value && $ordine->status === 'spedito') {
+                $ordine->status = 'ricevuto';
+                $ordine->save();
+                // Crea notifica per venditore (opzionale)
+                $tipoId = TipoNotifica::where('descrizione', 'Prodotto ricevuto')->value('id');
+                Notifica::create(['id_tipo_notifica' => $tipoId, 'impostazione' => true]);
+                echo json_encode(['success' => true, 'new_status' => 'ricevuto']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Azione non valida o stato errato']);
+            }
+            exit;
+        }
     ?>
 </head>
 <body>
@@ -94,36 +193,38 @@
                                         case 'PRODUCT_SENT':
                                             $icon = 'bi-truck';
                                             $color = 'text-primary-brown';
-                                            $title = 'Prodotto inviato';
+                                            $title = 'Prodotto spedito';
                                             $message = 'Il prodotto è stato spedito.';
                                             break;
 
                                         case 'PRODUCT_RECEIVED':
                                             $icon = 'bi-check-circle';
-                                            $color = 'text-secondary-green';
+                                            $color = 'text-success';
                                             $title = 'Prodotto ricevuto';
-                                            $message = 'Ordine completato.';
+                                            $message = 'Il prodotto è stato ricevuto.';
                                             break;
-                                    }
 
-                                    $highlight = $notification['actionable']
-                                        ? 'border-start border-4 border-secondary-red'
-                                        : '';
+                                        default:
+                                            continue 2;
+                                    }
                                 ?>
 
-                                <div class="card mb-3 border-0 <?= $highlight ?>">
-                                    <div class="card-body d-flex justify-content-between align-items-start">
-
-                                        <div class="d-flex">
-                                            <i class="bi <?= $icon ?> fs-2 <?= $color ?> me-3"></i>
-                                            <div>
-                                                <h6 class="fw-semibold mb-1"><?= $title ?></h6>
-                                                <p class="text-muted mb-1"><?= $message ?></p>
-                                            </div>
+                                <div class="notification-item mb-3">
+                                    <div class="d-flex align-items-start gap-3">
+                                        <div class="notification-icon rounded-circle bg-light p-2">
+                                            <i class="bi <?= $icon ?> fs-4 <?= $color ?>"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h5 class="mb-1 fw-semibold"><?= $title ?></h5>
+                                            <p class="mb-1 text-muted"><?= $message ?></p>
+                                            <small class="text-muted">
+                                                <!-- Aggiungi data reale se disponibile -->
+                                                <?= date('d/m/Y H:i', strtotime('-' . rand(1,30) . ' days')) ?>
+                                            </small>
                                         </div>
 
-                                        <!-- AZIONI -->
-                                        <div>
+                                        <!-- BOTTONI AZIONI -->
+                                        <?php if ($notification['actionable']): ?>
                                             <?php if (
                                                 $notification['type'] === 'ORDER_CONFIRMED' &&
                                                 $userRole === Role::VENDOR->value
@@ -147,8 +248,7 @@
                                             <?php elseif ($notification['type'] === 'PRODUCT_RECEIVED'): ?>
                                                 <span class="badge bg-success">Completato</span>
                                             <?php endif; ?>
-                                        </div>
-
+                                        <?php endif; ?>
                                     </div>
                                 </div>
 
@@ -161,6 +261,14 @@
             <?php endforeach; ?>
 
         </div>
+
+        <?php if (empty($orders)): ?>
+            <div class="empty-state mt-4">
+                <i class="bi bi-bell-slash"></i>
+                <h3>Nessuna notifica</h3>
+                <p>Non ci sono ordini con notifiche al momento.</p>
+            </div>
+        <?php endif; ?>
 
     <?php endif; ?>
 </div>
@@ -193,6 +301,7 @@
 
 <script>
     let selectedButton = null;
+    const modal = new bootstrap.Modal(document.getElementById('confirmActionModal'));
 
     document.querySelectorAll('.action-btn').forEach(button => {
         button.addEventListener('click', function () {
@@ -204,29 +313,52 @@
                 : 'Sei sicuro di voler confermare la ricezione dell’ordine?';
 
             document.getElementById('confirmMessage').innerText = message;
-
-            new bootstrap.Modal(
-                document.getElementById('confirmActionModal')
-            ).show();
+            modal.show();
         });
     });
 
-    document.getElementById('confirmActionBtn').addEventListener('click', function () {
+    document.getElementById('confirmActionBtn').addEventListener('click', async function () {
         if (!selectedButton) return;
 
+        const action = selectedButton.dataset.action;
+        const orderId = selectedButton.dataset.order;
+
+        // Disabilita bottone durante la richiesta
         selectedButton.disabled = true;
-        selectedButton.classList.remove(
-            'btn-primary-custom',
-            'btn-outline-primary-custom'
-        );
-        selectedButton.classList.add('btn-secondary');
-        selectedButton.innerHTML =
-            '<i class="bi bi-check me-1"></i>Completato';
 
-        bootstrap.Modal
-            .getInstance(document.getElementById('confirmActionModal'))
-            .hide();
+        // Invia richiesta AJAX per aggiornare
+        try {
+            const response = await fetch(window.location.href, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    action: action,
+                    order_id: orderId
+                })
+            });
 
+            const data = await response.json();
+
+            if (data.success) {
+                // Aggiorna UI
+                selectedButton.classList.remove('btn-primary-custom', 'btn-outline-primary-custom');
+                selectedButton.classList.add('btn-secondary');
+                selectedButton.innerHTML = '<i class="bi bi-check me-1"></i>Completato';
+
+                // Opzionale: aggiorna l'intera pagina o l'accordion
+                // location.reload(); // Se vuoi ricaricare per vedere cambiamenti
+            } else {
+                alert(data.message || 'Errore durante l\'aggiornamento');
+                selectedButton.disabled = false;
+            }
+        } catch (error) {
+            alert('Errore di rete: ' + error.message);
+            selectedButton.disabled = false;
+        }
+
+        modal.hide();
         selectedButton = null;
     });
 </script>

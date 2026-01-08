@@ -69,6 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_c
         $carta->circuito_pagamento = $circuito;
         $carta->codice_carta = $numeroPulito;
         $carta->cvv_carta = $cvv;
+        $carta->nome_titolare = $utente->nome . ' ' . $utente->cognome; // FIXME SE NECESSARIO
         $carta->scadenza_mese = $scadenza_mese;
         $carta->scadenza_anno = $scadenza_anno;
         $carta->save();
