@@ -22,9 +22,10 @@
     }
 
     $vendor = UtenteVenditore::where('id_utente', $id)->first();
-
+    
+    //Checks if the id is of a vendor
     if ($vendor == null) {
-        die("Vendor profile not found");
+        die("Id not of a vendor user");
     }
 
     // Fetch the user
@@ -33,20 +34,23 @@
         die("User not found");
     }
 
-    $avatar = !empty($user->immagine_profilo)
-				? $user->immagine_profilo
-				: 'uploads\prodotti\1764774501_IMG-20250315-WA0041.jpg';
+    // Determine profile image path and if the path contains a file
+    if(!empty($user->immagine_profilo)){
+        $avatar = 'uploads/profile_images/' . $user->immagine_profilo;
+        if(!file_exists($avatar)){
+            $avatar = './images/profiles/Default_Profile_Image.jpg';
+        }
+    } else {
+        $avatar = './images/profiles/Default_Profile_Image.jpg';
+    }
 
-
-    $orders = collect();
-	if ($id) {
-		$orders = Ordine::with(['prodotto', 'utente'])
-			->whereHas('prodotto', function($q) use ($id) {
-				$q->where('id_venditore', $id);
-			})
-			->orderBy('id', 'desc')
-			->get();
-	}
+    $vendorId = $vendor->id;
+	$orders = Ordine::with('prodotto') // eager load product info
+                    ->whereHas('prodotto', function($query) use ($vendorId) {
+                        $query->where('id_venditore', $vendorId);
+                    })
+                        ->orderBy('id', 'desc')
+                        ->get();
 
     $priceRanges = [
         ['min' => 0, 'max' => 50, 'label' => '<50€'],
@@ -122,14 +126,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php 
-                                    $statusMap = [
-                                        1 => 'Ordinato',
-                                        2 => 'Pagato',
-                                        3 => 'Spedito',
-                                        4 => 'Ricevuto'
-                                    ];
-                                    foreach ($orders as $order): ?>
+                                    <?php foreach ($orders as $order): ?>
                                         <tr>
                                             <td><?= htmlspecialchars($order->utente->username ?? ($order->utente->nome ?? '')) ?></td>
                                             <td>
@@ -141,7 +138,7 @@
                                                     Prodotto
                                                 <?php endif; ?>
                                             </td>
-                                            <td><?= htmlspecialchars($statusMap[$order->status] ?? $order->status) ?></td>
+                                            <td><?= htmlspecialchars($order->status) ?></td>
                                             <td><?= mapPriceToRange($order->prezzo_totale, $priceRanges) ?></td>
                                         </tr>
                                     <?php endforeach; ?>
