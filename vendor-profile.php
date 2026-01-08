@@ -1,13 +1,13 @@
 <?php
 
     require __DIR__ . '/bootstrap.php';
-
+    require_once __DIR__ . '/role.php';
     use App\Models\UtenteVenditore;
     use App\Models\Utente;
     use App\Models\Ordine;
 
     session_start();
-                
+
     $utente = Utente::where('id', $_SESSION['LoggedUser']['id'])->first();
     if ($utente == null) {
         // Handle missing user data: redirect or show error
@@ -17,12 +17,16 @@
 
     // Get the user ID from query string
     $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+    if($_SESSION['LoggedUser']['id'] && $_SESSION['UserRole'] == Role::VENDOR->value){
+        $id = $_SESSION['LoggedUser']['id'];
+    }
+
     if ($id <= 0) {
         die("Invalid user ID");
     }
 
     $vendor = UtenteVenditore::where('id_utente', $id)->first();
-    
+
     //Checks if the id is of a vendor
     if ($vendor == null) {
         die("Id not of a vendor user");
@@ -90,7 +94,7 @@
             table { width: 100%; border-collapse: collapse; margin-top: 10px; }
             th, td { padding: 8px; border: 1px solid #ccc; text-align: left; }
         </style>
-        
+
     </head>
     <body>
         <?php require_once __DIR__ . '/navbar-selector.php'; ?>
@@ -113,7 +117,7 @@
 			</div>
 
 			<div id="venduti-content" class="tab-content" style="display: none;">
-						
+
                 <div class="orders">
                     <h3>Orders</h3>
                     <?php if($orders->isEmpty()): ?>
@@ -152,7 +156,7 @@
 			</div>
 
             <div id="prodotti-content" class="tab-content" style="display: none;">
-						
+
                 <div class="prodotti">
                     <h3>Prodotti</h3>
                     <?php if($prodotti->isEmpty()): ?>

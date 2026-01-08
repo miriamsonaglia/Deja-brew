@@ -57,8 +57,13 @@ $notificationCount = getNotificationCount();
                     <i class="bi bi-gear me-2"></i>Impostazioni Profilo
                 </a>
             </li>
+            <li>
+                <a href="./vendor-profile.php?" class="nav-link">
+                    <i class="bi bi-person me-2"></i>Account Overview
+                </a>
+            </li>
             <li><hr class="my-3"></li>
-            
+
             <li>
                 <a href="./logout.php" class="nav-link text-danger" onclick="logout()">
                     <i class="bi bi-box-arrow-right me-2"></i>Logout
