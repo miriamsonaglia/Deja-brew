@@ -15,9 +15,10 @@ function createUtenteTable()
         $table->string('email')->unique();
         $table->string('username')->unique();
         $table->string('password');
+        $table->string('immagine_profilo')->nullable(); // Campo aggiunto
         $table->timestamp('email_verified_at')->nullable();
         $table->rememberToken();
-        // $table->timestamps(); // Rimosso per disabilitare created_at e updated_at
+        // $table->timestamps(); // Disabilitati come da progetto
     });
 
     echo "Utente table created successfully!\n";
@@ -29,7 +30,6 @@ function createUtenteCompratoreTable()
     Capsule::schema()->create('utenteCompratore', function (Blueprint $table) {
         $table->id();
         $table->foreignId('id_utente')->constrained('utente')->onDelete('cascade');
-        // $table->timestamps(); // Rimosso per disabilitare created_at e updated_at
     });
 
     echo "UtenteCompratore table created successfully!\n";
@@ -42,7 +42,8 @@ function createUtenteVenditoreTable()
         $table->id();
         $table->foreignId('id_utente')->constrained('utente')->onDelete('cascade');
         $table->text('descrizione')->nullable();
-        // $table->timestamps(); // Rimosso per disabilitare created_at e updated_at
+        $table->string('paese')->nullable();        // Campo aggiunto
+        $table->string('cellulare')->nullable();    // Campo aggiunto
     });
 
     echo "UtenteVenditore table created successfully!\n";
@@ -54,7 +55,6 @@ function createCategoriaTable()
     Capsule::schema()->create('categoria', function (Blueprint $table) {
         $table->id();
         $table->string('descrizione');
-        // $table->timestamps(); // Rimosso per disabilitare created_at e updated_at
     });
 
     echo "Categoria table created successfully!\n";
@@ -66,7 +66,6 @@ function createAromaTable()
     Capsule::schema()->create('aroma', function (Blueprint $table) {
         $table->id();
         $table->string('gusto');
-        // $table->timestamps(); // Rimosso per disabilitare created_at e updated_at
     });
 
     echo "Aroma table created successfully!\n";
@@ -87,7 +86,6 @@ function createProdottoTable()
         $table->foreignId('id_venditore')->constrained('utenteVenditore')->onDelete('cascade');
         $table->foreignId('categoria_id')->constrained('categoria')->onDelete('cascade');
         $table->foreignId('aroma_id')->constrained('aroma')->onDelete('cascade');
-        // $table->timestamps(); // Rimosso per disabilitare created_at e updated_at
     });
 
     echo "Prodotto table created successfully!\n";
@@ -100,9 +98,9 @@ function createOrdineTable()
         $table->id();
         $table->foreignId('id_utente')->constrained('utente')->onDelete('cascade');
         $table->foreignId('id_prodotto')->constrained('prodotto')->onDelete('cascade');
-        $table->string('status')->default('pending');
+        $table->string('status');
         $table->decimal('prezzo_totale', 10, 2);
-        // $table->timestamps(); // Rimosso per disabilitare created_at e updated_at
+        $table->unsignedInteger('quantita')->default(1); // Campo aggiunto
     });
 
     echo "Ordine table created successfully!\n";
@@ -115,15 +113,14 @@ function createRecensioneTable()
         $table->id();
         $table->foreignId('id_utente')->constrained('utente')->onDelete('cascade');
         $table->foreignId('id_prodotto')->constrained('prodotto')->onDelete('cascade');
+        $table->unsignedTinyInteger('stelle'); // 1-5
         $table->text('testo')->nullable();
-        $table->tinyInteger('stelle')->unsigned()->default(1);
-        // $table->timestamps(); // Rimosso per disabilitare created_at e updated_at
     });
 
     echo "Recensione table created successfully!\n";
 }
 
-// Migration per creare la tabella lista (carrello e desideri)
+// Migration per creare la tabella lista
 function createListaTable()
 {
     Capsule::schema()->create('lista', function (Blueprint $table) {
@@ -131,11 +128,7 @@ function createListaTable()
         $table->foreignId('id_utente_compratore')->constrained('utenteCompratore')->onDelete('cascade');
         $table->foreignId('id_prodotto')->constrained('prodotto')->onDelete('cascade');
         $table->enum('tipo', ['desideri', 'carrello']);
-        $table->integer('quantita')->unsigned()->default(1);
-        // $table->timestamps(); // Rimosso per disabilitare created_at e updated_at
-
-        // Indice unico per evitare duplicati
-        $table->unique(['id_utente_compratore', 'id_prodotto', 'tipo']);
+        $table->unsignedInteger('quantita')->default(1);
     });
 
     echo "Lista table created successfully!\n";
@@ -148,8 +141,8 @@ function createFatturaTable()
         $table->id();
         $table->foreignId('id_utente')->constrained('utente')->onDelete('cascade');
         $table->foreignId('id_venditore')->constrained('utenteVenditore')->onDelete('cascade');
-        $table->foreignId('id_ordine')->constrained('ordine')->onDelete('cascade');
-        // $table->timestamps(); // Rimosso per disabilitare created_at e updated_at
+        $table->foreignId('id_ordine')->nullable()->constrained('ordine')->onDelete('set null');
+        $table->string('transaction_id')->nullable(); // Campo aggiunto per gestire acquisti multi-prodotto
     });
 
     echo "Fattura table created successfully!\n";
@@ -161,12 +154,12 @@ function createCartaDiCreditoTable()
     Capsule::schema()->create('cartaDiCredito', function (Blueprint $table) {
         $table->id();
         $table->foreignId('id_utente')->constrained('utente')->onDelete('cascade');
-        $table->string('circuito_pagamento'); // Visa, MasterCard, etc.
-        $table->string('codice_carta'); // Criptato
-        $table->string('cvv_carta'); // Criptato
-        $table->smallInteger('scadenza_mese');
-        $table->smallInteger('scadenza_anno');
-        // $table->timestamps(); // Rimosso per disabilitare created_at e updated_at
+        $table->string('circuito_pagamento');
+        $table->string('codice_carta');
+        $table->string('cvv_carta');
+        $table->string('nome_titolare');              // Campo aggiunto
+        $table->unsignedTinyInteger('scadenza_mese'); // 1-12
+        $table->unsignedSmallInteger('scadenza_anno');
     });
 
     echo "CartaDiCredito table created successfully!\n";
@@ -178,9 +171,8 @@ function createImpostazioniUtenteTable()
     Capsule::schema()->create('impostazioniUtente', function (Blueprint $table) {
         $table->id();
         $table->foreignId('id_utente')->unique()->constrained('utente')->onDelete('cascade');
-        $table->string('tema')->default('light'); // light, dark, etc.
+        $table->string('tema')->default('light');
         $table->boolean('notifiche')->default(true);
-        // $table->timestamps(); // Rimosso per disabilitare created_at e updated_at
     });
 
     echo "ImpostazioniUtente table created successfully!\n";
@@ -193,30 +185,41 @@ function createNotificaTable()
         $table->id();
         $table->string('tipo');
         $table->boolean('impostazione')->default(true);
-        // $table->timestamps(); // Rimosso per disabilitare created_at e updated_at
     });
 
     echo "Notifica table created successfully!\n";
 }
 
-// Array delle tabelle nell'ordine corretto per rispettare le foreign key
+// Nuova migration per la tabella tipo_notifica
+function createTipoNotificaTable()
+{
+    Capsule::schema()->create('tipo_notifica', function (Blueprint $table) {
+        $table->id();
+        $table->string('descrizione')->unique();
+    });
+
+    echo "TipoNotifica table created successfully!\n";
+}
+
+// Array delle migrazioni nell'ordine corretto (rispettando le foreign key)
 $migrations = [
-    'utente' => 'createUtenteTable',
-    'utenteCompratore' => 'createUtenteCompratoreTable',
-    'utenteVenditore' => 'createUtenteVenditoreTable',
-    'categoria' => 'createCategoriaTable',
-    'aroma' => 'createAromaTable',
-    'prodotto' => 'createProdottoTable',
-    'ordine' => 'createOrdineTable',
-    'recensione' => 'createRecensioneTable',
-    'lista' => 'createListaTable',
-    'fattura' => 'createFatturaTable',
-    'cartaDiCredito' => 'createCartaDiCreditoTable',
-    'impostazioniUtente' => 'createImpostazioniUtenteTable',
-    'notifica' => 'createNotificaTable',
+    'utente'              => 'createUtenteTable',
+    'utenteCompratore'    => 'createUtenteCompratoreTable',
+    'utenteVenditore'     => 'createUtenteVenditoreTable',
+    'categoria'           => 'createCategoriaTable',
+    'aroma'               => 'createAromaTable',
+    'prodotto'            => 'createProdottoTable',
+    'ordine'              => 'createOrdineTable',
+    'recensione'          => 'createRecensioneTable',
+    'lista'               => 'createListaTable',
+    'fattura'             => 'createFatturaTable',
+    'cartaDiCredito'      => 'createCartaDiCreditoTable',
+    'impostazioniUtente'  => 'createImpostazioniUtenteTable',
+    'notifica'            => 'createNotificaTable',
+    'tipo_notifica'       => 'createTipoNotificaTable', // Nuova tabella
 ];
 
-// Esegui le migrations
+// Esecuzione delle migrazioni
 try {
     echo "Starting database migrations...\n";
     echo "================================\n";

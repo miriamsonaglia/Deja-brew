@@ -38,6 +38,8 @@ $carrello = Lista::where('id_utente_compratore', $utenteCompratore->id)
 $totale = $carrello->sum(function($item) {
     return $item->quantita * $item->prodotto->prezzo;
 });
+$iva = $totale * 0.22;
+$totaleFinale = $totale + $iva;
 
 // --- Recupero carte di credito ---
 $carte = CartaDiCredito::where('id_utente', $idUtente)->get();
@@ -116,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_c
                 <?php endforeach; ?>
                 <li class="list-group-item d-flex justify-content-between fw-bold">
                     <span>Totale</span>
-                    <span><?= number_format($totale, 2) ?> €</span>
+                    <span><?= number_format($totale, 2) ?> + <?= number_format($iva, 2) ?> €</span>
                 </li>
             <?php else: ?>
                 <li class="list-group-item text-center">Il carrello è vuoto.</li>
@@ -154,7 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_c
                 </div>
 
                 <button type="submit" class="btn btn-success btn-lg">
-                    <i class="bi bi-credit-card"></i> Paga <?= number_format($totale, 2) ?> €
+                    <i class="bi bi-credit-card"></i> Paga <?= number_format($totaleFinale, 2) ?> €
                 </button>
             </form>
         </div>
