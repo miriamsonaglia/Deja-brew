@@ -67,18 +67,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $userId)
 }
 
 // Preparazione dati per la visualizzazione
-$orders = [];
-
-// Preparazione dati per la visualizzazione
-$orders = [];
+$orders = collect(); // Collection vuota di default
 
 if ($userRole !== Role::GUEST->value && $userId) {
     if ($userRole === Role::BUYER->value) {
         // Per compratore: fetcha i suoi ordini
         $orders = Ordine::where('id_utente', $userId)
             ->orderBy('id', 'desc')
-            ->get()
-            ->toArray();
+            ->get();
     } elseif ($userRole === Role::VENDOR->value) {
         // Per venditore: fetcha gli ordini dei suoi prodotti
         $venditore = UtenteVenditore::where('id_utente', $userId)->first();
@@ -86,37 +82,37 @@ if ($userRole !== Role::GUEST->value && $userId) {
             $prodottiIds = Prodotto::where('id_venditore', $venditore->id)->pluck('id');
             $orders = Ordine::whereIn('id_prodotto', $prodottiIds)
                 ->orderBy('id', 'desc')
-                ->get()
-                ->toArray();
+                ->get();
         }
     }
 
-    // Per ogni ordine, associa le notifiche basate sullo status
-    foreach ($orders as &$order) {
+    // Aggiungiamo le notifiche a ogni ordine
+    foreach ($orders as $order) {
         $notifications = [];
 
         // Notifica base: Ordine confermato (sempre presente)
         $notifications[] = [
             'type' => 'ORDER_CONFIRMED',
-            'actionable' => ($userRole === Role::VENDOR->value && $order['status'] === 'confermato')
+            'actionable' => ($userRole === Role::VENDOR->value && $order->status === 'confermato')
         ];
 
-        if ($order['status'] === 'spedito' || $order['status'] === 'ricevuto') {
+        if (in_array($order->status, ['spedito', 'ricevuto'])) {
             $notifications[] = [
                 'type' => 'PRODUCT_SENT',
-                'actionable' => ($userRole === Role::BUYER->value && $order['status'] === 'spedito')
+                'actionable' => ($userRole === Role::BUYER->value && $order->status === 'spedito')
             ];
         }
 
-        if ($order['status'] === 'ricevuto') {
+        if ($order->status === 'ricevuto') {
             $notifications[] = [
                 'type' => 'PRODUCT_RECEIVED',
                 'actionable' => false
             ];
         }
 
-        $order['notifications'] = $notifications;
-        $order['order_id'] = $order['id']; // Usa ID reale
+        // Attributi temporanei sul modello (non salvati nel DB)
+        $order->notifications = $notifications;
+        $order->order_id = $order->id;
     }
 }
 ?>
@@ -156,8 +152,8 @@ if ($userRole !== Role::GUEST->value && $userId) {
         <!-- ACCORDION ORDINI -->
         <div class="accordion" id="ordersAccordion">
 
-            <?php foreach ($orders as $index => $order): ?>
-                <?php $accordionId = 'order-' . $order['order_id']; ?>
+            <?php foreach ($orders as $order): ?>
+                <?php $accordionId = 'order-' . $order->order_id; ?>
 
                 <div class="accordion-item mb-3 shadow-custom border-0">
                     <h2 class="accordion-header">
@@ -166,7 +162,7 @@ if ($userRole !== Role::GUEST->value && $userId) {
                                 data-bs-toggle="collapse"
                                 data-bs-target="#<?= $accordionId ?>">
                             <i class="bi bi-bag me-2"></i>
-                            Ordine #<?= $order['order_id'] ?>
+                            Ordine #<?= $order->order_id ?>
                         </button>
                     </h2>
 
@@ -175,7 +171,7 @@ if ($userRole !== Role::GUEST->value && $userId) {
                          data-bs-parent="#ordersAccordion">
                         <div class="accordion-body bg-cream">
 
-                            <?php foreach ($order['notifications'] as $notification): ?>
+                            <?php foreach ($order->notifications as $notification): ?>
 
                                 <?php
                                     switch ($notification['type']) {
@@ -183,33 +179,27 @@ if ($userRole !== Role::GUEST->value && $userId) {
                                             $icon = 'bi-bag-check';
                                             $color = 'text-secondary-red';
                                             $title = 'Ordine confermato';
-                                            if ($userRole === Role::VENDOR->value) {
-                                                $message = 'Hai ricevuto un nuovo ordine. Conferma la spedizione quando pronto.';
-                                            } else {
-                                                $message = 'Il tuo ordine è stato confermato dal venditore.';
-                                            }
+                                            $message = $userRole === Role::VENDOR->value
+                                                ? 'Hai ricevuto un nuovo ordine. Conferma la spedizione quando pronto.'
+                                                : 'Il tuo ordine è stato confermato dal venditore.';
                                             break;
 
                                         case 'PRODUCT_SENT':
                                             $icon = 'bi-truck';
                                             $color = 'text-primary-brown';
                                             $title = 'Prodotto spedito';
-                                            if ($userRole === Role::BUYER->value) {
-                                                $message = 'Il tuo ordine è stato spedito. Conferma quando lo ricevi.';
-                                            } else {
-                                                $message = 'Hai confermato la spedizione dell\'ordine.';
-                                            }
+                                            $message = $userRole === Role::BUYER->value
+                                                ? 'Il tuo ordine è stato spedito. Conferma quando lo ricevi.'
+                                                : 'Hai confermato la spedizione dell\'ordine.';
                                             break;
 
                                         case 'PRODUCT_RECEIVED':
                                             $icon = 'bi-check-circle';
                                             $color = 'text-success';
                                             $title = 'Prodotto ricevuto';
-                                            if ($userRole === Role::VENDOR->value) {
-                                                $message = 'Il compratore ha confermato la ricezione dell\'ordine.';
-                                            } else {
-                                                $message = 'Hai confermato la ricezione dell\'ordine.';
-                                            }
+                                            $message = $userRole === Role::VENDOR->value
+                                                ? 'Il compratore ha confermato la ricezione dell\'ordine.'
+                                                : 'Hai confermato la ricezione dell\'ordine.';
                                             break;
 
                                         default:
@@ -223,10 +213,9 @@ if ($userRole !== Role::GUEST->value && $userId) {
                                             <i class="bi <?= $icon ?> fs-4 <?= $color ?>"></i>
                                         </div>
                                         <div class="flex-grow-1">
-                                            <h5 class="mb-1 fw-semibold"><?= $title ?></h5>
-                                            <p class="mb-1 text-muted"><?= $message ?></p>
+                                            <h5 class="mb-1 fw-semibold"><?= htmlspecialchars($title) ?></h5>
+                                            <p class="mb-1 text-muted"><?= htmlspecialchars($message) ?></p>
                                             <small class="text-muted">
-                                                <!-- Aggiungi data reale se disponibile -->
                                                 <?= date('d/m/Y H:i', strtotime('-' . rand(1,30) . ' days')) ?>
                                             </small>
                                         </div>
@@ -236,14 +225,14 @@ if ($userRole !== Role::GUEST->value && $userId) {
                                             <?php if ($notification['type'] === 'ORDER_CONFIRMED'): ?>
                                                 <button class="btn btn-primary-custom btn-sm action-btn"
                                                         data-action="ship"
-                                                        data-order="<?= $order['order_id'] ?>">
+                                                        data-order="<?= $order->order_id ?>">
                                                     <i class="bi bi-truck me-1"></i>Conferma spedizione
                                                 </button>
 
                                             <?php elseif ($notification['type'] === 'PRODUCT_SENT'): ?>
                                                 <button class="btn btn-outline-primary-custom btn-sm action-btn"
                                                         data-action="receive"
-                                                        data-order="<?= $order['order_id'] ?>">
+                                                        data-order="<?= $order->order_id ?>">
                                                     <i class="bi bi-check-circle me-1"></i>Conferma ricezione
                                                 </button>
                                             <?php endif; ?>
@@ -263,7 +252,7 @@ if ($userRole !== Role::GUEST->value && $userId) {
 
         </div>
 
-        <?php if (empty($orders)): ?>
+        <?php if ($orders->isEmpty()): ?>
             <div class="empty-state mt-4">
                 <i class="bi bi-bell-slash"></i>
                 <h3>Nessuna notifica</h3>
@@ -327,7 +316,6 @@ if ($userRole !== Role::GUEST->value && $userId) {
         // Disabilita bottone durante la richiesta
         selectedButton.disabled = true;
 
-        // Invia richiesta AJAX per aggiornare
         try {
             const response = await fetch(window.location.href, {
                 method: 'POST',
@@ -343,7 +331,6 @@ if ($userRole !== Role::GUEST->value && $userId) {
             const data = await response.json();
 
             if (data.success) {
-                // Ricarica la pagina per aggiornare notifiche e badge
                 location.reload();
             } else {
                 alert(data.message || 'Errore durante l\'aggiornamento');
