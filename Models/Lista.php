@@ -1,9 +1,9 @@
 <?php
 
 namespace App\Models;
-require_once "./Models/BaseModel.php";
-require_once "./Models/Prodotto.php";
-require_once "./Models/UtenteCompratore.php";
+require_once __DIR__ . '/BaseModel.php';
+require_once __DIR__ . '/Prodotto.php';
+require_once __DIR__ . '/UtenteCompratore.php';
 
 class Lista extends BaseModel
 {

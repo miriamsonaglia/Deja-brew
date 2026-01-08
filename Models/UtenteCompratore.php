@@ -1,8 +1,8 @@
 <?php
 
 namespace App\Models;
-require_once "./Models/BaseModel.php";
-require_once "./Models/Lista.php";
+require_once __DIR__ . '/BaseModel.php';
+require_once __DIR__ . '/Lista.php';
 
 class UtenteCompratore extends BaseModel
 {

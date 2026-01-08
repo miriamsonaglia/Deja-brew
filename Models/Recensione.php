@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Models;
-require_once "./Models/BaseModel.php";
+require_once __DIR__ . '/BaseModel.php';
 
 use App\Models\Utente;
 use App\Models\Prodotto;

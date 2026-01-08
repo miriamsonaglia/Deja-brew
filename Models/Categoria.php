@@ -1,8 +1,8 @@
 <?php
 
 namespace App\Models;
-require_once "./Models/BaseModel.php";
-require_once "./Models/Prodotto.php";
+require_once __DIR__ . '/BaseModel.php';
+require_once __DIR__ . '/Prodotto.php';
 
 use App\Models\BaseModel;
 use App\Models\Prodotto;
