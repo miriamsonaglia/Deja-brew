@@ -1,7 +1,7 @@
 <?php
 
-require_once __DIR__ . '../bootstrap.php';
-require_once __DIR__ . '../Models/Utente.php';
+require_once __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/../Models/Utente.php';
 use App\Models\Utente;
 
 session_start();

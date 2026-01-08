@@ -4,7 +4,7 @@
     use App\Models\CartaDiCredito;
 
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        header('Location: ../profile.php');
+        header('Location: ../cards-and-payment.php');
         exit;
     }
 
@@ -14,6 +14,6 @@
         'cvv_carta' => $_POST['cvv_carta'],
     ]);
 
-    header('Location: ../profile.php');
+    header('Location: ../cards-and-payment.php');
     exit;
 ?>

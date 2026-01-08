@@ -154,7 +154,7 @@
 					</div>
 					<div class="mb-3">
 						<label for="codiceCarta" class="form-label">Numero carta</label>
-						<input type="text" id="codiceCarta" name="codice_carta" class="form-control" placeholder="1234 5678 9012 3456" required pattern="\d{16}">
+						<input type="text" id="codiceCarta" name="codiceCarta" class="form-control" placeholder="1234 5678 9012 3456" required pattern="\d{16}">
 					</div>
 					<div class="mb-3">
 						<label for="scadenza" class="form-label">Data scadenza</label>
