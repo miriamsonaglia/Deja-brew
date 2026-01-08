@@ -6,12 +6,14 @@ require_once __DIR__ . '/Models/UtenteCompratore.php';
 require_once __DIR__ . '/Models/CartaDiCredito.php';
 require_once __DIR__ . '/Models/Lista.php';
 require_once __DIR__ . '/Models/Prodotto.php';
+require_once __DIR__ . '/Models/Ordine.php';
 
 use App\Models\Utente;
 use App\Models\UtenteCompratore;
 use App\Models\CartaDiCredito;
 use App\Models\Lista;
 use App\Models\Prodotto;
+use App\Models\Ordine;
 
 session_start();
 
@@ -103,20 +105,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'pay')
     // Se tutto è corretto, procedi con il pagamento
     $_SESSION['success'] = "Pagamento effettuato con successo!";
     
-    if ($isBuyNow) {
-        // Acquisto diretto
-        header('Location: orders-buyer.php');
-    } else {
-        // Svuota il carrello per acquisto dal carrello
-        try {
+    try {
+        if ($isBuyNow) {
+            // Acquisto diretto - crea un ordine per il singolo prodotto
+            $ordine = new Ordine();
+            $ordine->id_utente = $idUtente;
+            $ordine->id_prodotto = $idProdotto;
+            $ordine->quantita = $quantita;
+            $ordine->prezzo_totale = $totaleFinale;
+            $ordine->status = 'completato';
+            $ordine->save();
+        } else {
+            // Acquisto dal carrello - crea un ordine per ogni prodotto
+            foreach ($carrello as $item) {
+                $ordine = new Ordine();
+                $ordine->id_utente = $idUtente;
+                $ordine->id_prodotto = $item->id_prodotto;
+                $ordine->quantita = $item->quantita;
+                $ordine->prezzo_totale = $item->quantita * $item->prodotto->prezzo;
+                $ordine->status = 'completato';
+                $ordine->save();
+            }
+            
+            // Svuota il carrello dopo aver creato gli ordini
             Lista::where('id_utente_compratore', $utenteCompratore->id)
                  ->carrello()
                  ->delete();
-        } catch (Exception $e) {
-            // Log dell'errore se necessario
         }
-        header('Location: orders-buyer.php');
+    } catch (Exception $e) {
+        $_SESSION['error'] = "Errore durante il salvataggio dell'ordine: " . $e->getMessage();
+        header('Location: checkout.php');
+        exit;
     }
+    
+    header('Location: orders-buyer.php');
     exit;
 }
 
@@ -209,6 +231,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_c
         <div class="card-body">
             <form method="POST" action="checkout.php">
                 <input type="hidden" name="action" value="pay">
+                <?php if ($isBuyNow): ?>
+                    <input type="hidden" name="buy_now" value="1">
+                    <input type="hidden" name="id_prodotto" value="<?= $idProdotto ?>">
+                    <input type="hidden" name="quantita" value="<?= $quantita ?>">
+                <?php endif; ?>
                 <div class="mb-3">
                     <label for="carta" class="form-label">Seleziona carta di credito</label>
                     <select class="form-select" id="carta" name="id_carta" required>
