@@ -33,74 +33,136 @@
         die("User not found");
     }
 
-    // Fetch orders for the user
-    $orders = Ordine::where('id_utente', $user->id)->get();
+    $avatar = !empty($user->immagine_profilo)
+				? $user->immagine_profilo
+				: 'uploads\prodotti\1764774501_IMG-20250315-WA0041.jpg';
+
+
+    $orders = collect();
+	if ($id) {
+		$orders = Ordine::with(['prodotto', 'utente'])
+			->whereHas('prodotto', function($q) use ($id) {
+				$q->where('id_venditore', $id);
+			})
+			->orderBy('id', 'desc')
+			->get();
+	}
+
+    $priceRanges = [
+        ['min' => 0, 'max' => 50, 'label' => '<50€'],
+        ['min' => 51, 'max' => 100, 'label' => '<100€'],
+        ['min' => 101, 'max' => 200, 'label' => '<200€'],
+        ['min' => 201, 'max' => PHP_INT_MAX, 'label' => '>200€'],
+    ];
+
+    // Function to map price to a range
+    function mapPriceToRange($price, $ranges) {
+        foreach ($ranges as $range) {
+            if ($price >= $range['min'] && $price <= $range['max']) {
+                return $range['label'];
+            }
+        }
+        return "Unknown";
+    }
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title><?= htmlspecialchars($user->name ?? 'User Profile') ?></title>
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title><?= htmlspecialchars($user->username ?? 'User Profile') ?> - DejaBrew</title>
+        <link rel="stylesheet" href="./dist/bootstrap5/css/bootstrap.min.css">
+        <link rel="stylesheet" href="./dist/bootstrap5/icons/bootstrap-icons.css">
+        <link rel="stylesheet" href="./dist/custom/css/new-style.css">
         <style>
-            body { font-family: Arial, sans-serif; padding: 20px; }
-            .profile, .orders { max-width: 700px; margin: auto; border: 1px solid #ccc; padding: 20px; margin-bottom: 20px; }
-            .profile h2 { margin-top: 0; }
-            table { width: 100%; border-collapse: collapse; }
-            th, td { padding: 8px 12px; border: 1px solid #ccc; text-align: left; }
-            th { background: #f0f0f0; }
+            .tabs { margin-top: 30px; }
+            .tab-button { display: inline-block; padding: 10px 20px; cursor: pointer; background: #eee; border: 1px solid #ccc; border-bottom: none; margin-right: 4px; }
+            .tab-button.active { background: #fff; font-weight: bold; }
+            .tab-content { border: 1px solid #ccc; padding: 20px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+            th, td { padding: 8px; border: 1px solid #ccc; text-align: left; }
         </style>
+        <script>
+            function switchTab(tab) {
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(div => div.style.display = 'none');
+                document.getElementById(tab + '-btn').classList.add('active');
+                document.getElementById(tab + '-content').style.display = 'block';
+            }
+            window.onload = () => switchTab('informazioni');
+        </script>
     </head>
     <body>
+        <?php require_once __DIR__ . '/navbar-selector.php'; ?>
+        <div class="profile">
+            <h2><?= htmlspecialchars($user->username ?? 'No Name') ?></h2>
+            <div class="col-12 col-md-4 text-center">
+                <img src="<?= htmlspecialchars($avatar) ?>" alt="Immagine profilo" class="img-fluid rounded-circle shadow" style="max-width: 220px;">
+            </div>
+            
+        </div>
 
-    <div class="profile">
-        <h2><?= htmlspecialchars($user->name ?? 'No Name') ?></h2>
-        <p><strong>Email:</strong> <?= htmlspecialchars($user->email ?? '-') ?></p>
-        <p><strong>Joined:</strong> <?= htmlspecialchars($user->created_at ?? '-') ?></p>
 
-        <?php
-        $loggedInUserId = 2; // replace with actual logged-in user logic
-        if ($user->id == $loggedInUserId): ?>
-            <p>This is your profile!</p>
-            <a href="edit_profile.php?id=<?= $user->id ?>">Edit Profile</a>
-        <?php endif; ?>
-    </div>
+        <div class="tabs">
+			<div>
+				<span id="informazioni-btn" class="tab-button" onclick="switchTab('informazioni')">Informazioni</span>
+				<span id="venduti-btn" class="tab-button" onclick="switchTab('venduti')">Ordini Venduti</span>
+			</div>
 
-    <div class="orders">
-        <h3>Orders</h3>
-        <?php if($orders->isEmpty()): ?>
-            <p>No orders found.</p>
-        <?php else: ?>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Product ID</th>
-                        <th>Status</th>
-                        <th>Total Price</th>
-                    </tr>
-                </thead>
-                <tbody>
-                <?php
-                // Status mapping
-                $statusMap = [
-                    1 => 'Ordered',
-                    2 => 'Paid',
-                    3 => 'Shipped',
-                    4 => 'Received'
-                ];
+			<div id="informazioni-content" class="tab-content">
+				<h3>Informazioni sul venditore</h3>
+				<p><strong>Email:</strong> <?= htmlspecialchars($user->email ?? '-') ?></p>
+                <p><strong>Bio:</strong> <?= htmlspecialchars($vendor->descrizione ?? 'N/A') ?></p>
+			</div>
 
-                foreach($orders as $order): ?>
-                    <tr>
-                        <td><?= $order->id ?></td>
-                        <td><?= $order->id_prodotto ?></td>
-                        <td><?= $statusMap[$order->status] ?? $order->status ?></td>
-                        <td><?= number_format($order->prezzo_totale, 2) ?>€</td>
-                    </tr>
-                <?php endforeach; ?>
-                </tbody>
-            </table>
-        <?php endif; ?>
-    </div>
-
+			<div id="venduti-content" class="tab-content" style="display: none;">
+						
+            <div class="orders">
+                <h3>Orders</h3>
+                <?php if($orders->isEmpty()): ?>
+                    <p>No orders found.</p>
+                        <?php else: ?>
+                            <table class="table table-striped mb-0 orders-table">
+                                <thead>
+                                    <tr>
+                                        <th>Acquirente</th>
+                                        <th>Prodotto</th>
+                                        <th>Status</th>
+                                        <th>Totale</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php 
+                                    $statusMap = [
+                                        1 => 'Ordinato',
+                                        2 => 'Pagato',
+                                        3 => 'Spedito',
+                                        4 => 'Ricevuto'
+                                    ];
+                                    foreach ($orders as $order): ?>
+                                        <tr>
+                                            <td><?= htmlspecialchars($order->utente->username ?? ($order->utente->nome ?? '')) ?></td>
+                                            <td>
+                                                <?php if ($order->prodotto): ?>
+                                                    <a href="./product.php?id=<?= $order->prodotto->id ?>" class="text-decoration-none">
+                                                        <?= htmlspecialchars($order->prodotto->nome) ?>
+                                                    </a>
+                                                <?php else: ?>
+                                                    Prodotto
+                                                <?php endif; ?>
+                                            </td>
+                                            <td><?= htmlspecialchars($statusMap[$order->status] ?? $order->status) ?></td>
+                                            <td><?= mapPriceToRange($order->prezzo_totale, $priceRanges) ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </table>
+                <?php endif; ?>
+            </div>
+				
+		</div>
     </body>
 </html>

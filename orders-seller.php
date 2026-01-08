@@ -66,7 +66,14 @@
 							</tr>
 						</thead>
 						<tbody>
-						<?php foreach ($orders as $order): ?>
+						<?php 
+						$statusMap = [
+                                        1 => 'Ordinato',
+                                        2 => 'Pagato',
+                                        3 => 'Spedito',
+                                        4 => 'Ricevuto'
+                                    ];
+						foreach ($orders as $order): ?>
 							<tr>
 								<td><?= htmlspecialchars($order->utente->username ?? ($order->utente->nome ?? '')) ?></td>
 								<td>
@@ -78,7 +85,7 @@
 										Prodotto
 									<?php endif; ?>
 								</td>
-								<td><?= htmlspecialchars($order->status) ?></td>
+								<td><?= htmlspecialchars($statusMap[$order->status] ?? $order->status) ?></td>
 								<td><?= number_format((float)$order->prezzo_totale, 2) ?> €</td>
 								<td>
 									<a href="generate_invoice.php?order_id=<?= $order->id ?>" class="btn btn-sm btn-outline-secondary" target="_blank">

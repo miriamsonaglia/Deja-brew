@@ -56,7 +56,14 @@
 							</tr>
 						</thead>
 						<tbody>
-						<?php foreach ($orders as $order): ?>
+						<?php 
+						$statusMap = [
+                                        1 => 'Ordinato',
+                                        2 => 'Pagato',
+                                        3 => 'Spedito',
+                                        4 => 'Ricevuto'
+                                    ];
+						foreach ($orders as $order): ?>
 							<tr>
 								<td>
 									<?php if ($order->prodotto): ?>
@@ -67,7 +74,7 @@
 										Prodotto
 									<?php endif; ?>
 								</td>
-								<td><?= htmlspecialchars($order->status) ?></td>
+								<td><?= htmlspecialchars($statusMap[$order->status] ?? $order->status) ?></td>
 
 								<!-- TODO modificare la quantità quando verrà aggiunta la colonna quantità nel database -->
 								<td><?= number_format(2*(float)$order->prodotto->prezzo, 2) ?> €</td>
