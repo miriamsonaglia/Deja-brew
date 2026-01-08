@@ -54,7 +54,7 @@ class AuthController
         $utente = Utente::where('email', $email)->first();
         echo $utente;
         // FOR THE MOMENT CHANGED FROM: password_verify($password, $utente->password) TO:
-        if ($utente && $password === $utente->password) {
+        if ($utente && password_verify($password, $utente->password)) {
             $_SESSION['LoggedUser'] = $utente->toArray();
             if ($role === 'acquirente') {
                 if (!$utente->utenteCompratore()) {

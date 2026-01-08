@@ -66,7 +66,7 @@
 							</tr>
 						</thead>
 						<tbody>
-						<?php 
+						<?php
 						$statusMap = [
                                         1 => 'Ordinato',
                                         2 => 'Pagato',

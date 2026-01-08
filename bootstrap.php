@@ -51,6 +51,4 @@ $capsule->bootEloquent();
 // (Opzionale) Log delle query per debug
 // $capsule->getConnection()->enableQueryLog();
 
-echo "Eloquent avviato correttamente! Database: " . __DIR__ . "/database.sqlite\n";
-
 return $capsule;
