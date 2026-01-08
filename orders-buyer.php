@@ -78,7 +78,7 @@
 								<td><?= htmlspecialchars($statusMap[$order->status] ?? $order->status) ?></td>
 
 								<!-- TODO modificare la quantità quando verrà aggiunta la colonna quantità nel database -->
-								<td><?= number_format((float)$order->prezzo_totale, 2) . ' € + ' . number_format((float)$order->prezzo_totale*0.22) . ' IVA €' ?></td>
+								<td><?= number_format((float)$order->prezzo_totale, 2) . '€ + ' . number_format((float)$order->prezzo_totale*0.22, 2) . '€ IVA' ?></td>
 								<td>
 									<a href="generate_invoice.php?order_id=<?= $order->id ?>" class="btn btn-sm btn-outline-secondary" target="_blank">
 										<i class="bi bi-file-earmark-pdf"></i> Scarica PDF

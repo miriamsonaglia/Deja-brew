@@ -150,7 +150,7 @@
                             <div class="summary-row d-flex justify-content-between align-items-center">
                                 <span class="text-muted">Spedizione:</span>
                                 <span class="fw-bold text-secondary-red" id="shipping-cost">
-                                    € 5.90
+                                    GRATIS
                                 </span>
                             </div>
 
