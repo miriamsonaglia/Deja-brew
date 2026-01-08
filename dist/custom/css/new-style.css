@@ -190,7 +190,7 @@ body {
     position: absolute;
     top: -8px;
     right: -8px;
-    background: #ff4444;
+    background: #c10202;
     color: white;
     border-radius: 50%;
     width: 20px;
@@ -561,13 +561,13 @@ body {
   .slider-list .card-product {
     flex: 0 0 250px;
   }
-  
+
   .slider-nav-btn {
     width: 40px;
     height: 40px;
     font-size: 16px;
   }
-  
+
   .filters-sidebar {
     width: 100%;
     right: -100%;
@@ -578,7 +578,7 @@ body {
   .slider-list .card-product {
     flex: 0 0 220px;
   }
-  
+
   .cart-content,
   .wishlist-content {
     padding: 0 0.5rem;
@@ -931,13 +931,13 @@ body {
   .category-header {
     padding: 0.5rem 0;
   }
-  
+
   .back-button {
     width: 40px;
     height: 40px;
     font-size: 16px;
   }
-  
+
   .category-title {
     font-size: 1.5rem;
     padding: 0 60px; /* Add padding to prevent overlap on small screens */
@@ -949,7 +949,7 @@ body {
     font-size: 1.3rem;
     padding: 0 50px;
   }
-  
+
   .back-button {
     width: 35px;
     height: 35px;
