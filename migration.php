@@ -85,7 +85,7 @@ function createProdottoTable()
         $table->decimal('peso', 8, 3)->nullable();
         $table->foreignId('id_venditore')->constrained('utenteVenditore')->onDelete('cascade');
         $table->foreignId('categoria_id')->constrained('categoria')->onDelete('cascade');
-        $table->foreignId('aroma_id')->constrained('aroma')->onDelete('cascade');
+        $table->foreignId('aroma_id')->nullable()->constrained('aroma')->onDelete('set null'); // <-- MODIFICATA
     });
 
     echo "Prodotto table created successfully!\n";
@@ -183,7 +183,7 @@ function createNotificaTable()
 {
     Capsule::schema()->create('notifica', function (Blueprint $table) {
         $table->id();
-        $table->string('tipo');
+        $table->foreignId('id_tipo_notifica')->constrained('tipo_notifica')->onDelete('cascade');
         $table->boolean('impostazione')->default(true);
     });
 

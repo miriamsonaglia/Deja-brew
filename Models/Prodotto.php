@@ -37,7 +37,7 @@ class Prodotto extends BaseModel
 
     public function aroma()
     {
-        return $this->belongsTo(Aroma::class);
+        return $this->belongsTo(Aroma::class)->withDefault(); // withDefault() evita errori se aroma è null
     }
 
     public function recensioni()
