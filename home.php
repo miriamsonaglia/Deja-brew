@@ -32,7 +32,7 @@
             <input type="text"
                    class="search-bar form-control"
                    id="live-search"
-                   placeholder="Search for products..."
+                   placeholder="Cerca prodotti..."
                    autocomplete="off"/>
 
             <ul id="search-results"
