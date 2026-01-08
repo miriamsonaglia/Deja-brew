@@ -5,7 +5,7 @@
         <link rel="stylesheet" href="./dist/bootstrap5/icons/bootstrap-icons.css">
         <link rel="stylesheet" href="./dist/bootstrap5/css/bootstrap.min.css">
         <link rel="stylesheet" href="./dist/custom/css/new-style.css">
-
+        <title>Deja Brew - Home</title>
         <?php
             // This in-page script initialize all the required php imports and populates the datasets.
             require_once __DIR__ . '/bootstrap.php';
