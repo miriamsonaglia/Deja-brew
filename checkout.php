@@ -230,8 +230,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_c
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-// Demo pagamento client-side
-document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+const shouldClearCart = <?php echo $isBuyNow ? 'false' : 'true'; ?>;
+
+document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const carta = document.getElementById('carta').value;
     const cvv = document.getElementById('cvv').value;
@@ -239,23 +240,34 @@ document.getElementById('checkoutForm').addEventListener('submit', function(e) {
     const esito = document.getElementById('esitoPagamento') || document.createElement('div');
     esito.id = 'esitoPagamento';
     esito.className = 'alert mt-4';
-    if(carta && cvv) {
+
+    if (carta && cvv) {
         esito.classList.add('alert-success');
         esito.textContent = 'Pagamento effettuato con successo!';
+        document.querySelector('.container').appendChild(esito);
+
+        if (shouldClearCart) {
+            try {
+                await fetch('cart-clean.php', { method: 'POST' });
+            } catch (error) {
+                console.error('Impossibile svuotare il carrello', error);
+            }
+        }
+
+        window.location.href = 'orders-buyer.php';
     } else {
         esito.classList.add('alert-danger');
         esito.textContent = 'Errore: compilare tutti i campi.';
+        document.querySelector('.container').appendChild(esito);
     }
-
-    document.querySelector('.container').appendChild(esito);
 });
 
 document.getElementById('modalNuovaCarta').addEventListener('submit', (e) => {
     const scadenzaInserita = Date.parse(document.getElementById('scadenza').value);
-    const oggi = Date.now()
-    if(oggi >= scadenzaInserita) {
+    const oggi = Date.now();
+    if (oggi >= scadenzaInserita) {
         e.preventDefault();
-        alert("Data inserita non valida.")
+        alert('Data inserita non valida.');
     }
 });
 </script>
