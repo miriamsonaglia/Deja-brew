@@ -62,10 +62,9 @@
         $card->update([
             'circuito_pagamento'  => $_POST['circuito_pagamento'],
             'codice_carta' => $_POST['codice_carta'],
-            'cvv_carta' => $_POST['cvv_carta'], //TODO criptare il cvv
-            //'scadenza_mese' => $mese,
-            //'scadenza_anno' => $anno,
-            //TODO aggiornare quando il database viene aggiornato
+            'cvv_carta' => $_POST['cvv_carta'],
+            'scadenza_mese' => $mese,
+            'scadenza_anno' => $anno,
             
         ]);
         echo json_encode(['success' => true]);
