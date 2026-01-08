@@ -52,6 +52,8 @@
                         ->orderBy('id', 'desc')
                         ->get();
 
+    $prodotti = $vendor->prodotti()->get();
+
     $priceRanges = [
         ['min' => 0, 'max' => 50, 'label' => '<50€'],
         ['min' => 51, 'max' => 100, 'label' => '<100€'],
@@ -94,13 +96,14 @@
         <?php require_once __DIR__ . '/navbar-selector.php'; ?>
         <div class="profile text-center mb-4">
             <h2><?= htmlspecialchars($user->username ?? 'No Name') ?></h2>
-                <img src="<?= htmlspecialchars($avatar) ?>" alt="Immagine profilo" class="img-fluid rounded-circle shadow" style="max-height: 500px;">
+            <img src="<?= htmlspecialchars($avatar) ?>" alt="Immagine profilo" class="img-fluid rounded-circle shadow" style="max-height: 500px;">
         </div>
 
         <div class="tabs">
 			<div>
 				<span id="informazioni-btn" class="tab-button" onclick="switchTab('informazioni')">Informazioni</span>
 				<span id="venduti-btn" class="tab-button" onclick="switchTab('venduti')">Ordini Venduti</span>
+                <span id="prodotti-btn" class="tab-button" onclick="switchTab('prodotti')">Prodotti</span>
 			</div>
 
 			<div id="informazioni-content" class="tab-content">
@@ -111,43 +114,76 @@
 
 			<div id="venduti-content" class="tab-content" style="display: none;">
 						
-            <div class="orders">
-                <h3>Orders</h3>
-                <?php if($orders->isEmpty()): ?>
+                <div class="orders">
+                    <h3>Orders</h3>
+                    <?php if($orders->isEmpty()): ?>
                     <p>No orders found.</p>
-                        <?php else: ?>
-                            <table class="table table-striped mb-0 orders-table">
-                                <thead>
+                    <?php else: ?>
+                        <table class="table table-striped mb-0 orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Acquirente</th>
+                                    <th>Prodotto</th>
+                                    <th>Status</th>
+                                    <th>Totale</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($orders as $order): ?>
                                     <tr>
-                                        <th>Acquirente</th>
-                                        <th>Prodotto</th>
-                                        <th>Status</th>
-                                        <th>Totale</th>
+                                        <td><?= htmlspecialchars($order->utente->username ?? ($order->utente->nome ?? '')) ?></td>
+                                        <td>
+                                            <?php if ($order->prodotto): ?>
+                                                <a href="./product.php?id=<?= $order->prodotto->id ?>" class="text-decoration-none">
+                                                    <?= htmlspecialchars($order->prodotto->nome) ?>
+                                                </a>
+                                            <?php else: ?>
+                                                Prodotto
+                                            <?php endif; ?>
+                                        </td>
+                                        <td><?= htmlspecialchars($order->status) ?></td>
+                                        <td><?= mapPriceToRange($order->prezzo_totale, $priceRanges) ?></td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($orders as $order): ?>
-                                        <tr>
-                                            <td><?= htmlspecialchars($order->utente->username ?? ($order->utente->nome ?? '')) ?></td>
-                                            <td>
-                                                <?php if ($order->prodotto): ?>
-                                                    <a href="./product.php?id=<?= $order->prodotto->id ?>" class="text-decoration-none">
-                                                        <?= htmlspecialchars($order->prodotto->nome) ?>
-                                                    </a>
-                                                <?php else: ?>
-                                                    Prodotto
-                                                <?php endif; ?>
-                                            </td>
-                                            <td><?= htmlspecialchars($order->status) ?></td>
-                                            <td><?= mapPriceToRange($order->prezzo_totale, $priceRanges) ?></td>
-                                        </tr>
-                                    <?php endforeach; ?>
+                                <?php endforeach; ?>
                             </tbody>
                         </table>
-                    </table>
-                <?php endif; ?>
-            </div>
-				
+                    <?php endif; ?>
+                </div>
+			</div>
+
+            <div id="prodotti-content" class="tab-content" style="display: none;">
+						
+                <div class="prodotti">
+                    <h3>Prodotti</h3>
+                    <?php if($prodotti->isEmpty()): ?>
+                    <p>No prodotti found.</p>
+                    <?php else: ?>
+                        <table class="table table-striped mb-0 prodotti-table">
+                            <thead>
+                                <tr>
+                                    <th>Prodotto</th>
+                                    <th>Tipo</th>
+                                    <th>Intensità</th>
+                                    <th>Prezzo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($prodotti as $prodotto): ?>
+                                    <tr>
+                                        <td><a href="./product.php?id=<?= $prodotto->id ?>" class="text-decoration-none">
+                                                    <?= htmlspecialchars($prodotto->nome) ?>
+                                        </a></td>
+                                        <td><?= htmlspecialchars($prodotto->tipo) ?></td>
+                                        <td><?= htmlspecialchars($prodotto->intensita) ?></td>
+                                        <td><?= htmlspecialchars($prodotto->prezzo) ?>€</td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    <?php endif; ?>
+                </div>
+			</div>
+
 		</div>
         <script>
             function switchTab(tab) {
