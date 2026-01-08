@@ -1,17 +1,15 @@
 <!DOCTYPE html>
 <html lang="it">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-		<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-        <title>Profilo - Deja-brew</title>
-    
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Profilo - Deja-brew</title>
+		<link rel="stylesheet" href="./dist/bootstrap5/css/bootstrap.min.css">
+		<link rel="stylesheet" href="./dist/bootstrap5/icons/bootstrap-icons.css">
+		<link rel="stylesheet" href="./dist/custom/css/new-style.css">
 
-        <?php
-            // PHP initialization code remains the same
-            use App\Models\Prodotto;
-            use App\Models\Lista;
+		<?php
+
 			use App\Models\Utente;
 			use App\Models\UtenteCompratore;
 			use App\Models\UtenteVenditore;
@@ -37,27 +35,49 @@
 				echo '<div class="alert alert-danger">Errore: dati utente non trovati.</div>';
 				exit;
 			}
-			
-			if ($_SESSION['UserRole'] == Role::VENDOR->value){
-				$descSeller = UtenteVenditore::where('id', $_SESSION['LoggedUser']['id'])->select('descrizione')->first();
+
+			$utente = Utente::where('id', $_SESSION['LoggedUser']['id'])->first();
+			$isBuyer = isset($_SESSION['UserRole']) && $_SESSION['UserRole'] === Role::BUYER->value;
+			$isVendor = isset($_SESSION['UserRole']) && $_SESSION['UserRole'] === Role::VENDOR->value;
+
+			$venditore = null;
+			if ($isVendor) {
+				$venditore = UtenteVenditore::where('id_utente', $utente->id)->first();
 			}
 
-        ?>
-		
-    </head>
+			$avatar = !empty($utente->immagine_profilo)
+				? $utente->immagine_profilo
+				: './images/profiles/Default_Profile_Image.jpg';
+		?>
+	</head>
 	<body>
 		<?php require_once __DIR__ . '/navbar-selector.php'; ?>
 
-		<h1>Profilo: <?= htmlspecialchars($_SESSION['LoggedUser']['username']) ?></h1>
+		<div class="container py-4">
+			<div class="row g-4 align-items-center">
+				<div class="col-12 col-md-4 text-center">
+					<img src="<?= htmlspecialchars($avatar) ?>" alt="Immagine profilo" class="img-fluid rounded-circle shadow" style="max-width: 220px;">
+				</div>
+				<div class="col-12 col-md-8">
+					<div class="card shadow-sm">
+						<div class="card-body">
+							<div class="d-flex align-items-center justify-content-between">
+								<h2 class="h4 mb-0"><?= htmlspecialchars($utente->username) ?></h2>
+								<?php if ($isBuyer): ?>
+									<span class="badge bg-primary">Acquirente</span>
+								<?php elseif ($isVendor): ?>
+									<span class="badge bg-warning text-dark">Venditore</span>
+								<?php endif; ?>
+							</div>
+							<p class="text-muted mb-1"><?= htmlspecialchars($utente->nome ?? '') ?> <?= htmlspecialchars($utente->cognome ?? '') ?></p>
+							<p class="mb-3"><i class="bi bi-envelope"></i> <?= htmlspecialchars($utente->email) ?></p>
 
-		<div class="profile-header">
-		
-			<?php if ($datiUtente && $datiUtente->immagine_profilo != null): ?>
-				<img src="<?= htmlspecialchars($datiUtente->immagine_profilo) ?>" alt="Immagine profilo" class="profile-pic">
-			<?php else: ?>
-				<img src="/images/profiles/Default_Profile_Image.jpg" alt="Immagine profilo di default" class="profile-pic">
-			
-			<?php endif; ?>
+							<?php if ($isVendor): ?>
+								<div class="mt-3">
+									<h6 class="text-uppercase text-muted">Descrizione Venditore</h6>
+									<p class="mb-0"><?= htmlspecialchars($venditore->descrizione ?? 'Nessuna descrizione.') ?></p>
+								</div>
+							<?php endif; ?>
 
 			<!-- Da mettere un if che cambia il tipo di elemento dipendentemente se chi accede è il venditore o un utente qualsiasi -->
 			<div class="profile-info">
@@ -65,8 +85,8 @@
 				
 
 				<?php if ($_SESSION['UserRole'] == Role::VENDOR->value): ?>
-					<?php if ($descSeller->descrizione != null): ?>
-						<p><?= htmlspecialchars($descSeller->descrizione) ?> </p>
+					<?php if ($venditore->descrizione != null): ?>
+						<p><?= htmlspecialchars($venditore->descrizione) ?> </p>
 					<?php else: ?>
 						<p>Nessuna descrizione.</p>
 					<?php endif; ?>
