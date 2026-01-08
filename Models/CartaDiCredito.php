@@ -4,7 +4,6 @@ namespace App\Models;
 
 require_once __DIR__ . '/BaseModel.php';
 
-
 class CartaDiCredito extends BaseModel
 {
     protected $table = 'cartaDiCredito';
@@ -14,14 +13,14 @@ class CartaDiCredito extends BaseModel
         'circuito_pagamento',
         'codice_carta',
         'cvv_carta',
+        'nome_titolare',         // Nuovo
         'scadenza_mese',
-        'scadenza_anno' // aggiunta la colonna scadenza
+        'scadenza_anno'
     ];
 
     protected $hidden = [
         'codice_carta',
         'cvv_carta'
-        // puoi aggiungere 'scadenza' qui se vuoi nasconderla nelle risposte JSON
     ];
 
     public function utente()

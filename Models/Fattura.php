@@ -9,7 +9,8 @@ class Fattura extends BaseModel
     protected $fillable = [
         'id_utente',
         'id_venditore',
-        'id_ordine'
+        'id_ordine',
+        'transaction_id'         // Nuovo campo per gestire transazioni con più prodotti
     ];
 
     public function utente()

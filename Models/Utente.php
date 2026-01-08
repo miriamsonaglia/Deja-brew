@@ -7,14 +7,13 @@ class Utente extends BaseModel
 {
     protected $table = 'utente';
 
-
     protected $fillable = [
         'nome',
         'cognome',
         'email',
         'username',
         'password',
-        'immagine_profilo'
+        'immagine_profilo'       // Già presente, ma confermato
     ];
 
     protected $hidden = [
