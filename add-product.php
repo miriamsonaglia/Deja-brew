@@ -1,41 +1,121 @@
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
-require_once __DIR__ . '/bootstrap.php'; // Connessione Eloquent
+require_once __DIR__ . '/bootstrap.php';
 require_once __DIR__ . '/Models/Prodotto.php';
+require_once __DIR__ . '/Models/Categoria.php';
+require_once __DIR__ . '/Models/Aroma.php';
+require_once __DIR__ . '/role.php';
+
+require_once __DIR__ . '/Models/UtenteVenditore.php';
+
 use App\Models\Prodotto;
+use App\Models\Categoria;
+use App\Models\Aroma;
+use App\Models\UtenteVenditore;
+
+session_start();
+
+// Verifica se l'utente è un venditore
+if (!isset($_SESSION['LoggedUser']) || $_SESSION['UserRole'] !== Role::VENDOR->value) {
+    header('Location: home.php');
+    exit;
+}
+
+// Carica categorie e aromi dal database
+$categorie = Categoria::all();
+$aromi = Aroma::all();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $prodotto = new Prodotto();
     $prodotto->nome         = $_POST['nome'] ?? null;
-    $prodotto->prezzo       = $_POST['prezzo'] ?? null;
-    $prodotto->peso         = $_POST['peso'] ?? null;
+    $prodotto->prezzo       = floatval($_POST['prezzo'] ?? 0);
+    $prodotto->peso         = floatval($_POST['peso'] ?? 0);
     $prodotto->provenienza  = $_POST['provenienza'] ?? null;
     $prodotto->tipo         = $_POST['tipo'] ?? null;
-    $prodotto->intensita    = $_POST['intensita'] ?? null;
-    $prodotto->categoria_id = $_POST['categoria_id'] ?? null;
-    $prodotto->aroma_id     = $_POST['aroma_id'] ?? null;
-    //$prodotto->descrizione  = $_POST['descrizione'] ?? null;
-    $prodotto->id_venditore = 1; // TODO: cambia con ID dinamico se uso sessioni!!!!!!!
-    // Salvataggio temporaneo
-    $prodotto->save();
-    // Gestione immagini
-    if (!empty($_FILES['immagini']['name'][0])) {
-        $uploadDir = __DIR__ . '/uploads/prodotti/';
-        if (!file_exists($uploadDir)) mkdir($uploadDir, 0777, true);
-        foreach ($_FILES['immagini']['tmp_name'] as $key => $tmpName) {
-            if ($_FILES['immagini']['error'][$key] === UPLOAD_ERR_OK) {
-                $originalName = basename($_FILES['immagini']['name'][$key]);
-                $filePath = 'uploads/prodotti/' . time() . '_' . $originalName;
-                move_uploaded_file($tmpName, __DIR__ . '/' . $filePath);
-                // Salva solo la prima nel campo "fotografia"
-                if ($key === 0) {
-                    $prodotto->fotografia = $filePath;
-                    $prodotto->save();
+    $prodotto->intensita    = intval($_POST['intensita'] ?? 5);
+    $prodotto->categoria_id = intval($_POST['categoria_id'] ?? 0);
+    $prodotto->aroma_id     = intval($_POST['aroma_id'] ?? 0);
+    
+    // Ottieni l'ID di utenteVenditore dell'utente loggato
+    $utenteVenditore = UtenteVenditore::where('id_utente', $_SESSION['LoggedUser']['id'])->first();
+    if (!$utenteVenditore) {
+        $_SESSION['errors'] = [
+            "Errore: il tuo account non è registrato come venditore.",
+            "Contatta l'amministratore del sito."
+        ];
+        header('Location: add-product.php');
+        exit;
+    }
+    
+    $prodotto->id_venditore = $utenteVenditore->id;
+    
+    // Validazione
+    $errors = [];
+    if (empty($prodotto->nome)) $errors[] = "Il nome è obbligatorio.";
+    if ($prodotto->prezzo <= 0) $errors[] = "Il prezzo è obbligatorio e deve essere maggiore di 0.";
+    if ($prodotto->categoria_id <= 0) $errors[] = "La categoria è obbligatoria.";
+    if ($prodotto->aroma_id <= 0) $errors[] = "L'aroma è obbligatorio.";
+    
+    // Verifica che la categoria esista
+    if ($prodotto->categoria_id > 0 && !Categoria::find($prodotto->categoria_id)) {
+        $errors[] = "La categoria selezionata non esiste nel database.";
+    }
+    
+    // Verifica che l'aroma esista
+    if ($prodotto->aroma_id > 0 && !Aroma::find($prodotto->aroma_id)) {
+        $errors[] = "L'aroma selezionato non esiste nel database.";
+    }
+    
+    if (!empty($errors)) {
+        $_SESSION['errors'] = $errors;
+        header('Location: add-product.php');
+        exit;
+    }
+    
+    try {
+        // Salva il prodotto
+        $prodotto->save();
+        
+        // Gestione immagini
+        if (!empty($_FILES['immagini']['name'][0])) {
+            $uploadDir = __DIR__ . '/uploads/prodotti/';
+            if (!file_exists($uploadDir)) mkdir($uploadDir, 0777, true);
+            
+            foreach ($_FILES['immagini']['tmp_name'] as $key => $tmpName) {
+                if ($_FILES['immagini']['error'][$key] === UPLOAD_ERR_OK) {
+                    $originalName = basename($_FILES['immagini']['name'][$key]);
+                    $fileName = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '', $originalName);
+                    $filePath = 'uploads/prodotti/' . $fileName;
+                    
+                    move_uploaded_file($tmpName, __DIR__ . '/' . $filePath);
+                    
+                    // Salva solo la prima immagine nel campo "fotografia"
+                    if ($key === 0) {
+                        $prodotto->fotografia = $filePath;
+                        $prodotto->save();
+                    }
                 }
             }
         }
+        
+        $_SESSION['success'] = "Prodotto aggiunto con successo!";
+        header('Location: home.php');
+        exit;
+    } catch (\Exception $e) {
+        $_SESSION['errors'] = [
+            "Errore nel salvataggio del prodotto.",
+            "Dettagli: " . $e->getMessage(),
+            "",
+            "Per diagnosticare il problema, verifica che:",
+            "- La categoria con ID {$prodotto->categoria_id} esista nel database",
+            "- L'aroma con ID {$prodotto->aroma_id} esista nel database",
+            "- Il tuo account sia registrato nella tabella utentevenditore",
+            "",
+            "Se il problema persiste, contatta l'amministratore."
+        ];
+        header('Location: add-product.php');
+        exit;
     }
-    header('Location: home.php');
-    exit;
 }
 ?>
 <!DOCTYPE html>
@@ -46,13 +126,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-  <link href="/dist/custom/css/style.css" rel="stylesheet">
+  <link href="/dist/custom/css/new-style.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
 <?php include __DIR__ . '/reusables/navbars/vendor-navbar.php'; ?>
 <div class="container form-section">
   <h2 class="mb-4 text-center fw-bold">Aggiungi un nuovo prodotto</h2>
+  
+  <?php if (isset($_SESSION['success'])): ?>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <?= $_SESSION['success'] ?>
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <?php unset($_SESSION['success']); ?>
+  <?php endif; ?>
+  
+  <?php if (isset($_SESSION['errors']) && !empty($_SESSION['errors'])): ?>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <ul class="mb-0">
+        <?php foreach ($_SESSION['errors'] as $error): ?>
+          <li><?= htmlspecialchars($error) ?></li>
+        <?php endforeach; ?>
+      </ul>
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <?php unset($_SESSION['errors']); ?>
+  <?php endif; ?>
+  
   <form method="POST" enctype="multipart/form-data">
     <div class="row g-4">
       <div class="col-md-6">
@@ -105,23 +206,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
         <div class="mb-3">
           <label class="form-label fw-semibold">Categoria</label>
-          <select class="form-select" name="categoria_id">
+          <select class="form-select" name="categoria_id" required>
             <option value="">Seleziona categoria</option>
-            <option value="1">Espresso</option>
-            <option value="2">Decaffeinato</option>
+            <?php foreach ($categorie as $categoria): ?>
+              <option value="<?= $categoria->id ?>"><?= htmlspecialchars($categoria->descrizione) ?></option>
+            <?php endforeach; ?>
           </select>
         </div>
         <div class="mb-3">
           <label class="form-label fw-semibold">Aroma</label>
-          <select class="form-select" name="aroma_id">
+          <select class="form-select" name="aroma_id" required>
             <option value="">Seleziona aroma</option>
-            <option value="1">Cioccolato</option>
-            <option value="2">Fruttato</option>
+            <?php foreach ($aromi as $aroma): ?>
+              <option value="<?= $aroma->id ?>"><?= htmlspecialchars($aroma->gusto) ?></option>
+            <?php endforeach; ?>
           </select>
-        </div>
-        <div class="mb-3">
-          <label class="form-label fw-semibold">Descrizione</label>
-          <textarea class="form-control product-description" name="descrizione" rows="5"></textarea>
         </div>
         <button type="submit" class="btn btn-info w-100 fw-semibold">Aggiungi prodotto</button>
       </div>
