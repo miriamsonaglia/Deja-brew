@@ -1,3 +1,126 @@
+<?php
+require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/role.php';
+
+use App\Models\Ordine;
+use App\Models\Notifica;
+use App\Models\TipoNotifica;
+use App\Models\UtenteVenditore;
+use App\Models\Prodotto;
+use Illuminate\Database\Capsule\Manager as DB;
+
+session_start();
+
+$userRole = $_SESSION['UserRole'] ?? Role::GUEST->value;
+$userId = $_SESSION['LoggedUser']['id'] ?? null;
+
+// Gestione aggiornamenti via POST (AJAX) - DEVE ESSERE PRIMA DI QUALSIASI OUTPUT HTML
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $userId) {
+    header('Content-Type: application/json');
+
+    $orderId = (int)($_POST['order_id'] ?? 0);
+    $action = $_POST['action'] ?? '';
+
+    if ($orderId <= 0) {
+        echo json_encode(['success' => false, 'message' => 'ID ordine non valido']);
+        exit;
+    }
+
+    $ordine = Ordine::find($orderId);
+
+    if (!$ordine) {
+        echo json_encode(['success' => false, 'message' => 'Ordine non trovato']);
+        exit;
+    }
+
+    // Controlla permessi
+    if ($userRole === Role::VENDOR->value) {
+        // Verifica se è un ordine del venditore
+        $venditore = UtenteVenditore::where('id_utente', $userId)->first();
+        $prodotto = Prodotto::find($ordine->id_prodotto);
+        if (!$venditore || $prodotto->id_venditore !== $venditore->id) {
+            echo json_encode(['success' => false, 'message' => 'Non autorizzato']);
+            exit;
+        }
+    } elseif ($userRole === Role::BUYER->value) {
+        if ($ordine->id_utente !== $userId) {
+            echo json_encode(['success' => false, 'message' => 'Non autorizzato']);
+            exit;
+        }
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Ruolo non valido']);
+        exit;
+    }
+
+    if ($action === 'ship' && $userRole === Role::VENDOR->value && $ordine->status === 'confermato') {
+        $ordine->status = 'spedito';
+        $ordine->save();
+        echo json_encode(['success' => true, 'new_status' => 'spedito']);
+    } elseif ($action === 'receive' && $userRole === Role::BUYER->value && $ordine->status === 'spedito') {
+        $ordine->status = 'ricevuto';
+        $ordine->save();
+        echo json_encode(['success' => true, 'new_status' => 'ricevuto']);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Azione non valida o stato errato']);
+    }
+    exit;
+}
+
+// Preparazione dati per la visualizzazione
+$orders = [];
+
+// Preparazione dati per la visualizzazione
+$orders = [];
+
+if ($userRole !== Role::GUEST->value && $userId) {
+    if ($userRole === Role::BUYER->value) {
+        // Per compratore: fetcha i suoi ordini
+        $orders = Ordine::where('id_utente', $userId)
+            ->orderBy('id', 'desc')
+            ->get()
+            ->toArray();
+    } elseif ($userRole === Role::VENDOR->value) {
+        // Per venditore: fetcha gli ordini dei suoi prodotti
+        $venditore = UtenteVenditore::where('id_utente', $userId)->first();
+        if ($venditore) {
+            $prodottiIds = Prodotto::where('id_venditore', $venditore->id)->pluck('id');
+            $orders = Ordine::whereIn('id_prodotto', $prodottiIds)
+                ->orderBy('id', 'desc')
+                ->get()
+                ->toArray();
+        }
+    }
+
+    // Per ogni ordine, associa le notifiche basate sullo status
+    foreach ($orders as &$order) {
+        $notifications = [];
+
+        // Notifica base: Ordine confermato (sempre presente)
+        $notifications[] = [
+            'type' => 'ORDER_CONFIRMED',
+            'actionable' => ($userRole === Role::VENDOR->value && $order['status'] === 'confermato')
+        ];
+
+        if ($order['status'] === 'spedito' || $order['status'] === 'ricevuto') {
+            $notifications[] = [
+                'type' => 'PRODUCT_SENT',
+                'actionable' => ($userRole === Role::BUYER->value && $order['status'] === 'spedito')
+            ];
+        }
+
+        if ($order['status'] === 'ricevuto') {
+            $notifications[] = [
+                'type' => 'PRODUCT_RECEIVED',
+                'actionable' => false
+            ];
+        }
+
+        $order['notifications'] = $notifications;
+        $order['order_id'] = $order['id']; // Usa ID reale
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -9,133 +132,6 @@
     <link rel="stylesheet" href="./dist/bootstrap5/icons/bootstrap-icons.css">
     <link rel="stylesheet" href="./dist/bootstrap5/css/bootstrap.min.css">
     <link rel="stylesheet" href="./dist/custom/css/new-style.css">
-
-    <?php
-        require_once __DIR__ . '/bootstrap.php';
-        require_once __DIR__ . '/role.php';
-        use App\Models\Ordine;
-        use App\Models\Notifica;
-        use App\Models\TipoNotifica;
-        use App\Models\UtenteVenditore;
-        use App\Models\Prodotto;
-        use Illuminate\Database\Capsule\Manager as DB;
-
-        session_start();
-
-        $userRole = $_SESSION['UserRole'] ?? Role::GUEST->value;
-        $userId = $_SESSION['LoggedUser']['id'] ?? null;
-
-        $orders = []; // Array per gli ordini reali
-
-        if ($userRole !== Role::GUEST->value && $userId) {
-            if ($userRole === Role::BUYER->value) {
-                // Per compratore: fetcha i suoi ordini
-                $orders = Ordine::where('id_utente', $userId)
-                    ->orderBy('id', 'desc')
-                    ->get()
-                    ->toArray();
-            } elseif ($userRole === Role::VENDOR->value) {
-                // Per venditore: fetcha gli ordini dei suoi prodotti
-                $venditore = UtenteVenditore::where('id_utente', $userId)->first();
-                if ($venditore) {
-                    $prodottiIds = Prodotto::where('id_venditore', $venditore->id)->pluck('id');
-                    $orders = Ordine::whereIn('id_prodotto', $prodottiIds)
-                        ->orderBy('id', 'desc')
-                        ->get()
-                        ->toArray();
-                }
-            }
-
-            // Fetcha i tipi di notifica dal DB
-            $tipiNotifica = TipoNotifica::pluck('descrizione', 'id')->toArray();
-
-            // Per ogni ordine, associa le notifiche basate sullo status
-            foreach ($orders as &$order) {
-                $notifications = [];
-
-                // Notifica base: Ordine confermato (sempre presente)
-                $notifications[] = [
-                    'type' => 'ORDER_CONFIRMED',
-                    'actionable' => false
-                ];
-
-                if ($order['status'] === 'spedito' || $order['status'] === 'ricevuto') {
-                    $notifications[] = [
-                        'type' => 'PRODUCT_SENT',
-                        'actionable' => ($userRole === Role::BUYER->value && $order['status'] === 'spedito')
-                    ];
-                }
-
-                if ($order['status'] === 'ricevuto') {
-                    $notifications[] = [
-                        'type' => 'PRODUCT_RECEIVED',
-                        'actionable' => false
-                    ];
-                }
-
-                $order['notifications'] = $notifications;
-                $order['order_id'] = $order['id']; // Usa ID reale
-            }
-        }
-
-        // Gestione aggiornamenti via POST (AJAX)
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $userId) {
-            header('Content-Type: application/json');
-
-            $orderId = (int)$_POST['order_id'] ?? 0;
-            $action = $_POST['action'] ?? '';
-
-            if ($orderId <= 0) {
-                echo json_encode(['success' => false, 'message' => 'ID ordine non valido']);
-                exit;
-            }
-
-            $ordine = Ordine::find($orderId);
-
-            if (!$ordine) {
-                echo json_encode(['success' => false, 'message' => 'Ordine non trovato']);
-                exit;
-            }
-
-            // Controlla permessi
-            if ($userRole === Role::VENDOR->value) {
-                // Verifica se è un ordine del venditore
-                $venditore = UtenteVenditore::where('id_utente', $userId)->first();
-                $prodotto = Prodotto::find($ordine->id_prodotto);
-                if (!$venditore || $prodotto->id_venditore !== $venditore->id) {
-                    echo json_encode(['success' => false, 'message' => 'Non autorizzato']);
-                    exit;
-                }
-            } elseif ($userRole === Role::BUYER->value) {
-                if ($ordine->id_utente !== $userId) {
-                    echo json_encode(['success' => false, 'message' => 'Non autorizzato']);
-                    exit;
-                }
-            } else {
-                echo json_encode(['success' => false, 'message' => 'Ruolo non valido']);
-                exit;
-            }
-
-            if ($action === 'ship' && $userRole === Role::VENDOR->value && $ordine->status === 'confermato') {
-                $ordine->status = 'spedito';
-                $ordine->save();
-                // Crea notifica per compratore (opzionale)
-                $tipoId = TipoNotifica::where('descrizione', 'Prodotto spedito')->value('id');
-                Notifica::create(['id_tipo_notifica' => $tipoId, 'impostazione' => true]);
-                echo json_encode(['success' => true, 'new_status' => 'spedito']);
-            } elseif ($action === 'receive' && $userRole === Role::BUYER->value && $ordine->status === 'spedito') {
-                $ordine->status = 'ricevuto';
-                $ordine->save();
-                // Crea notifica per venditore (opzionale)
-                $tipoId = TipoNotifica::where('descrizione', 'Prodotto ricevuto')->value('id');
-                Notifica::create(['id_tipo_notifica' => $tipoId, 'impostazione' => true]);
-                echo json_encode(['success' => true, 'new_status' => 'ricevuto']);
-            } else {
-                echo json_encode(['success' => false, 'message' => 'Azione non valida o stato errato']);
-            }
-            exit;
-        }
-    ?>
 </head>
 <body>
 
@@ -187,21 +183,33 @@
                                             $icon = 'bi-bag-check';
                                             $color = 'text-secondary-red';
                                             $title = 'Ordine confermato';
-                                            $message = 'L’ordine è stato confermato.';
+                                            if ($userRole === Role::VENDOR->value) {
+                                                $message = 'Hai ricevuto un nuovo ordine. Conferma la spedizione quando pronto.';
+                                            } else {
+                                                $message = 'Il tuo ordine è stato confermato dal venditore.';
+                                            }
                                             break;
 
                                         case 'PRODUCT_SENT':
                                             $icon = 'bi-truck';
                                             $color = 'text-primary-brown';
                                             $title = 'Prodotto spedito';
-                                            $message = 'Il prodotto è stato spedito.';
+                                            if ($userRole === Role::BUYER->value) {
+                                                $message = 'Il tuo ordine è stato spedito. Conferma quando lo ricevi.';
+                                            } else {
+                                                $message = 'Hai confermato la spedizione dell\'ordine.';
+                                            }
                                             break;
 
                                         case 'PRODUCT_RECEIVED':
                                             $icon = 'bi-check-circle';
                                             $color = 'text-success';
                                             $title = 'Prodotto ricevuto';
-                                            $message = 'Il prodotto è stato ricevuto.';
+                                            if ($userRole === Role::VENDOR->value) {
+                                                $message = 'Il compratore ha confermato la ricezione dell\'ordine.';
+                                            } else {
+                                                $message = 'Hai confermato la ricezione dell\'ordine.';
+                                            }
                                             break;
 
                                         default:
@@ -225,29 +233,22 @@
 
                                         <!-- BOTTONI AZIONI -->
                                         <?php if ($notification['actionable']): ?>
-                                            <?php if (
-                                                $notification['type'] === 'ORDER_CONFIRMED' &&
-                                                $userRole === Role::VENDOR->value
-                                            ): ?>
+                                            <?php if ($notification['type'] === 'ORDER_CONFIRMED'): ?>
                                                 <button class="btn btn-primary-custom btn-sm action-btn"
                                                         data-action="ship"
                                                         data-order="<?= $order['order_id'] ?>">
-                                                    <i class="bi bi-truck me-1"></i>Spedisci
+                                                    <i class="bi bi-truck me-1"></i>Conferma spedizione
                                                 </button>
 
-                                            <?php elseif (
-                                                $notification['type'] === 'PRODUCT_SENT' &&
-                                                $userRole === Role::BUYER->value
-                                            ): ?>
+                                            <?php elseif ($notification['type'] === 'PRODUCT_SENT'): ?>
                                                 <button class="btn btn-outline-primary-custom btn-sm action-btn"
                                                         data-action="receive"
                                                         data-order="<?= $order['order_id'] ?>">
                                                     <i class="bi bi-check-circle me-1"></i>Conferma ricezione
                                                 </button>
-
-                                            <?php elseif ($notification['type'] === 'PRODUCT_RECEIVED'): ?>
-                                                <span class="badge bg-success">Completato</span>
                                             <?php endif; ?>
+                                        <?php elseif ($notification['type'] === 'PRODUCT_RECEIVED'): ?>
+                                            <span class="badge bg-success">Completato</span>
                                         <?php endif; ?>
                                     </div>
                                 </div>
@@ -309,8 +310,8 @@
 
             const action = this.dataset.action;
             const message = action === 'ship'
-                ? 'Sei sicuro di voler segnare l’ordine come spedito?'
-                : 'Sei sicuro di voler confermare la ricezione dell’ordine?';
+                ? 'Sei sicuro di voler confermare la spedizione dell\'ordine?'
+                : 'Sei sicuro di aver ricevuto l\'ordine?';
 
             document.getElementById('confirmMessage').innerText = message;
             modal.show();

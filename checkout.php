@@ -113,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'pay')
             $ordine->id_prodotto = $idProdotto;
             $ordine->quantita = $quantita;
             $ordine->prezzo_totale = $totaleFinale;
-            $ordine->status = 'completato';
+            $ordine->status = 'confermato';
             $ordine->save();
         } else {
             // Acquisto dal carrello - crea un ordine per ogni prodotto
@@ -123,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'pay')
                 $ordine->id_prodotto = $item->id_prodotto;
                 $ordine->quantita = $item->quantita;
                 $ordine->prezzo_totale = $item->quantita * $item->prodotto->prezzo;
-                $ordine->status = 'completato';
+                $ordine->status = 'confermato';
                 $ordine->save();
             }
             
