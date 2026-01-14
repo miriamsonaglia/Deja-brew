@@ -5,10 +5,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const productId = this.getAttribute('data-product-id');
             const icon = this.querySelector('i');
             const isWished = icon.classList.contains('bi-heart-fill');
-            
+
             try {
                 let response;
-                
+
                 if (isWished) {
                     // Remove from wishlist
                     response = await fetch('./remove-product.php', {
@@ -16,8 +16,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ 
-                            productID: productId, 
+                        body: JSON.stringify({
+                            productID: productId,
                             type: 'desideri'
                         })
                     });
@@ -28,9 +28,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ 
-                            productID: productId,  
-                            quantity: 1, 
+                        body: JSON.stringify({
+                            productID: productId,
+                            quantity: 1,
                             type: 'desideri'
                         })
                     });
@@ -60,7 +60,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 const data = await response.json();
-                console.log('Wishlist updated:', data);
 
                 // Optional: Show success message
                 this.style.transform = 'scale(0.95)';
@@ -70,11 +69,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
             } catch (error) {
                 console.error('Error updating wishlist:', error);
-                
+
                 // Show error feedback
                 const originalColor = this.style.backgroundColor;
                 this.style.backgroundColor = 'rgba(220, 53, 69, 0.1)';
-                
+
                 setTimeout(() => {
                     this.style.backgroundColor = originalColor;
                 }, 1000);

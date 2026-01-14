@@ -24,7 +24,7 @@ async function updateCartQuantity(productId, quantity) {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ 
+                body: JSON.stringify({
                     productID: productId,
                     quantity: quantity,
                     type: 'carrello'
@@ -37,7 +37,6 @@ async function updateCartQuantity(productId, quantity) {
 
             await updateCartCount();
             const data = await response.json();
-            console.log('Cart updated:', data);
         } catch (error) {
             console.error('Error updating cart quantity:', error);
         }
@@ -63,7 +62,6 @@ async function removeFromCart(productId) {
         await updateCartCount();
 
         const data = await response.json();
-        console.log('Product removed:', data);
 
         // Rimuovi elemento DOM
         const productRow = document.querySelector(`.cart-item[data-product-id="${productId}"]`);
@@ -104,16 +102,16 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.cart-button').forEach(button => {
         button.addEventListener('click', async function() {
             const productId = this.getAttribute('data-product-id');
-            
+
             // Find quantity input - handle both structures
             let quantityInput = this.parentElement.querySelector('.quantity-input');
             if (!quantityInput) {
                 // Fallback for product page structure
                 quantityInput = document.querySelector(`input[data-product-id="${productId}"].quantity-input`);
             }
-            
+
             const quantity = quantityInput ? parseInt(quantityInput.value) || 1 : 1;
-            
+
             if (quantity > 0) {
                 try {
                     const response = await fetch('./append-product.php', {
@@ -121,9 +119,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ 
-                            productID: productId, 
-                            quantity: quantity, 
+                        body: JSON.stringify({
+                            productID: productId,
+                            quantity: quantity,
                             type: 'carrello'
                         })
                     });
@@ -135,13 +133,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Visual feedback
                     const originalText = this.innerHTML;
                     const originalBg = this.style.backgroundColor;
-                    
+
                     this.style.backgroundColor = '#28a745';
                     this.innerHTML = '<i class="bi bi-check"></i> Aggiunto!';
-                    
+
                     // Update cart count
                     await updateCartCount();
-                    
+
                     // Reset visual state
                     setTimeout(() => {
                         this.style.backgroundColor = originalBg;
@@ -154,16 +152,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
 
                     const data = await response.json();
-                    console.log('Cart updated:', data);
 
                 } catch (error) {
                     console.error('Error adding to cart:', error);
-                    
+
                     // Error visual feedback
                     const originalText = this.innerHTML;
                     this.style.backgroundColor = '#dc3545';
                     this.innerHTML = '<i class="bi bi-x"></i> Errore!';
-                    
+
                     setTimeout(() => {
                         this.style.backgroundColor = '';
                         this.innerHTML = originalText;
@@ -174,7 +171,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (quantityInput) {
                     quantityInput.style.borderColor = '#dc3545';
                     quantityInput.style.boxShadow = '0 0 0 3px rgba(220, 53, 69, 0.1)';
-                    
+
                     setTimeout(() => {
                         quantityInput.style.borderColor = '';
                         quantityInput.style.boxShadow = '';
