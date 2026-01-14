@@ -19,7 +19,7 @@ session_start();
 
         // Recupera l'utente
         $utente = Utente::find($_SESSION['LoggedUser']['id']);
-        
+
         if (!$utente) {
             $errors[] = 'Utente non trovato.';
         } else {
@@ -31,7 +31,7 @@ session_start();
 
         if ($errors) {
             $_SESSION['errors'] = $errors;
-            header("Location: ../profile.php");
+            header("Location: ../profile-settings.php");
             exit;
         }
 
@@ -46,12 +46,12 @@ session_start();
         //]);
 
         $_SESSION['success'] = 'Password aggiornata con successo.';
-        header("Location: ../profile.php");
+        header("Location: ../profile-settings.php");
         exit;
 
     } else {
         // Se non POST, reindirizza
-        header("Location: ../profile.php");
+        header("Location: ../profile-settings.php");
         exit;
     }
 ?>
