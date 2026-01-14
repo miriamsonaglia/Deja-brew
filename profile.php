@@ -136,10 +136,11 @@
 
 
 		<script>
+			formEdit = document.getElementById('edit_description_form')
+			formReset = document.getElementById('reset_password_form')
 
-			document.getElementById('edit_description_form').reset();
-			document.getElementById('reset_password_form').reset();
-
+			if(formEdit) document.getElementById('edit_description_form').reset();
+			if(formReset) document.getElementById('reset_password_form').reset();
 
 			document.getElementById('reset_password_form').addEventListener('input', function() {
 				const newPassword = document.getElementById('new_password').value;
