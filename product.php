@@ -137,7 +137,7 @@ function renderStars($media) {
     }
 ?>
 
-<div class="container my-5">
+<main class="container my-5">
   <div class="row g-4">
     <!-- Carosello immagini -->
     <div class="col-md-6">
@@ -163,7 +163,7 @@ function renderStars($media) {
     <!-- Dettagli prodotto -->
     <div class="col-md-6">
       <div class="product-card">
-        <h2 class="fw-bold product-name"><?php echo $prodotto->nome; ?></h2>
+        <h1 class="fw-bold product-name"><?php echo $prodotto->nome; ?></h1>
 
         <!-- Nome venditore -->
         <div class="mb-1">
@@ -181,8 +181,8 @@ function renderStars($media) {
             <small class="text-muted ms-2">(<?php echo number_format($mediaRecensioni, 1); ?> / 5)</small>
           </div>
           <?php if(isset($userRole) && ($userRole == Role::BUYER->value)): ?>
-            <a href="#" class="ms-3 text-decoration-none text-primary fw-semibold" data-bs-toggle="modal" data-bs-target="#modalRecensione">
-              <i class="bi bi-pencil-square"></i> Aggiungi una recensione
+            <a href="#" class="ms-3 text-decoration-none text-primary fw-semibold" data-bs-toggle="modal" data-bs-target="#modalRecensione" aria-label="Aggiungi una recensione">
+              <i class="bi bi-pencil-square" aria-hidden="true"></i> Aggiungi una recensione
             </a>
           <?php endif; ?>
         </div>
@@ -190,9 +190,9 @@ function renderStars($media) {
         <p class="text-muted">
           <?php echo $prodotto->categoria->descrizione; ?> • <?php echo $prodotto->tipo; ?>
         </p>
-        <h3 class="text-success fw-bold mb-3 product-price">
+        <h2 class="text-success fw-bold mb-3 product-price">
           <?php echo number_format($prodotto->prezzo, 2); ?> €
-        </h3>
+        </h2>
 
         <p><strong>Peso:</strong> <?php echo $prodotto->peso; ?> g</p>
         <p><strong>Provenienza:</strong> <?php echo $prodotto->provenienza; ?></p>
@@ -225,13 +225,8 @@ function renderStars($media) {
 
             <button class="wish-button"
                     data-product-id="<?php echo $prodotto->id; ?>"
-                    <?php if(wished($prodotto->id, $_SESSION['LoggedUser']['id'])): ?>
-                      title="Rimuovi dalla wishlist">
-                      <i class="bi bi-heart-fill"></i>
-                    <?php else: ?>
-                      title="Aggiungi alla wishlist">
-                      <i class="bi bi-heart"></i>
-                    <?php endif; ?>
+                    aria-label="<?php echo wished($prodotto->id, $_SESSION['LoggedUser']['id']) ? 'Rimuovi dalla wishlist' : 'Aggiungi alla wishlist'; ?>">
+              <i class="bi <?php echo wished($prodotto->id, $_SESSION['LoggedUser']['id']) ? 'bi-heart-fill text-danger' : 'bi-heart'; ?>" aria-hidden="true"></i>
             </button>
           </div>
 
@@ -246,17 +241,17 @@ function renderStars($media) {
         <!-- PULSANTI CONDIVIDI -->
         <div class="d-flex gap-2 mt-3">
           <button id="btnCondividi" class="btn btn-outline-secondary">
-            <i class="bi bi-link-45deg"></i> Condividi
+            <i class="bi bi-link-45deg" aria-hidden="true"></i> Condividi
           </button>
         </div>
       </div>
     </div>
   </div>
-</div>
+</main>
 
 <!-- Sezione Recensioni -->
 <div class="container my-5">
-  <h4 class="fw-bold mb-4">Recensioni</h4>
+  <h3 class="fw-bold mb-4">Recensioni</h3>
 
   <?php foreach ($recensioni as $index => $rec): ?>
     <div class="recensione mb-3 <?php echo $index >= 2 ? 'd-none extra-recensione' : ''; ?>">

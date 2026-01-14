@@ -53,7 +53,7 @@
             <section class="category-section">
                 <div class="category-header">
                     <h1 class="category-title"><?php echo htmlspecialchars($category->descrizione); ?></h1>
-                    <a href="./category-products.php?category=<?php echo $category->id; ?>" class="view-all-link">Vedi tutti</a>
+                    <a href="./category-products.php?category=<?php echo $category->id; ?>" class="view-all-link" aria-label="Vedi tutti i prodotti della categoria <?php echo htmlspecialchars($category->descrizione); ?>">Vedi tutti</a>
                 </div>
 
                 <div class="slider-wrapper" role ="region" aria-label="Prodotti della categoria <?php echo htmlspecialchars($category->descrizione); ?>">
@@ -77,6 +77,7 @@
                                         Quantità per <?php echo htmlspecialchars($product->nome); ?>
                                     </label>
                                     <input type="number"
+                                        id="quantity-<?php echo $product->id; ?>"
                                         step="1"
                                         value="1"
                                         min="1"

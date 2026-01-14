@@ -167,15 +167,15 @@ $savedCards = CartaDiCredito::where('id_utente', $datiUtente->id)->get()->map(fu
 					<div class="card-body">
 						<form action="actions/add_card.php" method="POST" class="row g-3">
 							<div class="col-12">
-								<label class="form-label">Nome intestatario</label>
-								<input type="text" name="card_owner" class="form-control" required>
+								<label for="card_owner" class="form-label">Nome intestatario</label>
+								<input type="text" id="card_owner" name="card_owner" class="form-control" required>
 							</div>
 							<div class="col-12">
-								<label class="form-label">Numero carta</label>
-								<input type="text" name="card_number" class="form-control" placeholder="1234 5678 9012 3456" inputmode="numeric" required>
+								<label for="card_number" class="form-label">Numero carta</label>
+								<input type="text" id="card_number" name="card_number" class="form-control" placeholder="1234 5678 9012 3456" inputmode="numeric" required>
 							</div>
 							<div class="col-12">
-								<label class="form-label">Circuito</label>
+								<label for="circuito_pagamento" class="form-label">Circuito</label>
 								<select id="circuito_pagamento" name="circuito_pagamento" class="form-select" required>
 									<option value="">Seleziona</option>
 									<option value="Visa">Visa</option>
@@ -185,12 +185,12 @@ $savedCards = CartaDiCredito::where('id_utente', $datiUtente->id)->get()->map(fu
 								</select>
 							</div>
 							<div class="col-md-6">
-								<label class="form-label">Scadenza</label>
+								<label for="scadenza" class="form-label">Scadenza</label>
 								<input type="month" id="scadenza" name="scadenza" class="form-control" required>
 							</div>
 							<div class="col-md-6">
-								<label class="form-label">CVV</label>
-								<input type="text" name="cvv" class="form-control" placeholder="123" inputmode="numeric" required>
+								<label for="cvv" class="form-label">CVV</label>
+								<input type="text" id="cvv" name="cvv" class="form-control" placeholder="123" inputmode="numeric" required>
 							</div>
 							<div class="col-12 d-grid">
 								<button type="submit" class="btn btn-primary-custom">Salva metodo di pagamento</button>

@@ -40,8 +40,8 @@
     <body class="bg-cream">
         <header></header>
         <?php include('./reusables/navbars/buyer-navbar.php'); ?>
-
-        <div class="container-fluid" id="main-container">
+        <h1 class="visually-hidden">Carrello</h1>
+        <main class="container-fluid" id="main-container">
             <?php if(count($user_cart) > 0): ?>
             <div class="cart-content">
                 <div class="row">
@@ -91,19 +91,23 @@
                                     <div class="col-md-3 col-sm-2">
                                         <div class="d-flex align-items-center justify-content-center">
                                             <button class="cart-quantity-btn btn decrease-btn"
-                                                    onclick="decreaseQuantity(<?php echo $product->id;?>)">
-                                                <i class="bi bi-dash"></i>
+                                                    onclick="decreaseQuantity(<?php echo $product->id;?>)"
+                                                    aria-label="Diminuisci quantità di <?php echo htmlspecialchars($product->nome); ?>">
+                                                <i class="bi bi-dash" aria-hidden="true"></i>
                                             </button>
                                             <!-- Quantity Input: Link onchange with cart logic -->
-                                            <input type="text"
+                                            <label for="quantity-<?php echo $product->id;?>" class="visually-hidden">Quantità prodotto <?php echo htmlspecialchars($product->nome); ?></label>
+                                            <input id ="quantity-<?php echo $product->id;?>"
+                                                   type="text"
                                                    value="<?php echo $cart_item->quantita; ?>"
                                                    class="form-control mx-2 text-center quantity-input"
                                                    style="width: 60px;"
                                                    data-product-id="<?php echo $product->id; ?>"
                                                    readonly>
                                             <button class="cart-quantity-btn btn increase-btn"
-                                                    onclick="increaseQuantity(<?php echo $product->id;?>)">
-                                                <i class="bi bi-plus"></i>
+                                                    onclick="increaseQuantity(<?php echo $product->id;?>)"
+                                                    aria-label="Aumenta quantità di <?php echo htmlspecialchars($product->nome); ?>">
+                                                <i class="bi bi-plus" aria-hidden="true"></i>
                                             </button>
                                         </div>
                                     </div>
@@ -203,12 +207,12 @@
                 <h3 class="text-primary-brown mb-3">Il tuo carrello è vuoto</h3>
                 <p class="text-muted mb-4">Aggiungi alcuni prodotti per iniziare i tuoi acquisti!</p>
                 <a href="home.php" class="btn btn-primary-custom">
-                    <i class="bi bi-shop me-2"></i>
+                    <i class="bi bi-shop me-2" aria-hidden="true"></i>
                     Inizia lo Shopping
                 </a>
             </div>
             <?php endif; ?>
-        </div>
+        </main>
 
         <footer></footer>
 

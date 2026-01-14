@@ -65,7 +65,7 @@
 </head>
 <body>
 
-<div class="container d-flex justify-content-center align-items-center min-vh-100">
+<main class="container d-flex justify-content-center align-items-center min-vh-100">
     <div class="card shadow p-4" style="max-width: 450px; width: 100%; border-radius: 1rem; background-color: #FAF8F6;">
 
         <h1 class="text-center mb-4 fw-bold">Deja-brew</h1>
@@ -78,15 +78,15 @@
             <input type="hidden" name="_token" value="<?= $_SESSION['_token'] ?? '' ?>">
 
             <div class="mb-3">
-                <label class="form-label fw-semibold">Email</label>
-                <input type="email" class="form-control email-input" name="email" required>
+                <label for="email" class="form-label fw-semibold">Email</label>
+                <input type="email" id="email" class="form-control email-input" name="email" required>
             </div>
 
             <div class="mb-3">
-                <label class="form-label fw-semibold">Password</label>
+                <label for="password" class="form-label fw-semibold">Password</label>
                 <div class="input-group">
-                    <input type="password" class="form-control password-input" name="password" required>
-                    <button type="button" class="btn toggle-password-btn" aria-label="Mostra/Nascondi password">
+                    <input type="password" id="password" class="form-control password-input" name="password" required>
+                    <button type="button" class="btn toggle-password-btn" aria-label="Mostra password">
                         <span class="toggle-icon">
                             <!-- icona occhio barrato iniziale -->
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -125,7 +125,7 @@
             <a href="home.php" class="text-decoration-underline text-primary fw-semibold">Prosegui senza registrarti</a>
         </div>
     </div>
-</div>
+</main>
 
 <script>
     let currentRole = 'acquirente';
@@ -162,6 +162,7 @@
         const isPassword = passwordInput.type === 'password';
         passwordInput.type = isPassword ? 'text' : 'password';
         toggleIcon.innerHTML = isPassword ? eyeOpen : eyeSlash;
+        togglePasswordBtn.setAttribute('aria-label', isPassword ? 'Nascondi password' : 'Mostra password');
     });
 </script>
 

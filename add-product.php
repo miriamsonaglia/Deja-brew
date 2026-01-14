@@ -131,8 +131,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
 <?php include __DIR__ . '/reusables/navbars/vendor-navbar.php'; ?>
-<div class="container form-section mb-5">
-  <h2 class="mb-4 text-center fw-bold">Aggiungi un nuovo prodotto</h2>
+<main class="container form-section mb-5">
+  <h1 class="mb-4 text-center fw-bold">Aggiungi un nuovo prodotto</h1>
   
   <?php if (isset($_SESSION['success'])): ?>
     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -157,42 +157,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <form method="POST" enctype="multipart/form-data">
     <div class="row g-4">
       <div class="col-md-6">
-        <label class="form-label fw-semibold">Foto del prodotto</label>
+        <label for="immagini" class="form-label fw-semibold">Foto del prodotto</label>
         <div class="upload-box mb-3">
           <span>Trascina qui le immagini o clicca per selezionarle</span>
-          <input type="file" class="image-upload-input" name="immagini[]" multiple accept="image/*">
+          <input type="file" id="immagini" class="image-upload-input" name="immagini[]" multiple accept="image/*">
         </div>
         <div id="productCarousel" class="carousel slide d-none" data-bs-ride="carousel">
           <div class="carousel-inner rounded" id="productCarouselInner"></div>
-          <button class="carousel-control-prev d-none" id="carouselPrev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon"></span>
+          <button class="carousel-control-prev d-none" id="carouselPrev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev" aria-label="Immagine precedente">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
           </button>
-          <button class="carousel-control-next d-none" id="carouselNext" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon"></span>
+          <button class="carousel-control-next d-none" id="carouselNext" type="button" data-bs-target="#productCarousel" data-bs-slide="next" aria-label="Immagine successiva">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
           </button>
         </div>
         <div class="text-muted small mt-2" id="noImagesHint">Nessuna immagine selezionata.</div>
       </div>
       <div class="col-md-6">
         <div class="mb-3">
-          <label class="form-label fw-semibold">Nome prodotto</label>
-          <input type="text" class="form-control product-name" name="nome" required>
+          <label for="nome" class="form-label fw-semibold">Nome prodotto</label>
+          <input type="text" id="nome" class="form-control product-name" name="nome" required>
         </div>
         <div class="mb-3">
-          <label class="form-label fw-semibold">Prezzo (€)</label>
-          <input type="number" class="form-control product-price" name="prezzo" step="0.10" required>
+          <label for="prezzo" class="form-label fw-semibold">Prezzo (€)</label>
+          <input type="number" id="prezzo" class="form-control product-price" name="prezzo" step="0.10" required>
         </div>
         <div class="mb-3">
-          <label class="form-label fw-semibold">Peso (g)</label>
-          <input type="number" class="form-control" name="peso" step="0.001">
+          <label for="peso" class="form-label fw-semibold">Peso (g)</label>
+          <input type="number" id="peso" class="form-control" name="peso" step="0.001">
         </div>
         <div class="mb-3">
-          <label class="form-label fw-semibold">Provenienza</label>
-          <input type="text" class="form-control" name="provenienza">
+          <label for="provenienza" class="form-label fw-semibold">Provenienza</label>
+          <input type="text" id="provenienza" class="form-control" name="provenienza">
         </div>
         <div class="mb-3">
-          <label class="form-label fw-semibold">Tipo</label>
-          <select class="form-select" name="tipo">
+          <label for="tipo" class="form-label fw-semibold">Tipo</label>
+          <select id="tipo" class="form-select" name="tipo">
             <option value="">Seleziona tipo</option>
             <option value="Capsule">Capsule</option>
             <option value="Cialde">Cialde</option>
@@ -205,8 +205,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <input type="range" class="form-range" name="intensita" id="intensita" min="1" max="10" value="5">
         </div>
         <div class="mb-3">
-          <label class="form-label fw-semibold">Categoria</label>
-          <select class="form-select" name="categoria_id" required>
+          <label for="categoria_id" class="form-label fw-semibold">Categoria</label>
+          <select id="categoria_id" class="form-select" name="categoria_id" required>
             <option value="">Seleziona categoria</option>
             <?php foreach ($categorie as $categoria): ?>
               <option value="<?= $categoria->id ?>"><?= htmlspecialchars($categoria->descrizione) ?></option>
@@ -214,8 +214,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           </select>
         </div>
         <div class="mb-3">
-          <label class="form-label fw-semibold">Aroma</label>
-          <select class="form-select" name="aroma_id" required>
+          <label for="aroma_id" class="form-label fw-semibold">Aroma</label>
+          <select id="aroma_id" class="form-select" name="aroma_id" required>
             <option value="">Seleziona aroma</option>
             <?php foreach ($aromi as $aroma): ?>
               <option value="<?= $aroma->id ?>"><?= htmlspecialchars($aroma->gusto) ?></option>
@@ -228,7 +228,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
     </div>
   </form>
-</div>
+</main>
 <script src='./dist/custom/js/sidebar-manager.js'></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {

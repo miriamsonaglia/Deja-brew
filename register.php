@@ -63,7 +63,7 @@
 </head>
 <body>
 
-<div class="container d-flex justify-content-center align-items-center min-vh-100">
+<main class="container d-flex justify-content-center align-items-center min-vh-100">
     <div class="card shadow p-4" style="max-width: 500px; width: 100%;">
 
         <!-- Link indietro -->
@@ -77,36 +77,36 @@
         </div>
 
         <!-- Titolo -->
-        <h2 class="text-center mb-4 fw-bold">Registrazione</h2>
+        <h1 class="text-center mb-4 fw-bold">Registrazione</h1>
 
         <!-- Form -->
         <form method="POST" action="authentication.php?action=register">
             <div class="row mb-3">
                 <div class="col">
-                    <label class="form-label fw-semibold">Nome</label>
-                    <input type="text" name="nome" class="form-control" required>
+                    <label for="nome" class="form-label fw-semibold">Nome</label>
+                    <input type="text" id="nome" name="nome" class="form-control" required>
                 </div>
                 <div class="col">
-                    <label class="form-label fw-semibold">Cognome</label>
-                    <input type="text" name="cognome" class="form-control" required>
+                    <label for="cognome" class="form-label fw-semibold">Cognome</label>
+                    <input type="text" id="cognome" name="cognome" class="form-control" required>
                 </div>
             </div>
 
             <div class="mb-3">
-                <label class="form-label fw-semibold">Username</label>
-                <input type="text" name="username" class="form-control" required>
+                <label for="username" class="form-label fw-semibold">Username</label>
+                <input type="text" id="username" name="username" class="form-control" required>
             </div>
 
             <div class="mb-3">
-                <label class="form-label fw-semibold">Email</label>
-                <input type="email" name="email" class="form-control" required>
+                <label for="email" class="form-label fw-semibold">Email</label>
+                <input type="email" id="email" name="email" class="form-control" required>
             </div>
 
             <div class="row mb-3">
                 <div class="col">
-                    <label class="form-label fw-semibold">Password</label>
+                    <label for="password" class="form-label fw-semibold">Password</label>
                     <div class="input-group">
-                        <input type="password" name="password" class="form-control" required>
+                        <input type="password" id="password" name="password" class="form-control" required>
                         <button type="button" class="btn toggle-btn" aria-label="Mostra/Nascondi password">
                             <!-- Icona occhio barrato -->
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-slash" viewBox="0 0 16 16">
@@ -119,9 +119,9 @@
                 </div>
 
                 <div class="col">
-                    <label class="form-label fw-semibold">Conferma Password</label>
+                    <label for="password_confirmation" class="form-label fw-semibold">Conferma Password</label>
                     <div class="input-group">
-                        <input type="password" name="password_confirmation" class="form-control" required>
+                        <input type="password" id="password_confirmation" name="password_confirmation" class="form-control" required>
                         <button type="button" class="btn toggle-btn" aria-label="Mostra/Nascondi conferma password">
                             <!-- Icona occhio barrato -->
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-slash" viewBox="0 0 16 16">
@@ -135,24 +135,24 @@
             </div>
 
             <!-- Selezione ruolo -->
-            <div class="text-center mb-4">
-                <label class="form-label fw-semibold d-block mb-2">Seleziona il tuo ruolo</label>
+            <fieldset class="text-center mb-4">
+                <legend class="form-label fw-semibold d-block mb-2">Seleziona il tuo ruolo</legend>
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="role" value="acquirente" checked>
-                    <label class="form-check-label text-primary fw-semibold">Acquirente</label>
+                    <input class="form-check-input" type="radio" id="role_acquirente" name="role" value="acquirente" checked>
+                    <label for="role_acquirente" class="form-check-label text-primary fw-semibold">Acquirente</label>
                 </div>
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="role" value="venditore">
-                    <label class="form-check-label text-primary fw-semibold">Venditore</label>
+                    <input class="form-check-input" type="radio" id="role_venditore" name="role" value="venditore">
+                    <label for="role_venditore" class="form-check-label text-primary fw-semibold">Venditore</label>
                 </div>
-            </div>
+            </fieldset>
 
             <div class="d-grid">
                 <button type="submit" class="btn btn-info fw-semibold">Registrati</button>
             </div>
         </form>
     </div>
-</div>
+</main>
 
 <!-- Toggle JS (senza id) -->
 <script>

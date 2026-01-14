@@ -35,10 +35,10 @@
             <!-- Sostituisci questo blocco nel tuo category-products.php: -->
             <div class="category-section my-4">
                 <div class="category-header">
-                    <a href="./home.php" class="back-button" title="Torna alla home">
-                        <i class="bi bi-arrow-left"></i>
+                    <a href="./home.php" class="back-button" title="Torna alla home" aria-label="Torna alla home">
+                        <i class="bi bi-arrow-left" aria-hidden="true"></i>
                     </a>
-                    <h1 class="category-title"><?php echo htmlspecialchars($category->descrizione); ?></h1>
+                    <h2 class="category-title"><?php echo htmlspecialchars($category->descrizione); ?></h2>
                 </div>
 
                 <div class="product-grid d-flex flex-wrap justify-content-center gap-4">
@@ -61,11 +61,13 @@
                             <div class="product-price mb-3"><?php echo number_format($product->prezzo, 2); ?> €</div>
                                 <?php if($_SESSION['UserRole'] === Role::BUYER->value): ?>
                                     <div class="d-flex align-items-center justify-content-center gap-2 mb-3">
+                                        <label for="quantity-<?php echo $product->id; ?>" class="visually-hidden">Quantità per <?php echo htmlspecialchars($product->nome); ?></label>
                                         <input type="number"
                                                step="1"
                                                value="1"
                                                min="1"
                                                class="quantity-input"
+                                               id="quantity-<?php echo $product->id; ?>"
                                                data-product-id="<?php echo $product->id; ?>">
                                     </div>
 

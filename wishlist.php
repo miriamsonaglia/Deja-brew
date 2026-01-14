@@ -82,20 +82,24 @@
 
                             <div class="col-md-2 col-sm-2">
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <button class="cart-quantity-btn btn decrease-btn"
-                                                    onclick="decreaseQuantity(<?php echo $product->id;?>)">
-                                                <i class="bi bi-dash"></i>
+                                            <button type="button" class="cart-quantity-btn btn decrease-btn"
+                                                    onclick="decreaseQuantity(<?php echo $product->id;?>)"
+                                                    aria-label="Diminuisci quantita di <?php echo htmlspecialchars($product->nome); ?>">
+                                                <i class="bi bi-dash" aria-hidden="true"></i>
                                             </button>
                                             <!-- Quantity Input: Link onchange with cart logic -->
+                                            <label for="quantity-<?php echo $product->id; ?>" class="visually-hidden">Quantità per <?php echo htmlspecialchars($product->nome); ?></label>
                                             <input type="text"
+                                                   id="quantity-<?php echo $product->id; ?>"
                                                    value="<?php echo $wishlist_item->quantita; ?>"
                                                    class="form-control mx-2 text-center quantity-input"
                                                    style="width: 60px;"
                                                    data-product-id="<?php echo $product->id; ?>"
                                                    readonly>
-                                            <button class="cart-quantity-btn btn increase-btn"
-                                                    onclick="increaseQuantity(<?php echo $product->id;?>)">
-                                                <i class="bi bi-plus"></i>
+                                            <button type="button" class="cart-quantity-btn btn increase-btn"
+                                                    onclick="increaseQuantity(<?php echo $product->id;?>)"
+                                                    aria-label="Aumenta quantita di <?php echo htmlspecialchars($product->nome); ?>">
+                                                <i class="bi bi-plus" aria-hidden="true"></i>
                                             </button>
                                         </div>
                                     </div>
@@ -168,8 +172,8 @@
                         Aggiungi prodotti che ti interessano per trovarli facilmente in seguito!
                     </p>
                     <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
-                        <a href="home.php" class="btn btn-primary-custom">
-                            <i class="bi bi-shop me-2"></i>
+                        <a href="home.php" class="btn btn-primary-custom" aria-label="Esplora Prodotti">
+                            <i class="bi bi-shop me-2" aria-hidden="true"></i>
                             Esplora Prodotti
                         </a>
                     </div>

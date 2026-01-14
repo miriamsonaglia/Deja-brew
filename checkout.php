@@ -191,8 +191,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_c
 </head>
 <body>
 
-<div class="container my-5">
-    <h2 class="mb-4">Checkout</h2>
+<main class="container my-5">
+    <h1 class="mb-4">Checkout</h1>
 
     <!-- Messaggi -->
     <?php if (isset($_SESSION['success'])): ?>
@@ -267,28 +267,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_c
             </form>
         </div>
     </div>
-</div>
+</main>
 
 <!-- Modal nuova carta -->
 <div class="modal fade" id="modalAggiungiCarta" tabindex="-1" aria-labelledby="modalAggiungiCartaLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Aggiungi nuova carta di credito</h5>
+                <h5 class="modal-title" id="modalAggiungiCartaLabel">Aggiungi nuova carta di credito</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
             </div>
             <form action="actions/add_card.php" method="POST">
                 <div class="modal-body">  
                     <div class="mb-3">
-                        <label class="form-label">Nome intestatario</label>
-                        <input type="text" name="card_owner" class="form-control" required>
+                        <label for="card_owner" class="form-label">Nome intestatario</label>
+                        <input type="text" id="card_owner" name="card_owner" class="form-control" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Numero carta</label>
-                        <input type="text" name="card_number" class="form-control" placeholder="1234 5678 9012 3456" inputmode="numeric" required>
+                        <label for="card_number" class="form-label">Numero carta</label>
+                        <input type="text" id="card_number" name="card_number" class="form-control" placeholder="1234 5678 9012 3456" inputmode="numeric" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Circuito</label>
+                        <label for="circuito_pagamento" class="form-label">Circuito</label>
                         <select id="circuito_pagamento" name="circuito_pagamento" class="form-select" required>
                             <option value="">Seleziona</option>
                             <option value="Visa">Visa</option>
@@ -299,12 +299,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_c
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Scadenza</label>
+                            <label for="scadenza" class="form-label">Scadenza</label>
                             <input type="month" id="scadenza" name="scadenza" class="form-control" required>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">CVV</label>
-                            <input type="text" name="cvv" class="form-control" placeholder="123" inputmode="numeric" required>
+                            <label for="cvv" class="form-label">CVV</label>
+                            <input type="text" id="cvv" name="cvv" class="form-control" placeholder="123" inputmode="numeric" required>
                         </div>
                     </div>
                 </div>
