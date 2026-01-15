@@ -54,11 +54,11 @@ $utenti = [
     // Compratori
     ['nome' => 'Mario', 'cognome' => 'Rossi', 'email' => 'mario.rossi@email.it', 'username' => 'mariorossi', 'password' => password_hash('password123', PASSWORD_DEFAULT), 'immagine_profilo' => null],
     ['nome' => 'Laura', 'cognome' => 'Bianchi', 'email' => 'laura.bianchi@email.it', 'username' => 'laurab', 'password' => password_hash('password123', PASSWORD_DEFAULT), 'immagine_profilo' => null],
-    ['nome' => 'Giulia', 'cognome' => 'Verdi', 'email' => 'giulia.verdi@email.it', 'username' => 'giuliav', 'password' => password_hash('password123', PASSWORD_DEFAULT), 'immagine_profilo' => null],
+    ['nome' => 'Giulia', 'cognome' => 'Verdi', 'email' => 'giulia.verdi@email.it', 'username' => 'giuliav', 'password' => password_hash('password123', PASSWORD_DEFAULT), 'immagine_profilo' => 'profile_69689545c8bfe6.74956311.jpg'],
 
     // Venditori
-    ['nome' => 'Caffè', 'cognome' => 'Verona', 'email' => 'info@caffeverona.it', 'username' => 'caffe_verona', 'password' => password_hash('venditore123', PASSWORD_DEFAULT), 'immagine_profilo' => null],
-    ['nome' => 'Torrefazione', 'cognome' => 'Artigianale', 'email' => 'vendite@torrefazione.it', 'username' => 'torrefazione', 'password' => password_hash('venditore123', PASSWORD_DEFAULT), 'immagine_profilo' => null],
+    ['nome' => 'Caffè', 'cognome' => 'Verona', 'email' => 'info@caffeverona.it', 'username' => 'caffe_verona', 'password' => password_hash('venditore123', PASSWORD_DEFAULT), 'immagine_profilo' => 'profile_69689528697b00.12734665.jpg'],
+    ['nome' => 'Torrefazione', 'cognome' => 'Artigianale', 'email' => 'vendite@torrefazione.it', 'username' => 'torrefazione', 'password' => password_hash('venditore123', PASSWORD_DEFAULT), 'immagine_profilo' => 'profile_696895604ca3a0.01091751.png'],
 ];
 
 foreach ($utenti as $utente) {
@@ -182,9 +182,9 @@ echo "✓ recensione popolata\n";
 
 // 12. Carte di credito (solo per i compratori)
 DB::table('cartaDiCredito')->insert([
-    ['id_utente' => $compratoriIds[0], 'circuito_pagamento' => 'Visa', 'codice_carta' => '4111111111111111', 'cvv_carta' => 'enc_123', 'nome_titolare' => 'Mario Rossi', 'scadenza_mese' => 12, 'scadenza_anno' => 2028],
-    ['id_utente' => $compratoriIds[1], 'circuito_pagamento' => 'MasterCard', 'codice_carta' => '5555555555554444', 'cvv_carta' => 'enc_456', 'nome_titolare' => 'Laura Bianchi', 'scadenza_mese' => 06, 'scadenza_anno' => 2027],
-    ['id_utente' => $compratoriIds[2], 'circuito_pagamento' => 'American Express', 'codice_carta' => '378282246310005', 'cvv_carta' => 'enc_789', 'nome_titolare' => 'Giulia Verdi', 'scadenza_mese' => 11, 'scadenza_anno' => 2026],
+    ['id_utente' => $compratoriIds[0], 'circuito_pagamento' => 'American Express', 'codice_carta' => '378282246310005', 'cvv_carta' => '789', 'nome_titolare' => 'Giulia Verdi', 'scadenza_mese' => 11, 'scadenza_anno' => 2026],
+    ['id_utente' => $compratoriIds[1], 'circuito_pagamento' => 'MasterCard', 'codice_carta' => '5555555555554444', 'cvv_carta' => '456', 'nome_titolare' => 'Laura Bianchi', 'scadenza_mese' => 06, 'scadenza_anno' => 2027],
+    ['id_utente' => $compratoriIds[2], 'circuito_pagamento' => 'Visa', 'codice_carta' => '4111111111111111', 'cvv_carta' => '123', 'nome_titolare' => 'Mario Rossi', 'scadenza_mese' => 12, 'scadenza_anno' => 2028],
 ]);
 
 echo "✓ cartaDiCredito popolata\n";
