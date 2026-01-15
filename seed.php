@@ -85,7 +85,7 @@ foreach ($venditoriIds as $id) {
 }
 
 echo "✓ utenteCompratore e utenteVenditore popolate\n";
-
+//TODO da eliminare
 // 6. ImpostazioniUtente (una per ogni utente)
 $allUserIds = DB::table('utente')->pluck('id');
 foreach ($allUserIds as $id) {
@@ -105,16 +105,21 @@ $venditore2 = DB::table('utenteVenditore')->where('id_utente', $venditoriIds[1])
 $prodotti = [
     ['nome' => 'Espresso Classico', 'tipo' => 'grani', 'prezzo' => 12.90, 'intensita' => 'Media', 'fotografia' => null, 'provenienza' => 'Brasile', 'peso' => 1.000, 'id_venditore' => $venditore1, 'categoria_id' => 1, 'aroma_id' => 5],
     ['nome' => 'Arabica 100%', 'tipo' => 'macinato', 'prezzo' => 15.50, 'intensita' => 'Delicata', 'fotografia' => null, 'provenienza' => 'Etiopia', 'peso' => 0.250, 'id_venditore' => $venditore1, 'categoria_id' => 2, 'aroma_id' => 7],
-    ['nome' => 'Nocciola Cremosa', 'tipo' => 'capsule', 'prezzo' => 4.99, 'intensita' => 'Media', 'fotografia' => null, 'provenienza' => 'Italia', 'peso' => null, 'id_venditore' => $venditore2, 'categoria_id' => 3, 'aroma_id' => 3],
-    ['nome' => 'Intenso Decaffeinato', 'tipo' => 'macinato', 'prezzo' => 14.20, 'intensita' => 'Forte', 'fotografia' => null, 'provenienza' => 'Colombia', 'peso' => 0.500, 'id_venditore' => $venditore2, 'categoria_id' => 2, 'aroma_id' => 6],
-    ['nome' => 'Kit Macchina Moka', 'tipo' => 'accessorio', 'prezzo' => 29.90, 'intensita' => null, 'fotografia' => null, 'provenienza' => 'Italia', 'peso' => null, 'id_venditore' => $venditore1, 'categoria_id' => 6, 'aroma_id' => null],
+    ['nome' => 'Nocciola Cremosa', 'tipo' => 'capsule', 'prezzo' => 4.99, 'intensita' => 'Media', 'fotografia' => '1767898337_nocciolacremosa.jpg', 'provenienza' => 'Italia', 'peso' => null, 'id_venditore' => $venditore2, 'categoria_id' => 3, 'aroma_id' => 3],
+    ['nome' => 'Intenso Decaffeinato', 'tipo' => 'macinato', 'prezzo' => 14.20, 'intensita' => 'Forte', 'fotografia' => '1767898337_macinatointensodecaffeinato.jpg', 'provenienza' => 'Colombia', 'peso' => 0.500, 'id_venditore' => $venditore2, 'categoria_id' => 2, 'aroma_id' => 6],
+    ['nome' => 'Kit Macchina Moka', 'tipo' => 'accessorio', 'prezzo' => 29.90, 'intensita' => null, 'fotografia' => 'Kit_moka.jpg', 'provenienza' => 'Italia', 'peso' => null, 'id_venditore' => $venditore1, 'categoria_id' => 6, 'aroma_id' => null],
+    ['nome' => 'Crazy Spumino', 'tipo' => 'macinato', 'prezzo' => 19.80, 'intensita' => 'Forte', 'fotografia' => '1767898337_crazyspumino.jpg', 'provenienza' => 'Vietnam', 'peso' => 0.200, 'id_venditore' => $venditore2, 'categoria_id' => 2, 'aroma_id' => 5],
+    ['nome' => 'Vanilla Dream', 'tipo' => 'capsule', 'prezzo' => 13.49, 'intensita' => 'Delicata', 'fotografia' => '1767898340_vanilladream.jpg', 'provenienza' => 'India', 'peso' => 0.400, 'id_venditore' => $venditore1, 'categoria_id' => 3, 'aroma_id' => 4],
+    ['nome' => 'Solubile Classico', 'tipo' => 'solubile', 'prezzo' => 9.99, 'intensita' => 'Media', 'fotografia' => '1767898343_solubileclassic.jpg', 'provenienza' => 'Perù', 'peso' => 0.100, 'id_venditore' => $venditore2, 'categoria_id' => 5, 'aroma_id' => 6],
+    ['nome' => 'Solubile Per Latte', 'tipo' => 'solubile', 'prezzo' => 9.99, 'intensita' => 'Delicata', 'fotografia' => '1767898349_solubileperlatte.jpg', 'provenienza' => 'Perù', 'peso' => 0.100, 'id_venditore' => $venditore2, 'categoria_id' => 5, 'aroma_id' => 5],
+    ['nome' => 'Caramello Dolce', 'tipo' => 'capsule', 'prezzo' => 13.49, 'intensita' => 'Media', 'fotografia' => '1767898352_caramellodolce.jpg', 'provenienza' => 'Colombia', 'peso' => 0.400, 'id_venditore' => $venditore1, 'categoria_id' => 4, 'aroma_id' => 2],
 ];
 
 foreach ($prodotti as $prod) {
     DB::table('prodotto')->insert($prod);
 }
 
-echo "✓ prodotto popolata (5 prodotti)\n";
+echo "✓ prodotto popolata (10 prodotti)\n";
 
 // 8. Liste (carrello e desideri)
 $compratoreId = DB::table('utenteCompratore')->where('id_utente', $compratoriIds[0])->value('id'); // Mario Rossi
@@ -123,8 +128,11 @@ $prodottoIds = DB::table('prodotto')->pluck('id');
 DB::table('lista')->insert([
     ['id_utente_compratore' => $compratoreId, 'id_prodotto' => $prodottoIds[0], 'tipo' => 'carrello', 'quantita' => 2],
     ['id_utente_compratore' => $compratoreId, 'id_prodotto' => $prodottoIds[2], 'tipo' => 'carrello', 'quantita' => 1],
-    ['id_utente_compratore' => $compratoreId, 'id_prodotto' => $prodottoIds[1], 'tipo' => 'desideri', 'quantita' => 1],
+    ['id_utente_compratore' => $compratoreId, 'id_prodotto' => $prodottoIds[6], 'tipo' => 'desideri', 'quantita' => 1],
+    ['id_utente_compratore' => $compratoreId, 'id_prodotto' => $prodottoIds[4], 'tipo' => 'desideri', 'quantita' => 1],
+    ['id_utente_compratore' => $compratoreId, 'id_prodotto' => $prodottoIds[8], 'tipo' => 'desideri', 'quantita' => 1],
     ['id_utente_compratore' => $compratoreId, 'id_prodotto' => $prodottoIds[3], 'tipo' => 'desideri', 'quantita' => 1],
+    ['id_utente_compratore' => $compratoreId, 'id_prodotto' => $prodottoIds[4], 'tipo' => 'desideri', 'quantita' => 1],
 ]);
 
 echo "✓ lista (carrello e desideri) popolata\n";
@@ -132,8 +140,15 @@ echo "✓ lista (carrello e desideri) popolata\n";
 // 9. Ordini
 DB::table('ordine')->insert([
     ['id_utente' => $compratoriIds[0], 'id_prodotto' => $prodottoIds[0], 'status' => 'completato', 'prezzo_totale' => 25.80, 'quantita' => 2],
-    ['id_utente' => $compratoriIds[1], 'id_prodotto' => $prodottoIds[2], 'status' => 'in elaborazione', 'prezzo_totale' => 9.98, 'quantita' => 2],
+    ['id_utente' => $compratoriIds[0], 'id_prodotto' => $prodottoIds[1], 'status' => 'completato', 'prezzo_totale' => 15.50, 'quantita' => 1],
+    ['id_utente' => $compratoriIds[1], 'id_prodotto' => $prodottoIds[2], 'status' => 'completato', 'prezzo_totale' => 9.98, 'quantita' => 2],
+    ['id_utente' => $compratoriIds[0], 'id_prodotto' => $prodottoIds[3], 'status' => 'completato', 'prezzo_totale' => 14.20, 'quantita' => 1],
     ['id_utente' => $compratoriIds[2], 'id_prodotto' => $prodottoIds[4], 'status' => 'completato', 'prezzo_totale' => 29.90, 'quantita' => 1],
+    ['id_utente' => $compratoriIds[1], 'id_prodotto' => $prodottoIds[5], 'status' => 'completato', 'prezzo_totale' => 19.80, 'quantita' => 1],
+    ['id_utente' => $compratoriIds[1], 'id_prodotto' => $prodottoIds[6], 'status' => 'in elaborazione', 'prezzo_totale' => 13.49, 'quantita' => 1],
+    ['id_utente' => $compratoriIds[2], 'id_prodotto' => $prodottoIds[7], 'status' => 'completato', 'prezzo_totale' => 9.99, 'quantita' => 1],
+    ['id_utente' => $compratoriIds[2], 'id_prodotto' => $prodottoIds[8], 'status' => 'completato', 'prezzo_totale' => 9.99, 'quantita' => 1],
+    ['id_utente' => $compratoriIds[0], 'id_prodotto' => $prodottoIds[9], 'status' => 'completato', 'prezzo_totale' => 13.49, 'quantita' => 1],
 ]);
 
 $ordineIds = DB::table('ordine')->pluck('id');
@@ -143,7 +158,15 @@ echo "✓ ordine popolata\n";
 // 10. Fatture
 DB::table('fattura')->insert([
     ['id_utente' => $compratoriIds[0], 'id_venditore' => $venditore1, 'id_ordine' => $ordineIds[0], 'transaction_id' => 'txn_123456789'],
-    ['id_utente' => $compratoriIds[2], 'id_venditore' => $venditore1, 'id_ordine' => $ordineIds[2], 'transaction_id' => 'txn_987654321'],
+    ['id_utente' => $compratoriIds[1], 'id_venditore' => $venditore1, 'id_ordine' => $ordineIds[1], 'transaction_id' => 'txn_234567890'],
+    ['id_utente' => $compratoriIds[2], 'id_venditore' => $venditore2, 'id_ordine' => $ordineIds[2], 'transaction_id' => 'txn_987654321'],
+    ['id_utente' => $compratoriIds[0], 'id_venditore' => $venditore2, 'id_ordine' => $ordineIds[3], 'transaction_id' => 'txn_789123456'],
+    ['id_utente' => $compratoriIds[1], 'id_venditore' => $venditore1, 'id_ordine' => $ordineIds[4], 'transaction_id' => 'txn_456789123'],
+    ['id_utente' => $compratoriIds[2], 'id_venditore' => $venditore2, 'id_ordine' => $ordineIds[5], 'transaction_id' => 'txn_321654987'],
+    ['id_utente' => $compratoriIds[0], 'id_venditore' => $venditore1, 'id_ordine' => $ordineIds[6], 'transaction_id' => 'txn_123456789'],
+    ['id_utente' => $compratoriIds[1], 'id_venditore' => $venditore2, 'id_ordine' => $ordineIds[7], 'transaction_id' => 'txn_654987321'],
+    ['id_utente' => $compratoriIds[2], 'id_venditore' => $venditore2, 'id_ordine' => $ordineIds[8], 'transaction_id' => 'txn_852369741'],
+    ['id_utente' => $compratoriIds[0], 'id_venditore' => $venditore1, 'id_ordine' => $ordineIds[9], 'transaction_id' => 'txn_147258369'],
 ]);
 
 echo "✓ fattura popolata\n";
@@ -160,7 +183,8 @@ echo "✓ recensione popolata\n";
 // 12. Carte di credito (solo per i compratori)
 DB::table('cartaDiCredito')->insert([
     ['id_utente' => $compratoriIds[0], 'circuito_pagamento' => 'Visa', 'codice_carta' => '4111111111111111', 'cvv_carta' => 'enc_123', 'nome_titolare' => 'Mario Rossi', 'scadenza_mese' => 12, 'scadenza_anno' => 2028],
-    ['id_utente' => $compratoriIds[1], 'circuito_pagamento' => 'MasterCard', 'codice_carta' => '5555555555554444', 'cvv_carta' => 'enc_456', 'nome_titolare' => 'Laura Bianchi', 'scadenza_mese' => 6, 'scadenza_anno' => 2027],
+    ['id_utente' => $compratoriIds[1], 'circuito_pagamento' => 'MasterCard', 'codice_carta' => '5555555555554444', 'cvv_carta' => 'enc_456', 'nome_titolare' => 'Laura Bianchi', 'scadenza_mese' => 06, 'scadenza_anno' => 2027],
+    ['id_utente' => $compratoriIds[2], 'circuito_pagamento' => 'American Express', 'codice_carta' => '378282246310005', 'cvv_carta' => 'enc_789', 'nome_titolare' => 'Giulia Verdi', 'scadenza_mese' => 11, 'scadenza_anno' => 2026],
 ]);
 
 echo "✓ cartaDiCredito popolata\n";

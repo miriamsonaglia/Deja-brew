@@ -66,7 +66,7 @@
                             <?php foreach($products as $product): ?>
                             <li class="slider-object" data-product-id="<?php echo $product->id; ?>">
                                 <a href="product.php?id=<?php echo $product->id; ?>" class="text-decoration-none text-dark" aria-label="Vai alla pagina del prodotto <?php echo htmlspecialchars($product->nome); ?>">
-                                    <img src="<?php echo (empty($product->fotografia) ? './images/products/Standard_Blend.png' : htmlspecialchars($product->fotografia)); ?>"
+                                    <img src="<?php echo (empty($product->fotografia) ? './images/products/Standard_Blend.png' : './uploads/prodotti/' . htmlspecialchars($product->fotografia)); ?>"
                                         alt="<?php echo htmlspecialchars($product->nome); ?>">
                                     <div class="product-name"><?php echo htmlspecialchars($product->nome); ?></div>
                                 </a>

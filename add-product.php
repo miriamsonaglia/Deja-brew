@@ -91,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     
                     // Salva solo la prima immagine nel campo "fotografia"
                     if ($key === 0) {
-                        $prodotto->fotografia = $filePath;
+                        $prodotto->fotografia = $fileName;
                         $prodotto->save();
                     }
                 }
