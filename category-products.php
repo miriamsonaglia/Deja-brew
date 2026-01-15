@@ -52,7 +52,7 @@
                         data-product-provenienza="<?php echo htmlspecialchars($product->provenienza ?? ''); ?>"
                         data-product-weight="<?php echo $product->peso ?? 0; ?>">
 
-                        <img src="<?php echo (empty($product->fotografia) ? './images/products/Standard_Blend.png' : htmlspecialchars($product->fotografia)); ?>"
+                        <img src="<?php echo (empty($product->fotografia) ? './images/products/Standard_Blend.png' : './uploads/prodotti/' .htmlspecialchars($product->fotografia)); ?>"
                              class="card-img-top"
                              alt="<?php echo htmlspecialchars($product->nome); ?>">
 
