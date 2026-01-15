@@ -46,9 +46,7 @@
 
 			// Get the user ID from query string
 			$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-			if ($_SESSION['LoggedUser']['id'] && $_SESSION['UserRole'] == Role::VENDOR->value) {
-				$id = $_SESSION['LoggedUser']['id'];
-			}
+			
 
 			if ($id <= 0) {
 				die("Invalid user ID");
@@ -120,7 +118,7 @@
 						<div class="col-12 col-md-4 text-center">
 							<img src="<?= htmlspecialchars($avatar) ?>" 
 								 alt="Immagine del profilo di <?= htmlspecialchars($user->username ?? 'Venditore') ?>" 
-								 class="img-fluid w-100 rounded shadow" 
+								 class="img-fluid w-100 rounded" 
 								 style="max-width: 30vh;"
 								 role="img">
 						</div>

@@ -57,7 +57,7 @@ $utenti = [
     ['nome' => 'Giulia', 'cognome' => 'Verdi', 'email' => 'giulia.verdi@email.it', 'username' => 'giuliav', 'password' => password_hash('password123', PASSWORD_DEFAULT), 'immagine_profilo' => null],
 
     // Venditori
-    ['nome' => 'Caffè', 'cognome' => 'Verona', 'email' => 'info@caffe verona.it', 'username' => 'caffe_verona', 'password' => password_hash('venditore123', PASSWORD_DEFAULT), 'immagine_profilo' => null],
+    ['nome' => 'Caffè', 'cognome' => 'Verona', 'email' => 'info@caffeverona.it', 'username' => 'caffe_verona', 'password' => password_hash('venditore123', PASSWORD_DEFAULT), 'immagine_profilo' => null],
     ['nome' => 'Torrefazione', 'cognome' => 'Artigianale', 'email' => 'vendite@torrefazione.it', 'username' => 'torrefazione', 'password' => password_hash('venditore123', PASSWORD_DEFAULT), 'immagine_profilo' => null],
 ];
 

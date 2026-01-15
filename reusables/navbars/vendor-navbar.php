@@ -58,7 +58,7 @@ $notificationCount = getNotificationCount();
                 </a>
             </li>
             <li>
-                <a href="./vendor-profile.php?" class="nav-link">
+                <a href="./vendor-profile.php?id=<?php echo $_SESSION['LoggedUser']['id'] ?>" class="nav-link">
                     <i class="bi bi-person me-2"></i>Account Overview
                 </a>
             </li>

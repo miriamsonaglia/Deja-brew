@@ -75,7 +75,7 @@
 		<div class="container py-4">
 			<div class="row g-4 align-items-center">
 				<div class="col-12 col-md-4 text-center">
-					<img src="<?= htmlspecialchars($avatar) ?>" alt="Immagine profilo" class="img-fluid w-100 rounded shadow" style="max-width: 220px;">
+					<img src="<?= htmlspecialchars($avatar) ?>" alt="Immagine profilo" class="img-fluid w-100 rounded" style="max-width: 220px;">
 					<button class="btn btn-secondary mt-3" data-bs-toggle="modal" data-bs-target="#modalUploadImg">Modifica Immagine Profilo</button>
 				</div>
 				<div class="col-12 col-md-8">
