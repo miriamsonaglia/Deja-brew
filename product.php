@@ -17,9 +17,7 @@ use App\Models\UtenteVenditore;
 session_start();
 $userRole = $_SESSION['UserRole'] ?? Role::GUEST->value;
 
-// ---------------------------------------------------------------------------------------------
-// VERSIONE ELOQUENT (quando il DB sarà popolato)
-// ---------------------------------------------------------------------------------------------
+
  $id = $_GET['id'] ?? 1;
  $prodotto = Prodotto::find($id);
  $immagini = [empty($prodotto->fotografia) ? './images/products/Standard_Blend.png' : './uploads/prodotti/' .$prodotto->fotografia];
@@ -189,6 +187,11 @@ function renderStars($media) {
               <i class="bi bi-pencil-square" aria-hidden="true"></i> Aggiungi una recensione
             </a>
           <?php endif; ?>
+          <?php if(isset($userRole) && ($userRole == Role::VENDOR->value) && $venditore->id_utente == $_SESSION['LoggedUser']['id']): ?>
+            <a href="#" class="ms-3 text-decoration-none text-primary fw-semibold" data-bs-toggle="modal" data-bs-target="#modalModificaArticolo" aria-label="Modifica articolo">
+              <i class="bi bi-pencil-square" aria-hidden="true"></i> Modifica articolo
+            </a>
+          <?php endif; ?>
         </div>
 
         <p class="text-muted">
@@ -208,30 +211,38 @@ function renderStars($media) {
         <?php if(isset($userRole) && ($userRole == Role::BUYER->value)): ?>
           <!-- Actions compatible with JavaScript -->
           <div class="product-actions">
-            <div class="quantity-container">
-              <label for="quantity-<?php echo $prodotto->id; ?>" class="form-label mb-0 me-2">Quantità:</label>
-              <input type="number"
-                     step="1"
-                     value="1"
-                     min="1"
-                     max="99"
-                     class="quantity-input"
-                     id="quantity-<?php echo $prodotto->id; ?>"
-                     data-product-id="<?php echo $prodotto->id; ?>">
-            </div>
+            <span>
+              <div class="quantity-container">
+                <label for="quantity-<?php echo $prodotto->id; ?>" class="form-label">Quantità:</label>
+                <input type="number"
+                       step="1"
+                       value="1"
+                       min="1"
+                       max="99"
+                       class="quantity-input"
+                       id="quantity-<?php echo $prodotto->id; ?>"
+                       data-product-id="<?php echo $prodotto->id; ?>">
+              </div>
+            </span>
 
-            <button class="cart-button"
-                    data-product-id="<?php echo $prodotto->id; ?>"
-                    data-product-name="<?php echo htmlspecialchars($prodotto->nome); ?>"
-                    data-product-price="<?php echo $prodotto->prezzo; ?>">
-              <i class="bi bi-cart-plus"></i> Aggiungi al carrello
-            </button>
+            <span>
+              <div>
+                <button class="cart-button"
+                        data-product-id="<?php echo $prodotto->id; ?>"
+                        data-product-name="<?php echo htmlspecialchars($prodotto->nome); ?>"
+                        data-product-price="<?php echo $prodotto->prezzo; ?>">
+                  <i class="bi bi-cart-plus"></i> Aggiungi al carrello
+                </button>
+              </div>
+            </span>
 
-            <button class="wish-button"
-                    data-product-id="<?php echo $prodotto->id; ?>"
-                    aria-label="<?php echo wished($prodotto->id, $_SESSION['LoggedUser']['id']) ? 'Rimuovi dalla wishlist' : 'Aggiungi alla wishlist'; ?>">
-              <i class="bi <?php echo wished($prodotto->id, $_SESSION['LoggedUser']['id']) ? 'bi-heart-fill text-danger' : 'bi-heart'; ?>" aria-hidden="true"></i>
-            </button>
+            <span>
+              <button class="wish-button"
+                      data-product-id="<?php echo $prodotto->id; ?>"
+                      aria-label="<?php echo wished($prodotto->id, $_SESSION['LoggedUser']['id']) ? 'Rimuovi dalla wishlist' : 'Aggiungi alla wishlist'; ?>">
+                <i class="bi <?php echo wished($prodotto->id, $_SESSION['LoggedUser']['id']) ? 'bi-heart-fill text-danger' : 'bi-heart'; ?>" aria-hidden="true"></i>
+              </button>
+            </span>
           </div>
 
           <!-- Buy now button -->
@@ -239,15 +250,14 @@ function renderStars($media) {
             <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalCheckout">
               <i class="bi bi-bag-check"></i> Acquista ora
             </button>
+            <?php endif; ?>
+            
+            <!-- PULSANTI CONDIVIDI -->
+              <button id="btnCondividi" class="btn btn-outline-secondary">
+                <i class="bi bi-link-45deg" aria-hidden="true"></i> Condividi
+              </button>
+            
           </div>
-        <?php endif; ?>
-                    
-        <!-- PULSANTI CONDIVIDI -->
-        <div class="d-flex gap-2 mt-3">
-          <button id="btnCondividi" class="btn btn-outline-secondary">
-            <i class="bi bi-link-45deg" aria-hidden="true"></i> Condividi
-          </button>
-        </div>
       </div>
     </div>
   </div>
@@ -355,6 +365,49 @@ function renderStars($media) {
         <button type="submit" class="btn btn-warning">Invia</button>
       </div>
     </form>
+  </div>
+</div>
+
+<div class="modal fade" id="modalModificaArticolo" tabindex="-1" aria-labelledby="modalModificaArticoloLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="formModificaArticolo" action="actions/update_card.php" method="POST">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalModificaArticoloLabel">Modifica Articolo</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+        </div>
+        <input type="hidden" id="modal-card_id" name="card_id">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="modal-circuito_pagamento" class="form-label">Circuito della carta</label>
+            <select id="modal-circuito_pagamento" name="circuito_pagamento" class="form-select" required>
+              <option value="">Seleziona</option>
+              <option value="Visa">Visa</option>
+              <option value="MasterCard">MasterCard</option>
+              <option value="American Express">American Express</option>
+              <option value="Maestro">Maestro</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="modal-codice_carta" class="form-label">Numero carta</label>
+            <input type="text" id="modal-codice_carta" name="codice_carta" class="form-control" placeholder="1234 5678 9012 3456" required pattern="\d{16}">
+          </div>
+          <div class="mb-3">
+            <label for="modal-scadenza" class="form-label">Data scadenza</label>
+            <input type="month" id="modal-scadenza" name="scadenza" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="modal-cvv" class="form-label">CVV</label>
+            <input type="password" id="modal-cvv" name="cvv_carta" class="form-control" placeholder="***" required pattern="\d{3,4}">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Chiudi</button>
+          <button type="submit" formaction="actions/update_card.php" class="btn btn-success">Modifica carta</button>
+          <button type="submit" formaction="actions/delete_card.php" class="btn btn-danger" onclick="return confirm('Sei sicuro di voler eliminare questa carta?')">Elimina carta</button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
 
