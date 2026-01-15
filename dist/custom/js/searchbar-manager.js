@@ -37,10 +37,10 @@ document.addEventListener('DOMContentLoaded', function () {
                             li.setAttribute('data-index', index);
                             li.setAttribute('data-id', product.id);
                             if(!product.fotografia || product.fotografia.trim() === '') {
-                                product.fotografia = './images/products/Standard_Blend.png';
+                                product.fotografia = './uploads/prodotti/Standard_Blend.png';
                             }
                             li.innerHTML = `
-                                <img src="${product.fotografia}" alt="${product.nome}" style="width: 40px; height: 40px; object-fit: cover; margin-right: 10px;">
+                                <img src='./uploads/prodotti/${product.fotografia}' alt="${product.nome}" style="width: 40px; height: 40px; object-fit: cover; margin-right: 10px;">
                                 <span>${product.nome}</span>
                             `;
 
