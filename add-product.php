@@ -270,6 +270,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           img.src = url;
           img.className = 'd-block w-100';
           img.alt = 'Anteprima immagine ' + (idx + 1);
+          img.style.maxHeight = '400px';
+          img.style.objectFit = 'contain';
           item.appendChild(img);
           carouselInner.appendChild(item);
         });
