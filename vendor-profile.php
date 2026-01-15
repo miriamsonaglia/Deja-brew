@@ -120,8 +120,8 @@
 						<div class="col-12 col-md-4 text-center">
 							<img src="<?= htmlspecialchars($avatar) ?>" 
 								 alt="Immagine del profilo di <?= htmlspecialchars($user->username ?? 'Venditore') ?>" 
-								 class="img-fluid rounded-circle shadow" 
-								 style="max-width: 220px;"
+								 class="img-fluid w-100 rounded shadow" 
+								 style="max-width: 30vh;"
 								 role="img">
 						</div>
 						<div class="col-12 col-md-8">
