@@ -13,19 +13,25 @@ require_once __DIR__ . '/utilities.php';
 use App\Models\Prodotto;
 use App\Models\Recensione;
 use App\Models\UtenteVenditore;
+use App\Models\Categoria;
+use App\Models\Aroma;
 
 session_start();
 $userRole = $_SESSION['UserRole'] ?? Role::GUEST->value;
 
 
- $id = $_GET['id'] ?? 1;
- $prodotto = Prodotto::find($id);
- $immagini = [empty($prodotto->fotografia) ? './images/products/Standard_Blend.png' : './uploads/prodotti/' .$prodotto->fotografia];
- $mediaRecensioni = Recensione::where('id_prodotto', $id)->avg('stelle') ?? 0;
- $venditore = UtenteVenditore::with('user')->find($prodotto->id_venditore);
- $recensioni = Recensione::where('id_prodotto', $id)
-     ->with('utente')
-     ->get();
+$id = $_GET['id'] ?? 1;
+$prodotto = Prodotto::find($id);
+$immagini = [empty($prodotto->fotografia) ? './images/products/Standard_Blend.png' : './uploads/prodotti/' .$prodotto->fotografia];
+$mediaRecensioni = Recensione::where('id_prodotto', $id)->avg('stelle') ?? 0;
+$venditore = UtenteVenditore::with('user')->find($prodotto->id_venditore);
+$recensioni = Recensione::where('id_prodotto', $id)
+    ->with('utente')
+    ->get();
+
+// Carica categorie e aromi dal database
+$categorie = Categoria::all();
+$aromi = Aroma::all();
 
 // Funzione helper per generare stelline
 function renderStars($media) {
@@ -188,7 +194,19 @@ function renderStars($media) {
             </a>
           <?php endif; ?>
           <?php if(isset($userRole) && ($userRole == Role::VENDOR->value) && $venditore->id_utente == $_SESSION['LoggedUser']['id']): ?>
-            <a href="#" class="ms-3 text-decoration-none text-primary fw-semibold" data-bs-toggle="modal" data-bs-target="#modalModificaArticolo" aria-label="Modifica articolo">
+            <a href="#" class="ms-3 text-decoration-none text-primary fw-semibold"
+            data-id="<?= $prodotto->id ?>"
+            data-nome="<?= $prodotto->nome ?>"
+            data-prezzo="<?= $prodotto->prezzo ?>"
+            data-peso="<?= $prodotto->peso ?>"
+            data-provenienza="<?= $prodotto->provenienza ?>"
+            data-tipo="<?= $prodotto->tipo ?>"
+            data-intensita="<?= $prodotto->intensita ?>"
+            data-categoria="<?= $prodotto->categoria ?>"
+            data-aroma="<?= $prodotto->aroma ?>"
+            data-bs-toggle="modal"
+            data-bs-target="#modalModificaArticolo"
+            aria-label="Modifica articolo">
               <i class="bi bi-pencil-square" aria-hidden="true"></i> Modifica articolo
             </a>
           <?php endif; ?>
@@ -369,36 +387,95 @@ function renderStars($media) {
 </div>
 
 <div class="modal fade" id="modalModificaArticolo" tabindex="-1" aria-labelledby="modalModificaArticoloLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-xl">
     <div class="modal-content">
       <form id="formModificaArticolo" action="actions/update_card.php" method="POST">
         <div class="modal-header">
           <h5 class="modal-title" id="modalModificaArticoloLabel">Modifica Articolo</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
         </div>
-        <input type="hidden" id="modal-card_id" name="card_id">
+        <input type="hidden" id="modal-product-id" name="product-id">
         <div class="modal-body">
-          <div class="mb-3">
-            <label for="modal-circuito_pagamento" class="form-label">Circuito della carta</label>
-            <select id="modal-circuito_pagamento" name="circuito_pagamento" class="form-select" required>
-              <option value="">Seleziona</option>
-              <option value="Visa">Visa</option>
-              <option value="MasterCard">MasterCard</option>
-              <option value="American Express">American Express</option>
-              <option value="Maestro">Maestro</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label for="modal-codice_carta" class="form-label">Numero carta</label>
-            <input type="text" id="modal-codice_carta" name="codice_carta" class="form-control" placeholder="1234 5678 9012 3456" required pattern="\d{16}">
-          </div>
-          <div class="mb-3">
-            <label for="modal-scadenza" class="form-label">Data scadenza</label>
-            <input type="month" id="modal-scadenza" name="scadenza" class="form-control" required>
-          </div>
-          <div class="mb-3">
-            <label for="modal-cvv" class="form-label">CVV</label>
-            <input type="password" id="modal-cvv" name="cvv_carta" class="form-control" placeholder="***" required pattern="\d{3,4}">
+          <div class="row g-4">
+            <div class="col-md-6">
+              <div id="drop-zone">
+                Drop image here or click to upload
+                <input type="file" name="image" accept="image/*" hidden>
+              </div>
+              <img id="preview" class="img-fluid mt-3 d-none" />            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="modal-product-nome" class="form-label">Nome Prodotto</label>
+                <input type="text" id="modal-product-nome" name="product-nome" class="form-control" placeholder="Il nome del tuo prodotto" required>
+              </div>
+              <div class="row">
+                <div class="col-md-5">
+    
+                  <label for="modal-product-prezzo" class="form-label">Prezzo Prodotto (€)</label>
+                </div>
+                <div class="col-md-5">
+    
+                  <label for="modal-product-peso" class="form-label">Peso Prodotto (kg)</label>
+                </div>
+                
+              </div>
+              <div class="row">
+                <div class="col-md-5">
+                  <label>
+                    <input type="number" id="modal-product-prezzo" name="product-prezzo" class="form-control" placeholder="9.99" required>
+                  </label>
+                </div>
+                <div class="col">
+                <label>
+                  <input type="number" id="modal-product-peso" name="product-peso" class="form-control" placeholder="0.2" required>
+                </label> 
+                </div> 
+              </div>
+              <div class="mb-3">
+                <label for="modal-product-provenienza" class="form-label">Provenienza</label>
+                <input type="text" id="modal-product-provenienza" name="product-provenienza" class="form-control" placeholder="Perù" required>
+              </div>
+              <div class="mb-3">
+                <label for="modal-product-tipo" class="form-label">Tipo di caffè</label>
+                <select id="modal-product-tipo" class="form-select" name="product-tipo" class="form-control" required>
+                  <option value="">Seleziona tipo</option>
+                  <option value="capsule">Capsule</option>
+                  <option value="cialde">Cialde</option>
+                  <option value="grani">Grani</option>
+                  <option value="macinato">Macinato</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="modal-product-intensita" class="form-label fw-semibold">Intensità: <span id="valore-intensita">5</span></label>
+                <input type="range" id="modal-product-intensita" class="form-range" name="product-intensita" min="1" max="10" value="5">
+              </div>
+              <div class="mb-3">
+                <label for="modal-product-categoria" class="form-label fw-semibold">Categoria</label>
+                <select id="modal-product-categoria" class="form-select" name="product-categoria" required>
+                  <option value="">Seleziona categoria</option>
+                  <?php foreach ($categorie as $categoria): ?>
+                    <option value="<?= $categoria->id ?>" 
+                      <?php if ($categoria->descrizione === $prodotto->categoria->descrizione): ?>
+                        selected
+                      <?php endif; ?>
+                    ><?= htmlspecialchars($categoria->descrizione) ?></option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="modal-product-aroma" class="form-label fw-semibold">Aroma</label>
+                <select id="modal-product-aroma" class="form-select" name="product-aroma" required>
+                  <option value="">Seleziona aroma</option>
+                  <?php foreach ($aromi as $aroma): ?>
+                    <option value="<?= $aroma->id ?>" 
+                      <?php if (($aroma->gusto) === $prodotto->aroma->gusto): ?>
+                        selected
+                      <?php endif; ?>
+                    ><?= htmlspecialchars($aroma->gusto) ?></option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+            </div>
           </div>
         </div>
         <div class="modal-footer">
@@ -506,6 +583,36 @@ document.addEventListener('DOMContentLoaded', function() {
   updateCartCount();
 });
 <?php endif; ?>
+
+<?php if(isset($userRole) && ($userRole === Role::VENDOR->value)): ?>
+
+  if( document.getElementById('modalModificaArticolo')!==null ){
+    const modal_mod_prod = document.getElementById('modalModificaArticolo');
+          
+      modal_mod_prod.addEventListener('show.bs.modal', event => {
+        
+        const button = event.relatedTarget;
+        modal_mod_prod.querySelector('#modal-product-id').value = button.dataset.id;
+        modal_mod_prod.querySelector('#modal-product-nome').value = button.dataset.nome;
+        modal_mod_prod.querySelector('#modal-product-prezzo').value = button.dataset.prezzo;
+        modal_mod_prod.querySelector('#modal-product-peso').value = button.dataset.peso;
+        modal_mod_prod.querySelector('#modal-product-provenienza').value = button.dataset.provenienza;
+        modal_mod_prod.querySelector('#modal-product-tipo').value = button.dataset.tipo;
+        modal_mod_prod.querySelector('#modal-product-intensita').value = button.dataset.intensita;
+        modal_mod_prod.querySelector('#valore-intensita').textContent = button.dataset.intensita;
+        
+    });
+  }
+  const intensitaInput = document.getElementById('modal-product-intensita');
+  const valoreIntensita = document.getElementById('valore-intensita');
+  if (intensitaInput && valoreIntensita) {
+    intensitaInput.addEventListener('input', () => {
+      valoreIntensita.textContent = intensitaInput.value;
+    });
+  }
+
+<?php endif; ?>
+
 </script>
 
 </body>
