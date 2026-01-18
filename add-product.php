@@ -158,9 +158,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="row g-4">
       <div class="col-md-6">
         <label for="immagini" class="form-label fw-semibold">Foto del prodotto</label>
-        <div class="upload-box mb-3">
+        <div id="upload-box"class="mb-3 border border-2 rounded-3 p-4 text-center cursor-pointer border-dashed">
           <span>Trascina qui le immagini o clicca per selezionarle</span>
-          <input type="file" id="immagini" class="image-upload-input" name="immagini[]" multiple accept="image/*">
+          <input type="file" id="immagini" class="image-upload-input" name="immagini[]" multiple accept="image/*" hidden>
         </div>
         <div id="productCarousel" class="carousel slide d-none" data-bs-ride="carousel">
           <div class="carousel-inner rounded" id="productCarouselInner"></div>
@@ -232,8 +232,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <script src='./dist/custom/js/sidebar-manager.js'></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const uploadBox = document.querySelector('.upload-box');
-    const imageInput = document.querySelector('.image-upload-input');
+    const uploadBox = document.getElementById('upload-box');
+    const imageInput = uploadBox.querySelector('input');
     const slider = document.getElementById('intensita');
     const sliderValue = document.getElementById('valore-intensita');
     const carousel = document.getElementById('productCarousel');
@@ -241,8 +241,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     const noImagesHint = document.getElementById('noImagesHint');
     const btnPrev = document.getElementById('carouselPrev');
     const btnNext = document.getElementById('carouselNext');
+    
     if (uploadBox && imageInput) {
       uploadBox.addEventListener('click', () => imageInput.click());
+    
+      ['dragenter', 'dragover'].forEach(event => {
+        uploadBox.addEventListener(event, e => {
+          e.preventDefault();
+          uploadBox.classList.add('dragover');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach(event => {
+        uploadBox.addEventListener(event, e => {
+          e.preventDefault();
+          uploadBox.classList.remove('dragover');
+        });
+      });
+    
     }
     if (slider && sliderValue) {
       slider.addEventListener('input', () => {
@@ -263,6 +279,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         // Popola il carosello con le anteprime
         files.forEach((file, idx) => {
+          if (!file) return;
           const url = URL.createObjectURL(file);
           const item = document.createElement('div');
           item.className = 'carousel-item' + (idx === 0 ? ' active' : '');
@@ -285,6 +302,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           btnPrev.classList.add('d-none');
           btnNext.classList.add('d-none');
         }
+      });
+
+      uploadBox.addEventListener('drop', e => {
+        const file = e.dataTransfer.files[0];
+        if (!file) return;
+
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        imageInput.files = dataTransfer.files;
+        const item = document.createElement('div');
+        item.className = 'carousel-item' +' active';
+        const img = document.createElement('img');
+        img.className = 'd-block w-100';
+        img.alt = 'Anteprima immagine ';
+        img.style.maxHeight = '400px';
+        img.style.objectFit = 'contain';
+
+        img.src = URL.createObjectURL(file);
+        item.appendChild(img);
+        carouselInner.appendChild(item);
+
+        carousel.classList.remove('d-none');
+        noImagesHint.classList.add('d-none');
+
       });
     }
   });

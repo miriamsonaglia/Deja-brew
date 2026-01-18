@@ -187,7 +187,7 @@
 							Drop image here or click to upload
 							<input type="file" name="image" accept="image/*" hidden>
 						</div>
-						<img id="preview" class="img-fluid mt-3 d-none" />
+						<img id="preview" class="img-fluid mt-3 d-block mx-auto" />
 
 
 
@@ -240,34 +240,43 @@
 
 			});
 
-
+			//JavaScript per l'upload dell'immagine con drag and drop
 			const dropZone = document.getElementById('drop-zone');
 			const fileInput = dropZone.querySelector('input');
+			const img = document.getElementById('preview');
 
 			dropZone.addEventListener('click', () => fileInput.click());
 
-			dropZone.addEventListener('dragover', e => {
+			['dragenter', 'dragover'].forEach(event => {
+				dropZone.addEventListener(event, e => {
 				e.preventDefault();
 				dropZone.classList.add('dragover');
+				});
 			});
 
-			dropZone.addEventListener('dragleave', () => {
+			['dragleave', 'drop'].forEach(event => {
+				dropZone.addEventListener(event, e => {
+				e.preventDefault();
 				dropZone.classList.remove('dragover');
+				});
 			});
 
 			dropZone.addEventListener('drop', e => {
-				e.preventDefault();
-				dropZone.classList.remove('dragover');
-				fileInput.files = e.dataTransfer.files;
+				const file = e.dataTransfer.files[0];
+				if (!file) return;
+
+				const dataTransfer = new DataTransfer();
+				dataTransfer.items.add(file);
+				fileInput.files = dataTransfer.files;
+
+				img.src = URL.createObjectURL(file);
 			});
 
 			fileInput.addEventListener('change', () => {
 				const file = fileInput.files[0];
 				if (!file) return;
 
-				const img = document.getElementById('preview');
 				img.src = URL.createObjectURL(file);
-				img.classList.remove('d-none');
 			});
 
 		<?php if(isset($userRole) && ($userRole === Role::BUYER->value)): ?>

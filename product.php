@@ -398,11 +398,12 @@ function renderStars($media) {
         <div class="modal-body">
           <div class="row g-4">
             <div class="col-md-6">
-              <div id="drop-zone">
+              <div id="drop-zone" class="border border-2 rounded-3 p-4 text-center cursor-pointer border-dashed">
                 Drop image here or click to upload
                 <input type="file" name="image" accept="image/*" hidden>
               </div>
-              <img id="preview" class="img-fluid mt-3 d-none" />            </div>
+              <img id="preview" class="img-fluid mt-3 d-block mx-auto object-fit-contain center"/>
+            </div>
             <div class="col-md-6">
               <div class="mb-3">
                 <label for="modal-product-nome" class="form-label">Nome Prodotto</label>
@@ -610,6 +611,45 @@ document.addEventListener('DOMContentLoaded', function() {
       valoreIntensita.textContent = intensitaInput.value;
     });
   }
+
+  //JavaScript per l'upload dell'immagine con drag and drop
+  const dropZone = document.getElementById('drop-zone');
+  const fileInput = dropZone.querySelector('input');
+  const img = document.getElementById('preview');
+
+  dropZone.addEventListener('click', () => fileInput.click());
+
+  ['dragenter', 'dragover'].forEach(event => {
+    dropZone.addEventListener(event, e => {
+      e.preventDefault();
+      dropZone.classList.add('dragover');
+    });
+  });
+
+  ['dragleave', 'drop'].forEach(event => {
+    dropZone.addEventListener(event, e => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+    });
+  });
+
+  dropZone.addEventListener('drop', e => {
+    const file = e.dataTransfer.files[0];
+    if (!file) return;
+
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+    fileInput.files = dataTransfer.files;
+
+    img.src = URL.createObjectURL(file);
+  });
+
+  fileInput.addEventListener('change', () => {
+    const file = fileInput.files[0];
+    if (!file) return;
+
+    img.src = URL.createObjectURL(file);
+  });
 
 <?php endif; ?>
 
