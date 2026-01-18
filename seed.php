@@ -103,16 +103,16 @@ $venditore1 = DB::table('utenteVenditore')->where('id_utente', $venditoriIds[0])
 $venditore2 = DB::table('utenteVenditore')->where('id_utente', $venditoriIds[1])->value('id');
 
 $prodotti = [
-    ['nome' => 'Espresso Classico', 'tipo' => 'grani', 'prezzo' => 12.90, 'intensita' => '6', 'fotografia' => null, 'provenienza' => 'Brasile', 'peso' => 1.000, 'id_venditore' => $venditore1, 'categoria_id' => 1, 'aroma_id' => 5],
-    ['nome' => 'Arabica 100%', 'tipo' => 'macinato', 'prezzo' => 15.50, 'intensita' => '8', 'fotografia' => null, 'provenienza' => 'Etiopia', 'peso' => 0.250, 'id_venditore' => $venditore1, 'categoria_id' => 2, 'aroma_id' => 7],
-    ['nome' => 'Nocciola Cremosa', 'tipo' => 'capsule', 'prezzo' => 4.99, 'intensita' => '5', 'fotografia' => '1767898337_nocciolacremosa.jpg', 'provenienza' => 'Italia', 'peso' => null, 'id_venditore' => $venditore2, 'categoria_id' => 3, 'aroma_id' => 3],
-    ['nome' => 'Intenso Decaffeinato', 'tipo' => 'macinato', 'prezzo' => 14.20, 'intensita' => '9', 'fotografia' => '1767898337_macinatointensodecaffeinato.jpg', 'provenienza' => 'Colombia', 'peso' => 0.500, 'id_venditore' => $venditore2, 'categoria_id' => 2, 'aroma_id' => 6],
-    ['nome' => 'Kit Macchina Moka', 'tipo' => 'accessorio', 'prezzo' => 29.90, 'intensita' => null, 'fotografia' => 'Kit_moka.jpg', 'provenienza' => 'Italia', 'peso' => null, 'id_venditore' => $venditore1, 'categoria_id' => 6, 'aroma_id' => null],
-    ['nome' => 'Crazy Spumino', 'tipo' => 'macinato', 'prezzo' => 19.80, 'intensita' => '10', 'fotografia' => '1767898337_crazyspumino.jpg', 'provenienza' => 'Vietnam', 'peso' => 0.200, 'id_venditore' => $venditore2, 'categoria_id' => 2, 'aroma_id' => 5],
-    ['nome' => 'Vanilla Dream', 'tipo' => 'capsule', 'prezzo' => 13.49, 'intensita' => '2', 'fotografia' => '1767898340_vanilladream.jpg', 'provenienza' => 'India', 'peso' => 0.400, 'id_venditore' => $venditore1, 'categoria_id' => 3, 'aroma_id' => 4],
-    ['nome' => 'Solubile Classico', 'tipo' => 'solubile', 'prezzo' => 9.99, 'intensita' => '5', 'fotografia' => '1767898343_solubileclassic.jpg', 'provenienza' => 'Perù', 'peso' => 0.100, 'id_venditore' => $venditore2, 'categoria_id' => 5, 'aroma_id' => 6],
-    ['nome' => 'Solubile Per Latte', 'tipo' => 'solubile', 'prezzo' => 9.99, 'intensita' => '3', 'fotografia' => '1767898349_solubileperlatte.jpg', 'provenienza' => 'Perù', 'peso' => 0.100, 'id_venditore' => $venditore2, 'categoria_id' => 5, 'aroma_id' => 5],
-    ['nome' => 'Caramello Dolce', 'tipo' => 'capsule', 'prezzo' => 13.49, 'intensita' => '3', 'fotografia' => '1767898352_caramellodolce.jpg', 'provenienza' => 'Colombia', 'peso' => 0.400, 'id_venditore' => $venditore1, 'categoria_id' => 4, 'aroma_id' => 2],
+    ['nome' => 'Espresso Classico', 'tipo' => 'Grani', 'prezzo' => 12.90, 'intensita' => '6', 'fotografia' => null, 'provenienza' => 'Brasile', 'peso' => 1.000, 'id_venditore' => $venditore1, 'categoria_id' => 1, 'aroma_id' => 5],
+    ['nome' => 'Arabica 100%', 'tipo' => 'Macinato', 'prezzo' => 15.50, 'intensita' => '8', 'fotografia' => null, 'provenienza' => 'Etiopia', 'peso' => 0.250, 'id_venditore' => $venditore1, 'categoria_id' => 2, 'aroma_id' => 7],
+    ['nome' => 'Nocciola Cremosa', 'tipo' => 'Capsule', 'prezzo' => 4.99, 'intensita' => '5', 'fotografia' => '1767898337_nocciolacremosa.jpg', 'provenienza' => 'Italia', 'peso' => null, 'id_venditore' => $venditore2, 'categoria_id' => 3, 'aroma_id' => 3],
+    ['nome' => 'Intenso Decaffeinato', 'tipo' => 'Macinato', 'prezzo' => 14.20, 'intensita' => '9', 'fotografia' => '1767898337_macinatointensodecaffeinato.jpg', 'provenienza' => 'Colombia', 'peso' => 0.500, 'id_venditore' => $venditore2, 'categoria_id' => 2, 'aroma_id' => 6],
+    ['nome' => 'Kit Macchina Moka', 'tipo' => 'Accessorio', 'prezzo' => 29.90, 'intensita' => null, 'fotografia' => 'Kit_moka.jpg', 'provenienza' => 'Italia', 'peso' => null, 'id_venditore' => $venditore1, 'categoria_id' => 6, 'aroma_id' => null],
+    ['nome' => 'Crazy Spumino', 'tipo' => 'Macinato', 'prezzo' => 19.80, 'intensita' => '10', 'fotografia' => '1767898337_crazyspumino.jpg', 'provenienza' => 'Vietnam', 'peso' => 0.200, 'id_venditore' => $venditore2, 'categoria_id' => 2, 'aroma_id' => 5],
+    ['nome' => 'Vanilla Dream', 'tipo' => 'Capsule', 'prezzo' => 13.49, 'intensita' => '2', 'fotografia' => '1767898340_vanilladream.jpg', 'provenienza' => 'India', 'peso' => 0.400, 'id_venditore' => $venditore1, 'categoria_id' => 3, 'aroma_id' => 4],
+    ['nome' => 'Solubile Classico', 'tipo' => 'Solubile', 'prezzo' => 9.99, 'intensita' => '5', 'fotografia' => '1767898343_solubileclassic.jpg', 'provenienza' => 'Perù', 'peso' => 0.100, 'id_venditore' => $venditore2, 'categoria_id' => 5, 'aroma_id' => 6],
+    ['nome' => 'Solubile Per Latte', 'tipo' => 'Solubile', 'prezzo' => 9.99, 'intensita' => '3', 'fotografia' => '1767898349_solubileperlatte.jpg', 'provenienza' => 'Perù', 'peso' => 0.100, 'id_venditore' => $venditore2, 'categoria_id' => 5, 'aroma_id' => 5],
+    ['nome' => 'Caramello Dolce', 'tipo' => 'Capsule', 'prezzo' => 13.49, 'intensita' => '3', 'fotografia' => '1767898352_caramellodolce.jpg', 'provenienza' => 'Colombia', 'peso' => 0.400, 'id_venditore' => $venditore1, 'categoria_id' => 4, 'aroma_id' => 2],
 ];
 
 foreach ($prodotti as $prod) {

@@ -389,12 +389,12 @@ function renderStars($media) {
 <div class="modal fade" id="modalModificaArticolo" tabindex="-1" aria-labelledby="modalModificaArticoloLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
-      <form id="formModificaArticolo" action="actions/update_card.php" method="POST">
+      <form id="formModificaArticolo" action="actions/update_product.php" method="POST">
         <div class="modal-header">
           <h5 class="modal-title" id="modalModificaArticoloLabel">Modifica Articolo</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
         </div>
-        <input type="hidden" id="modal-product-id" name="product-id">
+        <input type="hidden" id="modal-product-id" name="product_id">
         <div class="modal-body">
           <div class="row g-4">
             <div class="col-md-6">
@@ -407,7 +407,7 @@ function renderStars($media) {
             <div class="col-md-6">
               <div class="mb-3">
                 <label for="modal-product-nome" class="form-label">Nome Prodotto</label>
-                <input type="text" id="modal-product-nome" name="product-nome" class="form-control" placeholder="Il nome del tuo prodotto" required>
+                <input type="text" id="modal-product-nome" name="product_nome" class="form-control" placeholder="Il nome del tuo prodotto" required>
               </div>
               <div class="row">
                 <div class="col-md-5">
@@ -423,36 +423,36 @@ function renderStars($media) {
               <div class="row">
                 <div class="col-md-5">
                   <label>
-                    <input type="number" id="modal-product-prezzo" name="product-prezzo" class="form-control" placeholder="9.99" required>
+                    <input type="number" id="modal-product-prezzo" name="product_prezzo" class="form-control" placeholder="9.99" required>
                   </label>
                 </div>
                 <div class="col">
                 <label>
-                  <input type="number" id="modal-product-peso" name="product-peso" class="form-control" placeholder="0.2" required>
+                  <input type="number" id="modal-product-peso" name="product_peso" class="form-control" placeholder="0.2" required>
                 </label> 
                 </div> 
               </div>
               <div class="mb-3">
                 <label for="modal-product-provenienza" class="form-label">Provenienza</label>
-                <input type="text" id="modal-product-provenienza" name="product-provenienza" class="form-control" placeholder="Perù" required>
+                <input type="text" id="modal-product-provenienza" name="product_provenienza" class="form-control" placeholder="Perù" required>
               </div>
               <div class="mb-3">
                 <label for="modal-product-tipo" class="form-label">Tipo di caffè</label>
-                <select id="modal-product-tipo" class="form-select" name="product-tipo" class="form-control" required>
+                <select id="modal-product-tipo" class="form-select" name="product_tipo" class="form-control" required>
                   <option value="">Seleziona tipo</option>
-                  <option value="capsule">Capsule</option>
-                  <option value="cialde">Cialde</option>
-                  <option value="grani">Grani</option>
-                  <option value="macinato">Macinato</option>
+                  <option value="Capsule">Capsule</option>
+                  <option value="Cialde">Cialde</option>
+                  <option value="Grani">Grani</option>
+                  <option value="Macinato">Macinato</option>
                 </select>
               </div>
               <div class="mb-3">
                 <label for="modal-product-intensita" class="form-label fw-semibold">Intensità: <span id="valore-intensita">5</span></label>
-                <input type="range" id="modal-product-intensita" class="form-range" name="product-intensita" min="1" max="10" value="5">
+                <input type="range" id="modal-product-intensita" class="form-range" name="product_intensita" min="1" max="10" value="5">
               </div>
               <div class="mb-3">
                 <label for="modal-product-categoria" class="form-label fw-semibold">Categoria</label>
-                <select id="modal-product-categoria" class="form-select" name="product-categoria" required>
+                <select id="modal-product-categoria" class="form-select" name="product_categoria" required>
                   <option value="">Seleziona categoria</option>
                   <?php foreach ($categorie as $categoria): ?>
                     <option value="<?= $categoria->id ?>" 
@@ -465,7 +465,7 @@ function renderStars($media) {
               </div>
               <div class="mb-3">
                 <label for="modal-product-aroma" class="form-label fw-semibold">Aroma</label>
-                <select id="modal-product-aroma" class="form-select" name="product-aroma" required>
+                <select id="modal-product-aroma" class="form-select" name="product_aroma" required>
                   <option value="">Seleziona aroma</option>
                   <?php foreach ($aromi as $aroma): ?>
                     <option value="<?= $aroma->id ?>" 
@@ -481,8 +481,8 @@ function renderStars($media) {
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Chiudi</button>
-          <button type="submit" formaction="actions/update_card.php" class="btn btn-success">Modifica carta</button>
-          <button type="submit" formaction="actions/delete_card.php" class="btn btn-danger" onclick="return confirm('Sei sicuro di voler eliminare questa carta?')">Elimina carta</button>
+          <button type="submit" formaction="actions/update_product.php" class="btn btn-success">Modifica prodotto</button>
+          <button type="submit" formaction="actions/delete_product.php" class="btn btn-danger" onclick="return confirm('Sei sicuro di voler eliminare questo prodotto?')">Elimina prodotto</button>
         </div>
       </form>
     </div>
