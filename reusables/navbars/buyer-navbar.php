@@ -3,7 +3,7 @@ require_once __DIR__ . '/../../notification-count.php';
 $notificationCount = getNotificationCount();
 ?>
 <!-- Navbar -->
-<nav class="navbar navbar-custom bg-light sticky-top border-bottom">
+<nav class="navbar navbar-custom bg-light sticky-top">
     <div class="container-fluid justify-content-between align-items-center">
         <!-- Pulsante hamburger per aprire la sidebar -->
         <button class="btn navbar-toggler bg-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-label="Apri menu">
