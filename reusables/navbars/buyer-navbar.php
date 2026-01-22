@@ -3,7 +3,7 @@ require_once __DIR__ . '/../../notification-count.php';
 $notificationCount = getNotificationCount();
 ?>
 <!-- Navbar -->
-<nav class="navbar bg-light border-bottom">
+<nav class="navbar navbar-custom bg-light border-bottom">
     <div class="container-fluid justify-content-between align-items-center">
         <!-- Pulsante hamburger per aprire la sidebar -->
         <button class="btn navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-label="Apri menu">
@@ -11,14 +11,14 @@ $notificationCount = getNotificationCount();
         </button>
 
         <!-- Logo/Brand centrato -->
-        <a href='./home.php' class="nav-link-custom"><span class="navbar-brand mx-auto fw-bold fs-3">Deja-brew</span></a>
+        <a href='./home.php' class="nav-link-custom"><span class="navbar-brand text-white mx-auto fw-bold fs-3">Deja-brew</span></a>
 
         <!-- Barra di ricerca e carrello -->
         <div class="d-flex align-items-center">
             <!-- Carrello -->
             <div class="cart-container">
                 <a href="./shopping-cart.php" class="cart-link">
-                    <div class="cart-icon">
+                    <div class="cart-icon text-white">
                         <i class="bi bi-cart"></i>
                     </div>
                 </a>

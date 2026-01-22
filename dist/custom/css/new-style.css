@@ -120,8 +120,7 @@ body {
    ================================================================= */
 
 .navbar-custom {
-  background-color: var(--light-gray) !important;
-  border-bottom: 1px solid #ddd;
+  background-color: var(--primary-brown) !important;
 }
 
 .navbar-brand-custom {
