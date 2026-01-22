@@ -57,7 +57,11 @@
                         <div class="row align-items-center">
                             <!-- Product Image -->
                             <div class="col-md-2 col-sm-3">
-                                <img src="<?php echo htmlspecialchars(empty($product->fotografia) ? './images/products/Standard_Blend.png' : './uploads/prodotti/' .$product->fotografia); ?>"
+                                <img src="<?php echo htmlspecialchars(empty($product->fotografia) ?
+                                                                                ('./images/products/Standard_Blend.png') :
+                                                                                (file_exists('./uploads/prodotti/' . htmlspecialchars($product->fotografia)) ?
+                                                                                        './uploads/prodotti/' . htmlspecialchars($product->fotografia) :
+                                                                                        './images/products/Standard_Blend.png')); ?>"
                                      alt="<?php echo htmlspecialchars($product->nome); ?>"
                                      class="wishlist-product-image img-fluid rounded"
                                      style="max-height: 100px; object-fit: contain;">
