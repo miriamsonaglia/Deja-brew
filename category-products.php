@@ -52,10 +52,10 @@
                         data-product-provenienza="<?php echo htmlspecialchars($product->provenienza ?? ''); ?>"
                         data-product-weight="<?php echo $product->peso ?? 0; ?>">
 
-                        <img src="<?php echo (empty($product->fotografia) ? 
-                                                            ('./images/products/Standard_Blend.png') : 
-                                                            (file_exists('./uploads/prodotti/' . htmlspecialchars($product->fotografia)) ? 
-                                                                        './uploads/prodotti/' . htmlspecialchars($product->fotografia) : 
+                        <img src="<?php echo (empty($product->fotografia) ?
+                                                            ('./images/products/Standard_Blend.png') :
+                                                            (file_exists('./uploads/prodotti/' . htmlspecialchars($product->fotografia)) ?
+                                                                        './uploads/prodotti/' . htmlspecialchars($product->fotografia) :
                                                                         './images/products/Standard_Blend.png')); ?>"
                              class="card-img-top"
                              alt="<?php echo htmlspecialchars($product->nome); ?>">
@@ -106,7 +106,7 @@
 
 <?php include('./reusables/filter-aside.php'); ?>
 
-<footer></footer>
+<?php require_once __DIR__ . '/reusables/footer.php'; ?>
 
 <!-- JavaScript -->
 <script src="./dist/bootstrap5/js/bootstrap.min.js"></script>

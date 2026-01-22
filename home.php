@@ -66,10 +66,10 @@
                             <?php foreach($products as $product): ?>
                             <li class="slider-object" data-product-id="<?php echo $product->id; ?>">
                                 <a href="product.php?id=<?php echo $product->id; ?>" class="text-decoration-none text-dark" aria-label="Vai alla pagina del prodotto <?php echo htmlspecialchars($product->nome); ?>">
-                                    <img src="<?php echo (empty($product->fotografia) ? 
-                                                                        ('./images/products/Standard_Blend.png') : 
-                                                                        (file_exists('./uploads/prodotti/' . htmlspecialchars($product->fotografia)) ? 
-                                                                                                './uploads/prodotti/' . htmlspecialchars($product->fotografia) : 
+                                    <img src="<?php echo (empty($product->fotografia) ?
+                                                                        ('./images/products/Standard_Blend.png') :
+                                                                        (file_exists('./uploads/prodotti/' . htmlspecialchars($product->fotografia)) ?
+                                                                                                './uploads/prodotti/' . htmlspecialchars($product->fotografia) :
                                                                                                 './images/products/Standard_Blend.png')); ?>"
                                         alt="<?php echo htmlspecialchars($product->nome); ?>">
                                     <div class="product-name"><?php echo htmlspecialchars($product->nome); ?></div>
@@ -123,7 +123,7 @@
             ?>
         </div>
 
-        <footer><!-- ?? Possible footer template ?? --></footer>
+        <?php require_once __DIR__ . '/reusables/footer.php'; ?>
 
         <!-- INSERT HERE ALL JAVASCRIPT NECESSARY IMPORTS -->
         <script src="./dist/bootstrap5/js/bootstrap.min.js"></script>

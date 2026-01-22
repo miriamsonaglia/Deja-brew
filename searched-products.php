@@ -95,7 +95,7 @@
             <button class="filters-button"><i class="fa-light fa-filter"></i></button>
             <!-- Tendina apribile con lista filtri -->
         </aside>
-        <footer><!-- ?? Possible footer template ?? --></footer>
+        <?php require_once __DIR__ . '/reusables/footer.php'; ?>
         <!-- INSERT HERE ALL JAVASCRIPT NECESSARY IMPORTS -->
         <script src="./dist/bootstrap5/js/bootstrap.min.js"></script>
         <script src="./dist/custom/js/sidebar-manager.js"></script>
