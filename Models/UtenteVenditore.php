@@ -8,8 +8,8 @@ class UtenteVenditore extends BaseModel
     protected $fillable = [
         'id_utente',
         'descrizione',
-        'paese',                 // Nuovo
-        'cellulare'              // Nuovo
+        'paese',                
+        'cellulare'             
     ];
 
     public function user()

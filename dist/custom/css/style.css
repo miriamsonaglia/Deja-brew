@@ -1,6 +1,4 @@
-/* =================================================================
-   BASE STYLES
-   ================================================================= */
+/* BASE STYLES */
 body {
   background-color: #F2EFEA;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -10,9 +8,7 @@ h1, h2, label, .navbar-brand {
   color: #594431;
 }
 
-/* =================================================================
-   FORM ELEMENTS
-   ================================================================= */
+/* FORM ELEMENTS */
 
 /* Upload Box */
 .upload-box {
@@ -49,9 +45,7 @@ h1, h2, label, .navbar-brand {
   background-color: #3E2C23;
 }
 
-/* =================================================================
-   NAVIGATION
-   ================================================================= */
+/* NAVIGATION */
 
 /* Navbar */
 .navbar {
@@ -105,9 +99,7 @@ h1, h2, label, .navbar-brand {
   color: #594431;
 }
 
-/* =================================================================
-   CART ICON
-   ================================================================= */
+/* CART ICON */
 .cart-container {
     position: relative;
     display: inline-block;
@@ -166,9 +158,7 @@ h1, h2, label, .navbar-brand {
     100% { transform: scale(1); }
 }
 
-/* =================================================================
-   PRODUCT LAYOUT COMPONENTS
-   ================================================================= */
+/* PRODUCT LAYOUT COMPONENTS */
 
 /* Category Section (shared by slider and grid) */
 .category-section {
@@ -347,9 +337,7 @@ h1, h2, label, .navbar-brand {
     font-size: 14px;
 }
 
-/* =================================================================
-   SLIDER LAYOUT
-   ================================================================= */
+/* SLIDER LAYOUT */
 
 /* Slider Structure */
 .slider-wrapper {
@@ -441,9 +429,7 @@ h1, h2, label, .navbar-brand {
     transform: scale(1.2);
 }
 
-/* =================================================================
-   GRID LAYOUT
-   ================================================================= */
+/* GRID LAYOUT */
 
 /* Grid Container */
 .product-grid-container {
@@ -461,10 +447,6 @@ h1, h2, label, .navbar-brand {
     padding: 0;
     margin: 0;
 }
-
-/* =================================================================
-   LEGACY STYLES (da rimuovere gradualmente)
-   ================================================================= */
 
 /* Mantenuto per compatibilità - da sostituire con slider-object */
 .product-list {
@@ -510,9 +492,7 @@ h1, h2, label, .navbar-brand {
   border-color: #594431;
 }
 
-/* =================================================================
-   FILTERS SIDEBAR
-   ================================================================= */
+/* FILTERS SIDEBAR */
 
 /* Toggle Button */
 .filters-toggle-btn {

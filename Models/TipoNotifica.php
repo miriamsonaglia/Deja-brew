@@ -5,15 +5,15 @@ require_once __DIR__ . '/BaseModel.php';
 
 class TipoNotifica extends BaseModel
 {
-    protected $table = 'tipo_notifica'; // nome tabella suggerito
+    protected $table = 'tipo_notifica'; 
 
     protected $fillable = [
-        'descrizione'   // es. "Nuovo ordine", "Recensione ricevuta", ecc.
+        'descrizione'   
     ];
 
-    // Eventuale relazione inversa con Notifica (se vuoi collegarle)
+    
     public function notifiche()
     {
-        return $this->hasMany(Notifica::class, 'tipo'); // assumendo che 'tipo' in Notifica sia la chiave foreign
+        return $this->hasMany(Notifica::class, 'tipo'); 
     }
 }

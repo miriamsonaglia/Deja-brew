@@ -31,7 +31,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Real-time input filtering
         input.addEventListener('input', function() {
-            // Remove any non-digit characters
             let value = this.value.replace(/[^0-9]/g, '');
             
             // Limit length to prevent very large numbers

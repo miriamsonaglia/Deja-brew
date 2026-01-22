@@ -106,7 +106,6 @@ document.addEventListener('DOMContentLoaded', function() {
             // Find quantity input - handle both structures
             let quantityInput = this.parentElement.querySelector('.quantity-input');
             if (!quantityInput) {
-                // Fallback for product page structure
                 quantityInput = document.querySelector(`input[data-product-id="${productId}"].quantity-input`);
             }
 

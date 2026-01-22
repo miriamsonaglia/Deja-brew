@@ -13,7 +13,7 @@ class Utente extends BaseModel
         'email',
         'username',
         'password',
-        'immagine_profilo'       // Già presente, ma confermato
+        'immagine_profilo'     
     ];
 
     protected $hidden = [
@@ -25,7 +25,6 @@ class Utente extends BaseModel
         'email_verified_at' => 'datetime',
     ];
 
-    // Relazioni
     public function utenteCompratore()
     {
         return $this->hasOne(UtenteCompratore::class);

@@ -13,7 +13,7 @@ class CartaDiCredito extends BaseModel
         'circuito_pagamento',
         'codice_carta',
         'cvv_carta',
-        'nome_titolare',         // Nuovo
+        'nome_titolare',    
         'scadenza_mese',
         'scadenza_anno'
     ];

@@ -11,12 +11,12 @@ class Ordine extends BaseModel
         'id_prodotto',
         'status',
         'prezzo_totale',
-        'quantita'               // Nuovo campo quantità
+        'quantita'             
     ];
 
     protected $casts = [
         'prezzo_totale' => 'decimal:2',
-        'quantita'      => 'integer',   // Cast consigliato
+        'quantita'      => 'integer',  
     ];
 
     public function utente()

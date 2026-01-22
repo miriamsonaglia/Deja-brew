@@ -6,13 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class User extends Model
 {
-    // Nome della tabella (opzionale se segue la convenzione)
     protected $table = 'users';
     
-    // Chiave primaria (default: 'id')
     protected $primaryKey = 'id';
     
-    // Campi che possono essere assegnati in massa
     protected $fillable = [
         'name',
         'email',
@@ -32,10 +29,8 @@ class User extends Model
         'updated_at' => 'datetime',
     ];
     
-    // Disabilita timestamps se non usi created_at/updated_at
     public $timestamps = false;
     
-    // Relazioni esempio
     public function posts()
     {
         return $this->hasMany(Post::class);
@@ -46,13 +41,11 @@ class User extends Model
         return $this->hasOne(UserProfile::class);
     }
     
-    // Accessor esempio
     public function getFullNameAttribute()
     {
         return $this->first_name . ' ' . $this->last_name;
     }
     
-    // Mutator esempio
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = password_hash($value, PASSWORD_DEFAULT);

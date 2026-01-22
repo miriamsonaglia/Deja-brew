@@ -1,6 +1,6 @@
-/* =================================================================
-   CUSTOM PROPERTIES & BASE STYLES
-   ================================================================= */
+
+/*CUSTOM PROPERTIES & BASE STYLES*/
+
 :root {
   --primary-brown: #594431;
   --secondary-red: #7C2E2E;
@@ -20,9 +20,7 @@ body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* =================================================================
-   BOOTSTRAP COMPONENT OVERRIDES
-   ================================================================= */
+/*BOOTSTRAP COMPONENT OVERRIDES */
 
 /* Custom Color Classes */
 .text-primary-brown { color: var(--primary-brown) !important; }
@@ -115,9 +113,7 @@ body {
   transition: var(--transition);
 }
 
-/* =================================================================
-   NAVIGATION COMPONENTS
-   ================================================================= */
+/* NAVIGATION COMPONENTS */
 
 .navbar-custom {
   background-color: var(--primary-brown) !important;
@@ -159,9 +155,7 @@ body {
 }
 
 
-/* =================================================================
-   CART ICON
-   ================================================================= */
+/* CART ICON */
 .cart-container {
     position: relative;
     display: inline-block;
@@ -220,9 +214,7 @@ body {
     100% { transform: scale(1); }
 }
 
-/* =================================================================
-   PRODUCT COMPONENTS
-   ================================================================= */
+/* PRODUCT COMPONENTS */
 
 .product-name {
   color: var(--primary-brown);
@@ -270,9 +262,7 @@ body {
   text-decoration: none;
 }
 
-/* =================================================================
-   SLIDER COMPONENTS
-   ================================================================= */
+/* SLIDER COMPONENTS */
 
 .slider-container {
   position: relative;
@@ -332,9 +322,7 @@ body {
   transform: translateY(-50%) scale(0.9);
 }
 
-/* =================================================================
-   CART PAGE STYLES
-   ================================================================= */
+/* CART PAGE STYLES */
 
 .cart-content {
   max-width: 1200px;
@@ -430,9 +418,7 @@ body {
   font-weight: bold;
 }
 
-/* =================================================================
-   WISHLIST STYLES
-   ================================================================= */
+/* WISHLIST STYLES */
 
 .wishlist-content {
   max-width: 1000px;
@@ -465,9 +451,7 @@ body {
   border-bottom: none;
 }
 
-/* =================================================================
-   FILTER SIDEBAR
-   ================================================================= */
+/* FILTER SIDEBAR */
 
 .filters-sidebar {
   position: fixed;
@@ -525,9 +509,7 @@ body {
   margin-bottom: 1rem;
 }
 
-/* =================================================================
-   EMPTY STATES
-   ================================================================= */
+/* EMPTY STATES */
 
 .empty-state {
   text-align: center;
@@ -552,9 +534,7 @@ body {
   margin-bottom: 2rem;
 }
 
-/* =================================================================
-   RESPONSIVE DESIGN
-   ================================================================= */
+/* RESPONSIVE DESIGN */
 
 @media (max-width: 768px) {
   .slider-list .card-product {
@@ -584,9 +564,7 @@ body {
   }
 }
 
-/* =================================================================
-   UTILITY CLASSES
-   ================================================================= */
+/* UTILITY CLASSES */
 
 .shadow-custom { box-shadow: var(--shadow-medium) !important; }
 .shadow-hover:hover { box-shadow: var(--shadow-hover) !important; }
@@ -594,12 +572,8 @@ body {
 .border-radius-custom { border-radius: var(--border-radius) !important; }
 
 
-/* =================================================================
-   HOME CSS
-   ================================================================= */
-   /* =================================================================
-   SLIDER LAYOUT
-   ================================================================= */
+/* HOME CSS */
+/* SLIDER LAYOUT */
 
 /* Slider Structure */
 .slider-wrapper {
@@ -689,9 +663,7 @@ body {
 }
 
 
-/* =================================================================
-   PRODUCT LAYOUT COMPONENTS
-   ================================================================= */
+/* PRODUCT LAYOUT COMPONENTS */
 
 /* Category Section (shared by slider and grid) */
 .category-section {
@@ -872,9 +844,7 @@ body {
 }
 
 
-/* =================================================================
-   CATEGORY HEADER IMPROVEMENTS
-   ================================================================= */
+/* CATEGORY HEADER IMPROVEMENTS */
 
 .category-header {
   position: relative;
@@ -981,9 +951,7 @@ body {
     color: white;
 }
 
-/* =================================================================
-   PROFILE SETTINGS PAGE
-   ================================================================= */
+/* PROFILE SETTINGS PAGE */
 
 .immagine-profilo{
   max-width: 220px;
@@ -1009,9 +977,7 @@ body {
   object-fit: contain;
 }
 
-/* =================================================================
-  VENDOR PROFILE PAGE
-   ================================================================= */
+/* VENDOR PROFILE PAGE */
 .skip-link {
   position: absolute;
   top: -40px;
@@ -1026,9 +992,7 @@ body {
   top: 0;
 }
 
-/* =================================================================
-   PERCENTAGE IMAGES CLASSES
-   ================================================================= */
+/* PERCENTAGE IMAGES CLASSES */
 .relative-30-percent{
   max-width: 30vh;
 }

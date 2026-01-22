@@ -61,7 +61,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 const data = await response.json();
 
-                // Optional: Show success message
                 this.style.transform = 'scale(0.95)';
                 setTimeout(() => {
                     this.style.transform = 'scale(1)';

@@ -10,7 +10,7 @@ class Fattura extends BaseModel
         'id_utente',
         'id_venditore',
         'id_ordine',
-        'transaction_id'         // Nuovo campo per gestire transazioni con più prodotti
+        'transaction_id'  
     ];
 
     public function utente()

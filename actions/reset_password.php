@@ -41,9 +41,6 @@ session_start();
         ]);
 
         // Aggiorna la password (Hashing incluso)
-        //$utente->update([
-        //    'password' => password_hash($new_password, PASSWORD_DEFAULT)
-        //]);
 
         $_SESSION['success'] = 'Password aggiornata con successo.';
         header("Location: ../profile-settings.php");
