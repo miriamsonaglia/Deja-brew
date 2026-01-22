@@ -44,6 +44,17 @@
 </footer>
 
 <style>
+
+/* Ensure footer stays at the bottom */
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
 /* Footer Styles */
 .footer-dejabrew {
     background-color: var(--primary-brown);
