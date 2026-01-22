@@ -40,7 +40,12 @@ document.addEventListener('DOMContentLoaded', function () {
                                 product.fotografia = './uploads/prodotti/Standard_Blend.png';
                             }
                             li.innerHTML = `
-                                <img src='./uploads/prodotti/${product.fotografia}' alt="${product.nome}" style="width: 40px; height: 40px; object-fit: cover; margin-right: 10px;">
+                                <img
+                                    src="./uploads/prodotti/${product.fotografia}"
+                                    alt="${product.nome}"
+                                    style="width: 40px; height: 40px; object-fit: cover; margin-right: 10px;"
+                                    onerror="this.onerror=null; this.src='./images/products/Standard_Blend.png';"
+                                >
                                 <span>${product.nome}</span>
                             `;
 

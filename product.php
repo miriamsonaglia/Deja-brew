@@ -22,7 +22,11 @@ $userRole = $_SESSION['UserRole'] ?? Role::GUEST->value;
 
 $id = $_GET['id'] ?? 1;
 $prodotto = Prodotto::find($id);
-$immagini = [empty($prodotto->fotografia) ? './images/products/Standard_Blend.png' : './uploads/prodotti/' .$prodotto->fotografia];
+$immagini = [empty($prodotto->fotografia) ? 
+                    ('./images/products/Standard_Blend.png') : 
+                    (file_exists('./uploads/prodotti/' . htmlspecialchars($prodotto->fotografia)) ? 
+                                            './uploads/prodotti/' . htmlspecialchars($prodotto->fotografia) : 
+                                            './images/products/Standard_Blend.png')];
 $mediaRecensioni = Recensione::where('id_prodotto', $id)->avg('stelle') ?? 0;
 $venditore = UtenteVenditore::with('user')->find($prodotto->id_venditore);
 $recensioni = Recensione::where('id_prodotto', $id)
