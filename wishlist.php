@@ -183,7 +183,7 @@
             </div>
         </div>
 
-        <footer></footer>
+        <?php require_once __DIR__ . '/reusables/footer.php'; ?>
 
         <!-- Bootstrap 5 JS -->
         <script src="./dist/bootstrap5/js/bootstrap.min.js"></script>
