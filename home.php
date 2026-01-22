@@ -123,7 +123,8 @@
             ?>
         </div>
 
-        <footer><!-- ?? Possible footer template ?? --></footer>
+        <!-- ?? <footer> Possible footer template ?? </footer>-->
+        <?php require_once __DIR__ . '/reusables/footer.php' ?>
 
         <!-- INSERT HERE ALL JAVASCRIPT NECESSARY IMPORTS -->
         <script src="./dist/bootstrap5/js/bootstrap.min.js"></script>
