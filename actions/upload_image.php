@@ -33,8 +33,18 @@ move_uploaded_file($file['tmp_name'], "$uploadsDir/$filename");
 
 $userId = $_SESSION['LoggedUser']['id'];
 
+//Old image to be deleted
 $user = Utente::where('id', $userId)->first();
+$oldImage = $user->immagine_profilo;
+
 $user->immagine_profilo = $filename;
-$user = $user->save();
+$user->save();
+// Delete old image file
+if ($oldImage && $oldImage !== $user->immagine_profilo) {
+    $oldImagePath = realpath(__DIR__ . '/..') . '/uploads/profile_images/' . $oldImage;
+    if (file_exists($oldImagePath)) {
+        unlink($oldImagePath);
+    }
+}
 
 header("Location: ../profile-settings.php?upload=success");

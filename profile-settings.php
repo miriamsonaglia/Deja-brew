@@ -181,16 +181,11 @@
 					</div>
 					<input type="hidden" id="modal-user_id" name="user_id">
 					<div class="modal-body">
-
-
 						<div id="drop-zone">
 							Drop image here or click to upload
 							<input type="file" name="image" accept="image/*" hidden>
 						</div>
 						<img id="preview" class="img-fluid mt-3 d-block mx-auto" />
-
-
-
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Annulla</button>

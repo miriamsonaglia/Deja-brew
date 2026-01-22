@@ -1,5 +1,6 @@
 <?php
     require_once __DIR__ . '/../bootstrap.php';
+    require_once __DIR__ . '/../Models/Prodotto.php';
     use App\Models\Prodotto;
     session_start();
 
@@ -27,32 +28,41 @@
         header("Location: $redirect");
         exit;
     }
-    
 
-    if (isset($_FILES['image'])) {
+    if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
 
         $file = $_FILES['image'];
-        if ($file['error'] === UPLOAD_ERR_OK) {
-    
-            $allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-            if (in_array(mime_content_type($_FILES['image']['tmp_name']), $allowedTypes)) {
-                
-            $uploadsDir = realpath(__DIR__ . '/..') . '/uploads/profile_images';
-            if (!is_dir($uploadsDir)) {
-                mkdir($uploadsDir, 0755, true);
-            }
 
-            $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-            $filename = uniqid('product_', true) . '.' . $extension;
+        // Temporary file path
+        $tmpPath = $file['tmp_name'];
 
-            move_uploaded_file($file['tmp_name'], "$uploadsDir/$filename");
-    
-            }
+        // Validate MIME type
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+        $mimeType = mime_content_type($tmpPath);
 
+        if (!in_array($mimeType, $allowedTypes)) {
+            die('Invalid image type');
         }
+
+        // Upload directory
+        $uploadsDir = realpath(__DIR__ . '/..') . '/uploads/prodotti';
+        if (!is_dir($uploadsDir)) {
+            mkdir($uploadsDir, 0755, true);
+        }
+
+        // Get file extension safely
+        $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+
+        // Generate unique filename
+        $filename = uniqid('product_', true) . '.' . $extension;
+
+        // Move uploaded file
+        if (!move_uploaded_file($tmpPath, "$uploadsDir/$filename")) {
+            die('Failed to move uploaded file');
+        }
+
     }
 
-        
     
     $user_id = $_SESSION['LoggedUser']['id'];
     $product_id = $_POST['product_id'];
@@ -80,9 +90,10 @@
             exit;
         }
         
+        //Save old image filename to delete later
+        $oldImage = $product->fotografia;
 
-        // Edit the card
-        
+        // Edit the product        
         $product->update([
             'nome' => $_POST['product_nome'],
             'prezzo' => $_POST['product_prezzo'],
@@ -97,6 +108,14 @@
         ]);
         echo json_encode(['success' => true]);
         
+        // Delete old image file if a new one was uploaded ($filename existing means a new file was uploaded)
+        if (isset($filename) && $oldImage) {
+            $oldImagePath = realpath(__DIR__ . '/..') . '/uploads/prodotti/' . $oldImage;
+            if (file_exists($oldImagePath)) {
+                unlink($oldImagePath);
+            }
+        }
+
         $redirect = $_SERVER['HTTP_REFERER'] ?? '/index.php';
         header("Location: $redirect");
         exit;

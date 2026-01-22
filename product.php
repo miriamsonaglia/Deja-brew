@@ -389,7 +389,7 @@ function renderStars($media) {
 <div class="modal fade" id="modalModificaArticolo" tabindex="-1" aria-labelledby="modalModificaArticoloLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
-      <form id="formModificaArticolo" action="actions/update_product.php" method="POST">
+      <form id="formModificaArticolo" action="actions/update_product.php" method="POST" enctype="multipart/form-data">
         <div class="modal-header">
           <h5 class="modal-title" id="modalModificaArticoloLabel">Modifica Articolo</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
@@ -423,12 +423,12 @@ function renderStars($media) {
               <div class="row">
                 <div class="col-md-5">
                   <label>
-                    <input type="number" id="modal-product-prezzo" name="product_prezzo" class="form-control" placeholder="9.99" required>
+                    <input type="number" id="modal-product-prezzo" name="product_prezzo" class="form-control" step="0.01" placeholder="9.99" required>
                   </label>
                 </div>
                 <div class="col">
                 <label>
-                  <input type="number" id="modal-product-peso" name="product_peso" class="form-control" placeholder="0.2" required>
+                  <input type="number" id="modal-product-peso" name="product_peso" class="form-control" step="0.001" placeholder="0.2" required>
                 </label> 
                 </div> 
               </div>
