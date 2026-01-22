@@ -244,6 +244,7 @@ $savedCards = CartaDiCredito::where('id_utente', $datiUtente->id)->get()->map(fu
 			</div>
 		</div>
 	</div>
+		<?php require_once __DIR__ . '/reusables/footer.php' ?>
 
 	<script src="./dist/bootstrap5/js/bootstrap.bundle.min.js"></script>
 	<script src="./dist//custom//js/cart-manager.js"></script>

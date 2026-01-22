@@ -103,5 +103,6 @@
 	</div>
 
 	<script src="./dist/bootstrap5/js/bootstrap.min.js"></script>
+        <?php require_once __DIR__ . '/reusables/footer.php' ?>
 </body>
 </html>

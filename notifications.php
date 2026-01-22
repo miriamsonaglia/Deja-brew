@@ -348,6 +348,6 @@ if ($userRole !== Role::GUEST->value && $userId) {
         updateCartCount();
     <?php endif; ?>
 </script>
-
+<?php require_once __DIR__ . '/reusables/footer.php' ?>
 </body>
 </html>

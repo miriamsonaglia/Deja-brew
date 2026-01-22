@@ -31,7 +31,7 @@
 
 			// Get the user ID from query string
 			$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-			
+
 
 			if ($id <= 0) {
 				die("Invalid user ID");
@@ -91,7 +91,7 @@
 	<body>
 		<!-- Skip Link per accessibilità -->
 		<a href="#main-content" class="skip-link">Salta al contenuto principale</a>
-		
+
 		<?php require_once __DIR__ . '/navbar-selector.php'; ?>
 
 		<main id="main-content" role="main" aria-label="Contenuto principale">
@@ -101,8 +101,8 @@
 					<h1 id="profile-heading" class="visually-hidden">Profilo di <?= htmlspecialchars($user->username ?? 'Venditore') ?></h1>
 					<div class="row g-4 align-items-center">
 						<div class="col-12 col-md-4 text-center">
-							<img src="<?= htmlspecialchars($avatar) ?>" 
-								 alt="Immagine del profilo di <?= htmlspecialchars($user->username ?? 'Venditore') ?>" 
+							<img src="<?= htmlspecialchars($avatar) ?>"
+								 alt="Immagine del profilo di <?= htmlspecialchars($user->username ?? 'Venditore') ?>"
 								 class="img-fluid w-100 rounded relative-30-percent"
 								 role="img">
 						</div>
@@ -118,7 +118,7 @@
 									<?= htmlspecialchars($user->nome ?? '') ?> <?= htmlspecialchars($user->cognome ?? '') ?>
 								</p>
 								<p class="mb-3">
-									<i class="bi bi-envelope" aria-hidden="true"></i> 
+									<i class="bi bi-envelope" aria-hidden="true"></i>
 									<span class="visually-hidden">Email: </span>
 									<a href="mailto:<?= htmlspecialchars($user->email ?? '') ?>" aria-label="Invia email a <?= htmlspecialchars($user->username ?? 'venditore') ?>">
 										<?= htmlspecialchars($user->email ?? '-') ?>
@@ -138,39 +138,39 @@
 				<nav aria-label="Navigazione sezioni profilo venditore">
 					<ul class="nav nav-tabs mb-3" id="vendorTabs" role="tablist">
 						<li class="nav-item" role="presentation">
-							<button class="nav-link active" 
-									id="informazioni-tab" 
-									data-bs-toggle="tab" 
-									data-bs-target="#informazioni" 
-									type="button" 
-									role="tab" 
-									aria-controls="informazioni" 
+							<button class="nav-link active"
+									id="informazioni-tab"
+									data-bs-toggle="tab"
+									data-bs-target="#informazioni"
+									type="button"
+									role="tab"
+									aria-controls="informazioni"
 									aria-selected="true"
 									aria-label="Visualizza informazioni del venditore">
 								<i class="bi bi-info-circle" aria-hidden="true"></i> Informazioni
 							</button>
 						</li>
 						<li class="nav-item" role="presentation">
-							<button class="nav-link" 
-									id="venduti-tab" 
-									data-bs-toggle="tab" 
-									data-bs-target="#venduti" 
-									type="button" 
-									role="tab" 
-									aria-controls="venduti" 
+							<button class="nav-link"
+									id="venduti-tab"
+									data-bs-toggle="tab"
+									data-bs-target="#venduti"
+									type="button"
+									role="tab"
+									aria-controls="venduti"
 									aria-selected="false"
 									aria-label="Visualizza ordini venduti">
 								<i class="bi bi-cart-check" aria-hidden="true"></i> Ordini Venduti
 							</button>
 						</li>
 						<li class="nav-item" role="presentation">
-							<button class="nav-link" 
-									id="prodotti-tab" 
-									data-bs-toggle="tab" 
-									data-bs-target="#prodotti" 
-									type="button" 
-									role="tab" 
-									aria-controls="prodotti" 
+							<button class="nav-link"
+									id="prodotti-tab"
+									data-bs-toggle="tab"
+									data-bs-target="#prodotti"
+									type="button"
+									role="tab"
+									aria-controls="prodotti"
 									aria-selected="false"
 									aria-label="Visualizza prodotti del venditore">
 								<i class="bi bi-box-seam" aria-hidden="true"></i> Prodotti
@@ -223,7 +223,7 @@
 															<th scope="row"><?= htmlspecialchars($order->utente->username ?? ($order->utente->nome ?? 'Utente')) ?></th>
 															<td>
 																<?php if ($order->prodotto): ?>
-																	<a href="./product.php?id=<?= $order->prodotto->id ?>" 
+																	<a href="./product.php?id=<?= $order->prodotto->id ?>"
 																	   class="text-decoration-none"
 																	   aria-label="Visualizza dettagli prodotto <?= htmlspecialchars($order->prodotto->nome) ?>">
 																		<?= htmlspecialchars($order->prodotto->nome) ?>
@@ -271,7 +271,7 @@
 												<?php foreach ($prodotti as $prodotto): ?>
 													<tr>
 														<th scope="row">
-															<a href="./product.php?id=<?= $prodotto->id ?>" 
+															<a href="./product.php?id=<?= $prodotto->id ?>"
 															   class="text-decoration-none"
 															   aria-label="Visualizza dettagli di <?= htmlspecialchars($prodotto->nome) ?>">
 																<?= htmlspecialchars($prodotto->nome) ?>
@@ -292,13 +292,13 @@
 				</div>
 			</div>
 		</main>
-
+		<?php require_once __DIR__ . '/reusables/footer.php' ?>
 		<script src="./dist/bootstrap5/js/bootstrap.bundle.min.js"></script>
 		<script>
 			// Gestione accessibilità tab con tastiera
 			document.addEventListener('DOMContentLoaded', function() {
 				const tabButtons = document.querySelectorAll('[role="tab"]');
-				
+
 				tabButtons.forEach(button => {
 					button.addEventListener('shown.bs.tab', function(e) {
 						// Sposta il focus sul pannello quando viene attivato un tab
@@ -309,7 +309,7 @@
 						}
 					});
 				});
-				
+
 				// Annuncia il cambio di tab agli screen reader
 				const tabList = document.querySelector('[role="tablist"]');
 				if (tabList) {
@@ -318,7 +318,7 @@
 					liveRegion.setAttribute('aria-live', 'polite');
 					liveRegion.classList.add('visually-hidden');
 					document.body.appendChild(liveRegion);
-					
+
 					tabButtons.forEach(button => {
 						button.addEventListener('shown.bs.tab', function(e) {
 							liveRegion.textContent = 'Visualizzazione sezione: ' + e.target.textContent.trim();

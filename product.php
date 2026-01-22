@@ -22,10 +22,10 @@ $userRole = $_SESSION['UserRole'] ?? Role::GUEST->value;
 
 $id = $_GET['id'] ?? 1;
 $prodotto = Prodotto::find($id);
-$immagini = [empty($prodotto->fotografia) ? 
-                    ('./images/products/Standard_Blend.png') : 
-                    (file_exists('./uploads/prodotti/' . htmlspecialchars($prodotto->fotografia)) ? 
-                                            './uploads/prodotti/' . htmlspecialchars($prodotto->fotografia) : 
+$immagini = [empty($prodotto->fotografia) ?
+                    ('./images/products/Standard_Blend.png') :
+                    (file_exists('./uploads/prodotti/' . htmlspecialchars($prodotto->fotografia)) ?
+                                            './uploads/prodotti/' . htmlspecialchars($prodotto->fotografia) :
                                             './images/products/Standard_Blend.png')];
 $mediaRecensioni = Recensione::where('id_prodotto', $id)->avg('stelle') ?? 0;
 $venditore = UtenteVenditore::with('user')->find($prodotto->id_venditore);
@@ -273,12 +273,12 @@ function renderStars($media) {
               <i class="bi bi-bag-check"></i> Acquista ora
             </button>
             <?php endif; ?>
-            
+
             <!-- PULSANTI CONDIVIDI -->
               <button id="btnCondividi" class="btn btn-outline-secondary">
                 <i class="bi bi-link-45deg" aria-hidden="true"></i> Condividi
               </button>
-            
+
           </div>
       </div>
     </div>
@@ -325,12 +325,12 @@ function renderStars($media) {
 
           <div class="mb-3">
             <label for="modalQuantity" class="form-label">Quantità</label>
-            <input type="number" 
-                   id="modalQuantity" 
-                   name="quantita" 
-                   value="1" 
-                   min="1" 
-                   max="99" 
+            <input type="number"
+                   id="modalQuantity"
+                   name="quantita"
+                   value="1"
+                   min="1"
+                   max="99"
                    class="form-control">
           </div>
 
@@ -415,14 +415,14 @@ function renderStars($media) {
               </div>
               <div class="row">
                 <div class="col-md-5">
-    
+
                   <label for="modal-product-prezzo" class="form-label">Prezzo Prodotto (€)</label>
                 </div>
                 <div class="col-md-5">
-    
+
                   <label for="modal-product-peso" class="form-label">Peso Prodotto (kg)</label>
                 </div>
-                
+
               </div>
               <div class="row">
                 <div class="col-md-5">
@@ -433,8 +433,8 @@ function renderStars($media) {
                 <div class="col">
                 <label>
                   <input type="number" id="modal-product-peso" name="product_peso" class="form-control" step="0.001" placeholder="0.2" required>
-                </label> 
-                </div> 
+                </label>
+                </div>
               </div>
               <div class="mb-3">
                 <label for="modal-product-provenienza" class="form-label">Provenienza</label>
@@ -459,7 +459,7 @@ function renderStars($media) {
                 <select id="modal-product-categoria" class="form-select" name="product_categoria" required>
                   <option value="">Seleziona categoria</option>
                   <?php foreach ($categorie as $categoria): ?>
-                    <option value="<?= $categoria->id ?>" 
+                    <option value="<?= $categoria->id ?>"
                       <?php if ($categoria->descrizione === $prodotto->categoria->descrizione): ?>
                         selected
                       <?php endif; ?>
@@ -472,7 +472,7 @@ function renderStars($media) {
                 <select id="modal-product-aroma" class="form-select" name="product_aroma" required>
                   <option value="">Seleziona aroma</option>
                   <?php foreach ($aromi as $aroma): ?>
-                    <option value="<?= $aroma->id ?>" 
+                    <option value="<?= $aroma->id ?>"
                       <?php if (($aroma->gusto) === $prodotto->aroma->gusto): ?>
                         selected
                       <?php endif; ?>
@@ -593,9 +593,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
   if( document.getElementById('modalModificaArticolo')!==null ){
     const modal_mod_prod = document.getElementById('modalModificaArticolo');
-          
+
       modal_mod_prod.addEventListener('show.bs.modal', event => {
-        
+
         const button = event.relatedTarget;
         modal_mod_prod.querySelector('#modal-product-id').value = button.dataset.id;
         modal_mod_prod.querySelector('#modal-product-nome').value = button.dataset.nome;
@@ -605,7 +605,7 @@ document.addEventListener('DOMContentLoaded', function() {
         modal_mod_prod.querySelector('#modal-product-tipo').value = button.dataset.tipo;
         modal_mod_prod.querySelector('#modal-product-intensita').value = button.dataset.intensita;
         modal_mod_prod.querySelector('#valore-intensita').textContent = button.dataset.intensita;
-        
+
     });
   }
   const intensitaInput = document.getElementById('modal-product-intensita');
@@ -658,6 +658,6 @@ document.addEventListener('DOMContentLoaded', function() {
 <?php endif; ?>
 
 </script>
-
+  <?php require_once __DIR__ . '/reusables/footer.php' ?>
 </body>
 </html>

@@ -32,7 +32,6 @@
 <main>
     <div class="container-fluid">
         <div class="category-section my-4">
-            <!-- Sostituisci questo blocco nel tuo category-products.php: -->
             <div class="category-section my-4">
                 <div class="category-header">
                     <a href="./home.php" class="back-button" title="Torna alla home" aria-label="Torna alla home">
@@ -42,16 +41,15 @@
                 </div>
 
                 <div class="product-grid d-flex flex-wrap justify-content-center gap-4">
-                    <!-- Il resto del codice rimane uguale -->
                     <?php foreach ($products as $product): ?>
-                                            <div class="slider-object card card-product" style="width: 18rem;"
-                        data-product-id="<?php echo $product->id; ?>"
-                        data-product-name="<?php echo htmlspecialchars($product->nome); ?>"
-                        data-product-price="<?php echo $product->prezzo; ?>"
-                        data-product-aroma="<?php echo htmlspecialchars($product->aroma ? $product->aroma->gusto : ''); ?>"
-                        data-product-provenienza="<?php echo htmlspecialchars($product->provenienza ?? ''); ?>"
-                        data-product-weight="<?php echo $product->peso ?? 0; ?>">
-
+                        <a href="product.php?id=<?php echo $product->id; ?>"><div class="slider-object card card-product" style="width: 18rem;"
+                            data-product-id="<?php echo $product->id; ?>"
+                            data-product-name="<?php echo htmlspecialchars($product->nome); ?>"
+                            data-product-price="<?php echo $product->prezzo; ?>"
+                            data-product-aroma="<?php echo htmlspecialchars($product->aroma ? $product->aroma->gusto : ''); ?>"
+                            data-product-provenienza="<?php echo htmlspecialchars($product->provenienza ?? ''); ?>"
+                            data-product-weight="<?php echo $product->peso ?? 0; ?>"
+                        >
                         <img src="<?php echo (empty($product->fotografia) ?
                                                             ('./images/products/Standard_Blend.png') :
                                                             (file_exists('./uploads/prodotti/' . htmlspecialchars($product->fotografia)) ?
@@ -97,6 +95,7 @@
                                 <?php endif; ?>
                         </div>
                     </div>
+                        </a>
                     <?php endforeach; ?>
                 </div>
             </div>

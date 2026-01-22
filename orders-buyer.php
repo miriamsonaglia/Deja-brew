@@ -112,5 +112,6 @@
 			});
 		});
 	</script>
+	        <?php require_once __DIR__ . '/reusables/footer.php' ?>
 </body>
 </html>

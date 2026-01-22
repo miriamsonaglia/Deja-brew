@@ -41,12 +41,12 @@ if ($isBuyNow && $idProdotto) {
     // Acquisto diretto di un singolo prodotto
     $prodotto = Prodotto::find($idProdotto);
     if (!$prodotto) die("Prodotto non trovato.");
-    
+
     $carrello = collect([(object)[
         'prodotto' => $prodotto,
         'quantita' => $quantita
     ]]);
-    
+
     $totale = $quantita * $prodotto->prezzo;
 } else {
     // Acquisto dal carrello
@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'pay')
         $carta = CartaDiCredito::where('id', $idCarta)
                                ->where('id_utente', $idUtente)
                                ->first();
-        
+
         if (!$carta) {
             $errors[] = "Carta non trovata o non autorizzata.";
         } else {
@@ -105,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'pay')
 
     // Se tutto è corretto, procedi con il pagamento
     $_SESSION['success'] = "Pagamento effettuato con successo!";
-    
+
     try {
         if ($isBuyNow) {
             // Acquisto diretto - crea un ordine per il singolo prodotto
@@ -127,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'pay')
                 $ordine->status = 'confermato';
                 $ordine->save();
             }
-            
+
             // Svuota il carrello dopo aver creato gli ordini
             Lista::where('id_utente_compratore', $utenteCompratore->id)
                  ->carrello()
@@ -138,7 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'pay')
         header('Location: checkout.php');
         exit;
     }
-    
+
     header('Location: orders-buyer.php');
     exit;
 }
@@ -278,7 +278,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_c
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
             </div>
             <form action="actions/add_card.php" method="POST">
-                <div class="modal-body">  
+                <div class="modal-body">
                     <div class="mb-3">
                         <label for="card_owner" class="form-label">Nome intestatario</label>
                         <input type="text" id="card_owner" name="card_owner" class="form-control" required>
@@ -316,6 +316,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_c
         </div>
     </div>
 </div>
+		<?php require_once __DIR__ . '/reusables/footer.php' ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
