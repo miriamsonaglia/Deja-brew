@@ -50,24 +50,6 @@
 			}
 
 		?>
-		<style>
-			#drop-zone {
-				border: 2px dashed #ccc;
-				border-radius: 10px;
-				padding: 20px;
-				text-align: center;
-				cursor: pointer;
-			}
-			#drop-zone:hover {
-				background-color: #f0f0f0;
-			}
-			#preview {
-				max-height: 65vh;
-				width: auto;         /* maintain aspect ratio */
-				display: block;      /* ensure block-level for consistent sizing */
-				object-fit: contain; /* optional: fit inside box without stretching */
-			}
-		</style>
 	</head>
 	<body>
 		<?php require_once __DIR__ . '/navbar-selector.php'; ?>
@@ -75,7 +57,7 @@
 		<div class="container py-4">
 			<div class="row g-4 align-items-center">
 				<div class="col-12 col-md-4 text-center">
-					<img src="<?= htmlspecialchars($avatar) ?>" alt="Immagine profilo" class="img-fluid w-100 rounded" style="max-width: 220px;">
+					<img src="<?= htmlspecialchars($avatar) ?>" alt="Immagine profilo" class="img-fluid w-100 rounded immagine-profilo">
 					<button class="btn btn-secondary mt-3" data-bs-toggle="modal" data-bs-target="#modalUploadImg">Modifica Immagine Profilo</button>
 				</div>
 				<div class="col-12 col-md-8">
@@ -181,7 +163,7 @@
 					</div>
 					<input type="hidden" id="modal-user_id" name="user_id">
 					<div class="modal-body">
-						<div id="drop-zone">
+						<div id="drop-zone" class="cursor-pointer">
 							Drop image here or click to upload
 							<input type="file" name="image" accept="image/*" hidden>
 						</div>

@@ -8,21 +8,6 @@
 		<link rel="stylesheet" href="./dist/bootstrap5/css/bootstrap.min.css">
 		<link rel="stylesheet" href="./dist/bootstrap5/icons/bootstrap-icons.css">
 		<link rel="stylesheet" href="./dist/custom/css/new-style.css">
-		<style>
-			.skip-link {
-				position: absolute;
-				top: -40px;
-				left: 0;
-				background: #000;
-				color: #fff;
-				padding: 8px;
-				text-decoration: none;
-				z-index: 100;
-			}
-			.skip-link:focus {
-				top: 0;
-			}
-		</style>
 
 		<?php
 			use App\Models\UtenteVenditore;
@@ -118,8 +103,7 @@
 						<div class="col-12 col-md-4 text-center">
 							<img src="<?= htmlspecialchars($avatar) ?>" 
 								 alt="Immagine del profilo di <?= htmlspecialchars($user->username ?? 'Venditore') ?>" 
-								 class="img-fluid w-100 rounded" 
-								 style="max-width: 30vh;"
+								 class="img-fluid w-100 rounded relative-30-percent"
 								 role="img">
 						</div>
 						<div class="col-12 col-md-8">

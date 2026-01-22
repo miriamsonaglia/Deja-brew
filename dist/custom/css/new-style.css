@@ -981,3 +981,55 @@ body {
     background-color: #007bff;
     color: white;
 }
+
+/* =================================================================
+   PROFILE SETTINGS PAGE
+   ================================================================= */
+
+.immagine-profilo{
+  max-width: 220px;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+#drop-zone {
+  border: 2px dashed #ccc;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+}
+#drop-zone:hover {
+  background-color: #f0f0f0;
+}
+#preview {
+  max-height: 65vh;
+  width: auto;
+  display: block;
+  object-fit: contain;
+}
+
+/* =================================================================
+  VENDOR PROFILE PAGE
+   ================================================================= */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #000;
+  color: #fff;
+  padding: 8px;
+  text-decoration: none;
+  z-index: 100;
+}
+.skip-link:focus {
+  top: 0;
+}
+
+/* =================================================================
+   PERCENTAGE IMAGES CLASSES
+   ================================================================= */
+.relative-30-percent{
+  max-width: 30vh;
+}
