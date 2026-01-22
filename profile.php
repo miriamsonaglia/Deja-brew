@@ -73,7 +73,6 @@
 								</div>
 							<?php endif; ?>
 
-			<!-- Da mettere un if che cambia il tipo di elemento dipendentemente se chi accede è il venditore o un utente qualsiasi -->
 			<div class="profile-info">
 				<?php if ($_SESSION['UserRole'] == Role::VENDOR->value): ?>
 					<form id="edit_description_form" action="actions/edit_description.php" method="post">

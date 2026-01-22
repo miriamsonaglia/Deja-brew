@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <!-- INSERT HERE ALL CSS NECESSARY IMPORTS -->
         <link rel="stylesheet" href="./dist/bootstrap5/icons/bootstrap-icons.css">
         <link rel="stylesheet" href="./dist/bootstrap5/css/bootstrap.min.css">
         <link rel="stylesheet" href="./dist/custom/css/style.css">
@@ -18,7 +17,6 @@
         ?>
     </head>
     <body>
-        <header><!-- ?? Possible header template ?? --></header>
         <?php include('./reusables/navbars/buyer-navbar.php'); ?>
         <main>
             <h1><?php echo $category->descrizione; ?></h1>
@@ -96,7 +94,6 @@
             <!-- Tendina apribile con lista filtri -->
         </aside>
         <?php require_once __DIR__ . '/reusables/footer.php'; ?>
-        <!-- INSERT HERE ALL JAVASCRIPT NECESSARY IMPORTS -->
         <script src="./dist/bootstrap5/js/bootstrap.min.js"></script>
         <script src="./dist/custom/js/sidebar-manager.js"></script>
     </body>

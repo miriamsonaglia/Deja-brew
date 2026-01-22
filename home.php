@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="it">
     <head>
-        <!-- INSERT HERE ALL CSS NECESSARY IMPORTS -->
         <link rel="stylesheet" href="./dist/bootstrap5/icons/bootstrap-icons.css">
         <link rel="stylesheet" href="./dist/bootstrap5/css/bootstrap.min.css">
         <link rel="stylesheet" href="./dist/custom/css/new-style.css">
@@ -25,7 +24,6 @@
         ?>
     </head>
     <body>
-        <header><!-- ?? Possible header template ?? --></header>
         <?php require_once __DIR__ . '/navbar-selector.php'; ?>
         <div class="container-fluid">
          <div class="search-wrapper position-relative mx-auto" style="max-width: 600px;">
@@ -125,7 +123,6 @@
 
         <?php require_once __DIR__ . '/reusables/footer.php' ?>
 
-        <!-- INSERT HERE ALL JAVASCRIPT NECESSARY IMPORTS -->
         <script src="./dist/bootstrap5/js/bootstrap.min.js"></script>
         <script src="./dist/custom/js/home-slider-manager.js"></script>
         <script src="./dist/custom/js/searchbar-manager.js"></script>
