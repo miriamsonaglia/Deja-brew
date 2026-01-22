@@ -1,5 +1,5 @@
 <!-- Footer -->
-<footer class="footer-dejabrew bg-primary-brown text-white mt-auto sticky-bottom" role="contentinfo">
+<footer class="footer-dejabrew bg-primary-brown text-white mt-auto" role="contentinfo">
     <div class="container py-4">
         <div class="row align-items-center">
             <!-- Brand -->

@@ -6,7 +6,7 @@ $notificationCount = getNotificationCount();
 <nav class="navbar navbar-custom bg-light border-bottom">
     <div class="container-fluid justify-content-between align-items-center">
         <!-- Pulsante hamburger per aprire la sidebar -->
-        <button class="btn navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-label="Apri menu">
+        <button class="btn navbar-toggler bg-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-label="Apri menu">
             <span class="navbar-toggler-icon"></span>
         </button>
 
