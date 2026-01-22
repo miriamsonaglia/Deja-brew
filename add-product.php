@@ -158,7 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="row g-4">
       <div class="col-md-6">
         <label for="immagini" class="form-label fw-semibold">Foto del prodotto</label>
-        <div id="upload-box"class="mb-3 border border-2 rounded-3 p-4 text-center cursor-pointer border-dashed">
+        <div id="upload-box" class="mb-3 border border-2 rounded-3 p-4 text-center border-dashed" style="cursor:pointer">
           <span>Trascina qui le immagini o clicca per selezionarle</span>
           <input type="file" id="immagini" class="image-upload-input" name="immagini[]" multiple accept="image/*" hidden>
         </div>
