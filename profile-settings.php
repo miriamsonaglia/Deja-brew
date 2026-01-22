@@ -84,7 +84,6 @@
 					</div>
 				</div>
 			</div>
-			<!-- Da mettere un if che cambia il tipo di elemento dipendentemente se chi accede è il venditore o un utente qualsiasi -->
 			<div class="profile-info">
 				<h2 class="mt-5 mb-4">Impostazioni Profilo</h2>
 
